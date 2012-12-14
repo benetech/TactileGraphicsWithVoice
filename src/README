@@ -1,3 +1,10 @@
-This code is based on a subset of the ZXing 1.2 release.
+This code is based on a subset of the ZXing 2.1 release.
 
-The SVN revision of the base code is 538.
+The SVN revision of the base code is 538. To get a diff against the
+unmodified ZXing 2.1 release:
+
+    $ svn diff -r 538
+
+The SVN revision of the code base with just the modifications for
+building and testing under Psellos developer id (changing the bundle
+identifier mostly) is 539.
