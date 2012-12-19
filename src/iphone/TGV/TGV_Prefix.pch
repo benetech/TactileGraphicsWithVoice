@@ -1,5 +1,5 @@
 //
-// Prefix header for all source files of the 'ScanTest' target in the 'ScanTest' project
+// Prefix header for all source files of the 'TGV' target in the 'TGV' project
 //
 #import <Availability.h>
 

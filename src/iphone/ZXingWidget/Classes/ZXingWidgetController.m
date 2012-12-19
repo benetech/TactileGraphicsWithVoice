@@ -33,9 +33,6 @@
 
 @interface ZXingWidgetController ()
 
-@property BOOL showCancel;
-@property BOOL showLicense;
-@property BOOL oneDMode;
 @property BOOL isStatusBarHidden;
 
 - (void)initCapture;
@@ -45,13 +42,14 @@
 
 @implementation ZXingWidgetController
 
+@synthesize delegate, showCancel, oneDMode, showLicense;
 #if HAS_AVFF
 @synthesize captureSession;
 @synthesize prevLayer;
 #endif
-@synthesize result, delegate, soundToPlay;
+@synthesize result, soundToPlay;
 @synthesize overlayView;
-@synthesize oneDMode, showCancel, showLicense, isStatusBarHidden;
+@synthesize isStatusBarHidden;
 @synthesize readers;
 
 
@@ -63,23 +61,38 @@
 - (id)initWithDelegate:(id<ZXingDelegate>)scanDelegate showCancel:(BOOL)shouldShowCancel OneDMode:(BOOL)shouldUseoOneDMode showLicense:(BOOL)shouldShowLicense {
   self = [super init];
   if (self) {
-    [self setDelegate:scanDelegate];
+    self.delegate = scanDelegate;
     self.oneDMode = shouldUseoOneDMode;
     self.showCancel = shouldShowCancel;
     self.showLicense = shouldShowLicense;
     self.wantsFullScreenLayout = YES;
     beepSound = -1;
     decoding = NO;
-    OverlayView *theOverLayView = [[OverlayView alloc] initWithFrame:[UIScreen mainScreen].bounds 
-                                                       cancelEnabled:showCancel 
-                                                            oneDMode:oneDMode
-                                                         showLicense:shouldShowLicense];
-    [theOverLayView setDelegate:self];
-    self.overlayView = theOverLayView;
-    [theOverLayView release];
+    // [self initOverlayView];
   }
   
   return self;
+}
+
+- (id) initWithCoder: (NSCoder *) aDecoder {
+  if (!(self = [super initWithCoder: aDecoder]))
+    return nil;
+  self.wantsFullScreenLayout = YES;
+  beepSound = -1;
+  decoding = NO;
+  // [self initOverlayView];
+  return self;
+}
+
+- (void) initOverlayView {
+  OverlayView *theOverLayView =
+    [[OverlayView alloc] initWithFrame: [UIScreen mainScreen].bounds
+                         cancelEnabled: self.showCancel
+                              oneDMode: self.oneDMode
+                           showLicense: self.showLicense];
+  [theOverLayView setDelegate:self];
+  self.overlayView = theOverLayView;
+  [theOverLayView release];
 }
 
 - (void)dealloc {
@@ -98,9 +111,9 @@
 
 - (void)cancelled {
   [self stopCapture];
-  if (!self.isStatusBarHidden) {
-    [[UIApplication sharedApplication] setStatusBarHidden:NO];
-  }
+  //if (!self.isStatusBarHidden) {
+  //  [[UIApplication sharedApplication] setStatusBarHidden:NO];
+  //}
 
   wasCancelled = YES;
   if (delegate != nil) {
@@ -138,23 +151,29 @@
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
-  self.isStatusBarHidden = [[UIApplication sharedApplication] isStatusBarHidden];
-  if (!isStatusBarHidden)
-    [[UIApplication sharedApplication] setStatusBarHidden:YES];
+  //self.isStatusBarHidden = [[UIApplication sharedApplication] isStatusBarHidden];
+  //if (!isStatusBarHidden)
+  //  [[UIApplication sharedApplication] setStatusBarHidden:YES];
+  
+  // Initialize the overlay view lazily, i.e., the first time
+  // it is needed. Currently its properties are fixed after that.
+  //
+  if(!overlayView)
+    [self initOverlayView];
 
   decoding = YES;
 
   [self initCapture];
-  [self.view addSubview:overlayView];
+  [self.view addSubview: self.overlayView];
   
-  [overlayView setPoints:nil];
+  [self.overlayView setPoints:nil];
   wasCancelled = NO;
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
   [super viewDidDisappear:animated];
-  if (!isStatusBarHidden)
-    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+  // if (!isStatusBarHidden)
+  //  [[UIApplication sharedApplication] setStatusBarHidden: NO withAnimation: UIStatusBarAnimationNone];
   [self.overlayView removeFromSuperview];
   [self stopCapture];
 }
@@ -262,7 +281,7 @@
                 usingSubset:(UIImage *)subset {
   // simply add the points to the image view
   NSMutableArray *mutableArray = [[NSMutableArray alloc] initWithArray:resultPoints];
-  [overlayView setPoints:mutableArray];
+  [self.overlayView setPoints:mutableArray];
   [mutableArray release];
 }
 
@@ -275,18 +294,18 @@
 }
 
 - (void)notifyDelegate:(id)text {
-  if (!isStatusBarHidden) [[UIApplication sharedApplication] setStatusBarHidden:NO];
+  // if (!isStatusBarHidden) [[UIApplication sharedApplication] setStatusBarHidden:NO];
   [delegate zxingController:self didScanResult:text];
   [text release];
 }
 
 - (void)decoder:(Decoder *)decoder failedToDecodeImage:(UIImage *)image usingSubset:(UIImage *)subset reason:(NSString *)reason {
   decoder.delegate = nil;
-  [overlayView setPoints:nil];
+  [self.overlayView setPoints:nil];
 }
 
 - (void)decoder:(Decoder *)decoder foundPossibleResultPoint:(CGPoint)point {
-  [overlayView setPoint:point];
+  [self.overlayView setPoint:point];
 }
 
 /*
@@ -446,7 +465,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
   CGContextRelease(newContext); 
   CGColorSpaceRelease(colorSpace);
 
-  CGRect cropRect = [overlayView cropRect];
+  CGRect cropRect = [self.overlayView cropRect];
   if (oneDMode) {
     // let's just give the decoder a vertical band right above the red line
     cropRect.origin.x = cropRect.origin.x + (cropRect.size.width / 2) - (ONE_D_BAND_HEIGHT + 1);

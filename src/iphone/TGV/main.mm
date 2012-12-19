@@ -1,6 +1,6 @@
 //
 //  main.m
-//  ScanTest
+//  TGV
 //
 //  Created by David Kavanagh on 5/10/10.
 //  Copyright __MyCompanyName__ 2010. All rights reserved.

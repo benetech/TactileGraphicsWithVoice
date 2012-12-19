@@ -38,11 +38,11 @@
   ParsedResult *result;
   OverlayView *overlayView;
   SystemSoundID beepSound;
-  BOOL showCancel;
+  // BOOL showCancel;
   NSURL *soundToPlay;
-  id<ZXingDelegate> delegate;
+  // id<ZXingDelegate> delegate;
   BOOL wasCancelled;
-  BOOL oneDMode;
+  // BOOL oneDMode;
 #if HAS_AVFF
   AVCaptureSession *captureSession;
   AVCaptureVideoPreviewLayer *prevLayer;
@@ -51,12 +51,17 @@
   BOOL isStatusBarHidden;
 }
 
+@property (nonatomic, assign) id<ZXingDelegate> delegate;
+@property (nonatomic, assign) BOOL showCancel;
+@property (nonatomic, assign) BOOL oneDMode;
+@property (nonatomic, assign) BOOL showLicense;
+
 #if HAS_AVFF
 @property (nonatomic, retain) AVCaptureSession *captureSession;
 @property (nonatomic, retain) AVCaptureVideoPreviewLayer *prevLayer;
 #endif
+
 @property (nonatomic, retain ) NSSet *readers;
-@property (nonatomic, assign) id<ZXingDelegate> delegate;
 @property (nonatomic, retain) NSURL *soundToPlay;
 @property (nonatomic, retain) ParsedResult *result;
 @property (nonatomic, retain) OverlayView *overlayView;

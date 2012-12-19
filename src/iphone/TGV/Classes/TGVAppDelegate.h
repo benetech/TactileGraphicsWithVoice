@@ -1,14 +1,14 @@
 //
-//  ScanTestAppDelegate.h
-//  ScanTest
+//  TGVAppDelegate.h
+//  TGV
 //
 //  Created by David Kavanagh on 5/10/10.
-//  Copyright __MyCompanyName__ 2010. All rights reserved.
+//  Modified for TGV by Jeffrey Scofield 12/14/12 ...
 //
 
 #import <UIKit/UIKit.h>
 
-@interface ScanTestAppDelegate : NSObject <UIApplicationDelegate> {
+@interface TGVAppDelegate : NSObject <UIApplicationDelegate> {
     
     UIWindow *window;
     UINavigationController *navigationController;
