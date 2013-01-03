@@ -52,7 +52,13 @@
 {
   self.resultstring = resultstr;
   if (self.isViewLoaded) {
-    [self.textview setText: resultstring];
+    // [self.textview setText: resultstring];
+    resultstr = [resultstr stringByAppendingString: @"\n"];
+    if([self.textview.text isEqualToString: @"Scanned text will go here."])
+      self.textview.text = self.resultstring;
+    else
+      self.textview.text =
+        [self.resultstring stringByAppendingString: self.textview.text];
     [self.textview setNeedsDisplay];
     announce = YES;
   }

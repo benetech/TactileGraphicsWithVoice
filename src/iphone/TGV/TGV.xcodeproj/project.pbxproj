@@ -325,7 +325,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Jeffrey Scofield (PP36DPP7BP)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Jeffrey Scofield";
 				COPY_PHASE_STRIP = YES;
 				EXPORTED_SYMBOLS_FILE = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -335,7 +335,7 @@
 				INFOPLIST_FILE = "TGV-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = TGV;
-				PROVISIONING_PROFILE = "C1F25C9E-FB7C-4FE8-B2D5-3FCC8D32A6D3";
+				PROVISIONING_PROFILE = "61978E9B-3E04-4769-B29E-AFA1C0365795";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

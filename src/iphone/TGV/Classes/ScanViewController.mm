@@ -15,7 +15,7 @@
 @synthesize resultscontroller;
 
 
-- (IBAction)scanPressed:(id)sender {
+- (void) scanPressed:(id)sender {
     NSMutableSet *readerset = [[NSMutableSet alloc ] init];
 
     QRCodeReader* qrcodeReader = [[QRCodeReader alloc] init];
