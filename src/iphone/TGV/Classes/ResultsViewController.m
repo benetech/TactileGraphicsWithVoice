@@ -33,17 +33,16 @@
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-
-    // Do any additional setup after loading the view from its nib.
+  [super viewDidLoad];
 }
 
 - (void) viewDidAppear: (BOOL) animated
 {
   [super viewDidAppear: animated];
-  if(announce && [resultstring length] > 0)
+  if(announce && [resultstring length] > 0) {
     UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification,
                                     resultstring);
+  }
   announce = NO;
 }
 
@@ -52,14 +51,11 @@
 {
   self.resultstring = resultstr;
   if (self.isViewLoaded) {
-    // [self.textview setText: resultstring];
-    resultstr = [resultstr stringByAppendingString: @"\n"];
-    if([self.textview.text isEqualToString: @"Scanned text will go here."])
-      self.textview.text = self.resultstring;
-    else
-      self.textview.text =
-        [self.resultstring stringByAppendingString: self.textview.text];
-    [self.textview setNeedsDisplay];
+    if([textview.text isEqualToString: @"Scanned text will go here."])
+      textview.text = @"";
+    NSArray *newtext = @[resultstr, @"\n", textview.text];
+    textview.text = [newtext componentsJoinedByString: @""];
+    [textview setNeedsDisplay];
     announce = YES;
   }
 }

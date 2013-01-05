@@ -12,6 +12,6 @@
     BOOL announce;
 }
 @property (nonatomic, retain) NSString *resultstring;
-@property (nonatomic, retain) UITextView *textview;
+@property (nonatomic, retain) IBOutlet UITextView *textview;
 - (void) addResult: (NSString *) resultstr;
 @end
