@@ -8,7 +8,7 @@
 @interface ScanViewController : ZXingWidgetController <ZXingDelegate> {
 }
 @property (nonatomic, retain) IBOutlet UITabBarController *tabcontroller;
-@property (nonatomic, retain) IBOutlet ResultsViewController *resultscontroller;
+@property (nonatomic, retain) IBOutlet UIViewController <TGVResults> *resultscontroller;
 
 - (IBAction)scanPressed:(id)sender;
 @end

@@ -12,6 +12,8 @@
 
 @end
 
+static NSString *placeholder = @"Scanned text will go here.";
+
 @implementation ResultsViewController
 
 @synthesize textview;
@@ -28,6 +30,7 @@
 
 - (void) initialize
 {
+  textview.text = placeholder;
   announce = NO;
 }
 
@@ -51,13 +54,18 @@
 {
   self.resultstring = resultstr;
   if (self.isViewLoaded) {
-    if([textview.text isEqualToString: @"Scanned text will go here."])
+    if([textview.text isEqualToString: placeholder])
       textview.text = @"";
     NSArray *newtext = @[resultstr, @"\n", textview.text];
     textview.text = [newtext componentsJoinedByString: @""];
     [textview setNeedsDisplay];
     announce = YES;
   }
+}
+
+- (IBAction) clearResults: (id) sender
+{
+  textview.text = placeholder;
 }
 
 
