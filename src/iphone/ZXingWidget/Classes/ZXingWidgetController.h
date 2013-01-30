@@ -76,6 +76,7 @@
 @end
 
 @protocol ZXingDelegate
+- (BOOL)zxingController:(ZXingWidgetController*)controller shouldScanBitmap:(uint8_t *)bitmap width:(size_t)width height:(size_t)height;
 - (void)zxingController:(ZXingWidgetController*)controller didScanResult:(NSString *)result;
 - (void)zxingControllerDidCancel:(ZXingWidgetController*)controller;
 @end

@@ -444,6 +444,7 @@
 		3B81AAF7120F0A7E0022E5D4 /* GreyscaleRotatedLuminanceSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GreyscaleRotatedLuminanceSource.h; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* ZXingWidget_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZXingWidget_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		B911DA7916AF1B9A00FDD76C /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libZXingWidget.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libZXingWidget.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E53458B511987396000CB77F /* BarcodeFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BarcodeFormat.cpp; sourceTree = "<group>"; };
 		E53458B611987396000CB77F /* BarcodeFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BarcodeFormat.h; sourceTree = "<group>"; };
@@ -617,6 +618,7 @@
 		0867D691FE84028FC02AAC07 /* ZXingWidget */ = {
 			isa = PBXGroup;
 			children = (
+				B911DA7916AF1B9A00FDD76C /* CoreImage.framework */,
 				1D6038A113DF6FBF006F4B51 /* Tests */,
 				E53458B311987396000CB77F /* CoreSrc */,
 				08FB77AEFE84172EC02AAC07 /* Classes */,
@@ -1580,7 +1582,7 @@
 					armv7s,
 				);
 				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -1608,6 +1610,7 @@
 					armv7s,
 				);
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;

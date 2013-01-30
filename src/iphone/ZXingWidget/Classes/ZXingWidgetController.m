@@ -30,6 +30,7 @@
 #define CAMERA_SCALAR 1.12412 // scalar = (480 / (2048 / 480))
 #define FIRST_TAKE_DELAY 1.0
 #define ONE_D_BAND_HEIGHT 10.0
+#define CAPTURE_FRAME_RATE 15
 
 @interface ZXingWidgetController ()
 
@@ -375,6 +376,21 @@ static bool isIPad() {
   [self.captureSession addInput:captureInput];
   [self.captureSession addOutput:captureOutput];
 
+  // Set frame rate reasonably low if possible.
+  //
+  AVCaptureConnection *conn = [captureOutput connectionWithMediaType:AVMediaTypeVideo];
+  
+  // CMTimeShow(conn.videoMinFrameDuration);
+  // CMTimeShow(conn.videoMaxFrameDuration);
+  
+  if (conn.isVideoMinFrameDurationSupported)
+    conn.videoMinFrameDuration = CMTimeMake(1, CAPTURE_FRAME_RATE);
+  if (conn.isVideoMaxFrameDurationSupported)
+    conn.videoMaxFrameDuration = CMTimeMake(1, CAPTURE_FRAME_RATE);
+  
+  // CMTimeShow(conn.videoMinFrameDuration);
+  // CMTimeShow(conn.videoMaxFrameDuration);
+  
   [captureOutput release];
 
 /*
@@ -431,7 +447,7 @@ static bool isIPad() {
 - (void)captureOutput:(AVCaptureOutput *)captureOutput 
 didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer 
        fromConnection:(AVCaptureConnection *)connection 
-{ 
+{
   if (!decoding) {
     return;
   }
@@ -445,14 +461,24 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     
   uint8_t* baseAddress = CVPixelBufferGetBaseAddress(imageBuffer); 
   void* free_me = 0;
-  if (true) { // iOS bug?
+  if (false) { // iOS bug?
     uint8_t* tmp = baseAddress;
     int bytes = bytesPerRow*height;
     free_me = baseAddress = (uint8_t*)malloc(bytes);
     baseAddress[0] = 0xdb;
     memcpy(baseAddress,tmp,bytes);
   }
-
+  
+  // Make a low-level copy of the bitmap for the delegate to work with.
+  //
+  uint8_t *copyForDelegate;
+  if(delegate != nil) {
+    copyForDelegate = malloc(bytesPerRow * height);
+    memcpy(copyForDelegate, baseAddress, bytesPerRow * height);
+  }
+  
+  // Make an image for decoding.
+  //
   CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB(); 
   CGContextRef newContext =
     CGBitmapContextCreate(baseAddress, width, height, 8, bytesPerRow, colorSpace,
@@ -461,9 +487,21 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
   CGImageRef capture = CGBitmapContextCreateImage(newContext); 
   CVPixelBufferUnlockBaseAddress(imageBuffer,0);
   free(free_me);
-
-  CGContextRelease(newContext); 
+  CGContextRelease(newContext);
   CGColorSpaceRelease(colorSpace);
+
+  // Delegate decides whether to go further in decoding the frame.
+  //
+  BOOL shouldScan =
+    self.delegate != nil &&
+    [self.delegate zxingController: self
+                  shouldScanBitmap: copyForDelegate
+                             width: width
+                            height: height];
+  if(!shouldScan) {
+    CGImageRelease(capture);
+    return;
+  }
 
   CGRect cropRect = [self.overlayView cropRect];
   if (oneDMode) {
@@ -489,6 +527,9 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
   // - iOS always takes videos in landscape
   // - images are always 4x3; device is not
   // - iOS uses virtual pixels for non-image stuff
+  
+  // Scan the whole image, not just a rectangle.
+  // TEMP: make this suaver
 
   {
     float height = CGImageGetHeight(capture);
@@ -501,11 +542,17 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 
     cropRect.origin.x = (width-cropRect.size.width)/2;
     cropRect.origin.y = (height-cropRect.size.height)/2;
+    cropRect.origin.x = 0; // TEMP ADDED
+    cropRect.origin.y = 0; // TEMP ADDED
+    cropRect.size.width = width; // TEMP ADDED
+    cropRect.size.height = height; // TEMP ADDED
   }
-  CGImageRef newImage = CGImageCreateWithImageInRect(capture, cropRect);
+  // SUAVER XXX look at the whole capture
+  // CGImageRef newImage = CGImageCreateWithImageInRect(capture, cropRect);
+  UIImage *scrn = [[UIImage alloc] initWithCGImage:capture]; // TEMP ADDED
   CGImageRelease(capture);
-  UIImage *scrn = [[UIImage alloc] initWithCGImage:newImage];
-  CGImageRelease(newImage);
+  // UIImage *scrn = [[UIImage alloc] initWithCGImage:newImage];
+  // CGImageRelease(newImage);
   Decoder *d = [[Decoder alloc] init];
   d.readers = readers;
   d.delegate = self;
@@ -577,7 +624,7 @@ dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 12000000000), dispatch_get_main_
     if ( [device hasTorch] ) {
       return [device torchMode] == AVCaptureTorchModeOn;
     }
-    [device unlockForConfiguration];
+    // [device unlockForConfiguration]; LOOKS BUGGY TO ME
   }
 #endif
   return NO;
