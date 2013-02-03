@@ -77,6 +77,7 @@ static void blob_create(NSMutableDictionary *dict, int x, int y, RUN *r)
     blob.slopeCount = r->slopes;
     blob.runCount = 1;
     [dict setObject: blob forKey: [NSValue valueWithPointer: r]];
+    [blob release];
 }
 
 

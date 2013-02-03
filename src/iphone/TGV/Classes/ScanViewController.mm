@@ -9,6 +9,8 @@
 
 @interface ScanViewController ()
 @property (nonatomic, strong) Voice *voice;
+- (void) initialize;
+- (void) didBecomeActive: (NSNotification *) notification;
 @end
 
 
@@ -24,22 +26,6 @@
     _voice = [[Voice alloc] init];
   }
   return _voice;
-}
-
-
-- (void) scanPressed:(id)sender {
-    NSMutableSet *readerset = [[NSMutableSet alloc ] init];
-
-    QRCodeReader* qrcodeReader = [[QRCodeReader alloc] init];
-    [readerset addObject:qrcodeReader];
-    [qrcodeReader release];
-    
-    self.readers = readerset;
-    [readerset release];
-    
-    NSBundle *mainBundle = [NSBundle mainBundle];
-    self.soundToPlay =
-        [NSURL fileURLWithPath:[mainBundle pathForResource:@"beep-beep" ofType:@"aiff"] isDirectory:NO];
 }
 
 - (BOOL) zxingController:(ZXingWidgetController *)controller
@@ -58,6 +44,7 @@
 
 #ifdef SAVEFRAMES
   // Make copy of original bitmap for failure analysis.
+  //
   uint8_t *bitmapCopy = (uint8_t *) malloc(width * height * 4);
   memcpy(bitmapCopy, bitmap, width * height * 4);
 #endif
@@ -78,7 +65,7 @@
 
 #ifdef SAVEFRAMES
   // Save failed frames for analysis. Test by scanning
-  // exactly one QRC. (Change the count for later tests.)
+  // exactly one QRC. (Change the count here for other tests.)
   //
   if (guided && [qrcs count] != 1)
     [self saveFrame: bitmapCopy width: width height: height];
@@ -112,9 +99,9 @@
 
 - (id) init
 {
-  if(!(self = [self initWithDelegate: self showCancel: NO OneDMode: NO]))
+  if(!(self = [super initWithDelegate: self showCancel: NO OneDMode:NO showLicense:NO]))
     return nil;
-  [self scanPressed: nil]; // TEMPORARY: make it suaver when it works
+  [self initialize];
   return self;
 }
 
@@ -126,8 +113,43 @@
   self.showCancel = NO;
   self.oneDMode = NO;
   self.showLicense = NO;
-  [self scanPressed: nil]; // TEMPORARY: make it suaver when it works
+  [self initialize];
   return self;
+}
+
+- (void) initialize
+{
+  // Shared initialization code.
+  //
+  [[NSNotificationCenter defaultCenter]
+      addObserver:self
+         selector:@selector(didBecomeActive:)
+             name:UIApplicationDidBecomeActiveNotification
+           object:nil];
+  NSMutableSet *readerset = [[NSMutableSet alloc ] init];
+
+  QRCodeReader* qrcodeReader = [[QRCodeReader alloc] init];
+  [readerset addObject:qrcodeReader];
+  [qrcodeReader release];
+  
+  self.readers = readerset;
+  [readerset release];
+  
+  NSBundle *mainBundle = [NSBundle mainBundle];
+  self.soundToPlay =
+  [NSURL fileURLWithPath:[mainBundle pathForResource:@"beep-beep" ofType:@"aiff"] isDirectory:NO];
+
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+  [super viewDidAppear:animated];
+  [self.voice initializeGuidance];
+}
+
+- (void) didBecomeActive: (NSNotification *) notification
+{
+  [self.voice initializeGuidance];
 }
 
 - (void) saveFrame: (uint8_t *) bitmap

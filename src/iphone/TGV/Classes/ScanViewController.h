@@ -9,6 +9,4 @@
 }
 @property (nonatomic, retain) IBOutlet UITabBarController *tabController;
 @property (nonatomic, retain) IBOutlet UIViewController <TGVResults> *resultsController;
-
-- (IBAction)scanPressed:(id)sender;
 @end

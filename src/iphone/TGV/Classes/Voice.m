@@ -31,6 +31,12 @@
     return self;
 }
 
+- (void) initializeGuidance
+{
+    self.guidanceNow = nil;
+    self.finishedTime = 0.0;
+}
+
 - (BOOL) offerGuidance: (NSString *) guidance
 {
     if (guidance == nil)
