@@ -5,11 +5,13 @@
 #import "Blob.h"
 #import "findblobs.h"
 
-static void blob_create(NSMutableDictionary *, int, int, RUN *);
-static void blob_union(NSMutableDictionary *, int, RUN *, int, int, RUN *);
+static void blob_create(NSMutableDictionary *, int, int,
+                        int, int, RUN *);
+static void blob_union(NSMutableDictionary *, int, int,
+                       int, RUN *, int, int, RUN *);
 
 
-NSMutableDictionary *findblobs(int height, RUN **starts)
+NSMutableDictionary *findblobs(int width, int height, RUN **starts)
 {
     // Assemble vertically adjacent runs into blobs, using union-find à
     // la Tarjan to establish a representative run for each region.  Use
@@ -27,7 +29,7 @@ NSMutableDictionary *findblobs(int height, RUN **starts)
     x = 0;
     for(r = starts[0]; r < starts[1]; r++) {
         r->component = NULL;     // Mark as a run with no blob yet
-        blob_create(dict, x, 0, r);
+        blob_create(dict, width, height, x, 0, r);
         x += r->width;
     }
 
@@ -45,14 +47,14 @@ NSMutableDictionary *findblobs(int height, RUN **starts)
             }
             for(;;) {
                 if(prevr->pclass == r->pclass)
-                    blob_union(dict, prevx, prevr, x, y, r);
+                    blob_union(dict, width, height, prevx, prevr, x, y, r);
                 if(prevx + prevr->width >= x + r->width)
                     break;
                 prevx += prevr->width;
                 prevr++;
             }
             if(r->component == NULL)
-                blob_create(dict, x, y, r);
+                blob_create(dict, width, height, x, y, r);
             x += r->width;
         }
     }
@@ -60,7 +62,8 @@ NSMutableDictionary *findblobs(int height, RUN **starts)
 }
 
 
-static void blob_create(NSMutableDictionary *dict, int x, int y, RUN *r)
+static void blob_create(NSMutableDictionary *dict, int imgwd, int imght,
+                        int x, int y, RUN *r)
 {
     // Create a new Blob containing just the run r.
     //
@@ -76,12 +79,16 @@ static void blob_create(NSMutableDictionary *dict, int x, int y, RUN *r)
     blob.maxy = y;
     blob.slopeCount = r->slopes;
     blob.runCount = 1;
+    if (y == 0) blob.topPixels = r->width;
+    if (y == imght - 1) blob.botPixels = r->width;
+    if (x == 0) blob.leftPixels = 1;
+    if (x + r->width == imgwd) blob.rightPixels = 1;
     [dict setObject: blob forKey: [NSValue valueWithPointer: r]];
     [blob release];
 }
 
 
-static void blob_union(NSMutableDictionary *dict,
+static void blob_union(NSMutableDictionary *dict, int imgwd, int imght,
                     int oldx, RUN *oldr, int newx, int newy, RUN *newr)
 {
     // Make the union of the blobs for oldr and newr.
@@ -93,7 +100,7 @@ static void blob_union(NSMutableDictionary *dict,
     if(!oldblob) {
         // Caller has erred. Maybe it will work just to make a new blob.
         //
-        blob_create(dict, newx, newy, newr);
+        blob_create(dict, imgwd, imght, newx, newy, newr);
         return;
     }
     RUN *newrep = component_find(newr);
@@ -121,6 +128,10 @@ static void blob_union(NSMutableDictionary *dict,
             oldblob.maxy = newblob.maxy;
         oldblob.slopeCount = oldblob.slopeCount + newblob.slopeCount;
         oldblob.runCount = oldblob.runCount + newblob.runCount;
+        oldblob.topPixels = oldblob.topPixels + newblob.topPixels;
+        oldblob.botPixels = oldblob.botPixels + newblob.botPixels;
+        oldblob.leftPixels = oldblob.leftPixels + newblob.leftPixels;
+        oldblob.rightPixels = oldblob.rightPixels + newblob.rightPixels;
         [dict removeObjectForKey: newkey];
     } else {
         // New run is not in a blob. Just update the existing blob.
@@ -136,5 +147,9 @@ static void blob_union(NSMutableDictionary *dict,
             oldblob.maxy = newy;
         oldblob.slopeCount = oldblob.slopeCount + newr->slopes;
         oldblob.runCount = oldblob.runCount + 1;
+        // (New run can't be on top row. That's where old blob is.)
+        if (newy == imght - 1) oldblob.botPixels = oldblob.botPixels + newr->width;
+        if (newx == 0) oldblob.leftPixels = oldblob.leftPixels + 1;
+        if (newx + newr->width == imgwd) oldblob.rightPixels = oldblob.rightPixels + 1;
     }
 }

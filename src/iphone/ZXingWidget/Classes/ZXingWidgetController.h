@@ -72,6 +72,7 @@
 - (BOOL)fixedFocus;
 - (void)setTorch:(BOOL)status;
 - (BOOL)torchIsOn;
+- (void) setFocusPointOfInterest: (CGPoint) point;
 
 @end
 

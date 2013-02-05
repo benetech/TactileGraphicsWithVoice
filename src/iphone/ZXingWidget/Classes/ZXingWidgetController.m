@@ -630,4 +630,24 @@ dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 12000000000), dispatch_get_main_
   return NO;
 }
 
+#pragma mark - Focus
+
+- (void) setFocusPointOfInterest: (CGPoint) point
+{
+#if HAS_AVFF
+  Class captureDeviceClass = NSClassFromString(@"AVCaptureDevice");
+  if (captureDeviceClass == nil)
+    return;
+  AVCaptureDevice *device = [captureDeviceClass defaultDeviceWithMediaType:AVMediaTypeVideo];
+  if (!device.focusPointOfInterestSupported)
+    return;
+  if (CGPointEqualToPoint(device.focusPointOfInterest, point))
+    return;
+  [device lockForConfiguration: nil];
+  device.focusPointOfInterest = point;
+  [device unlockForConfiguration];
+#endif
+}
+
+
 @end

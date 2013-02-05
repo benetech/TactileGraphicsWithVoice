@@ -260,7 +260,7 @@ NSArray *findqrcs_x(RUN ***startsp, uint8_t *bitmap,
         *startsp = NULL;
         return [mres copy]; // Empty array
     }
-    NSMutableDictionary *dict = findblobs(height, starts);
+    NSMutableDictionary *dict = findblobs(width, height, starts);
 
     for(NSNumber *key in dict) {
         Blob *b = [dict objectForKey: key];

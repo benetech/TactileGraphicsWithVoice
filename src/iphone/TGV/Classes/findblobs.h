@@ -4,4 +4,4 @@
 #import "runle.h"
 #import "Blob.h"
 
-NSMutableDictionary *findblobs(int height, RUN **starts);
+NSMutableDictionary *findblobs(int width, int height, RUN **starts);

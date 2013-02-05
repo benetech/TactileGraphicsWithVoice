@@ -34,9 +34,9 @@
                   height:(size_t)height
 {
   // Tell the ZXing controller whether to scan the given bitmap looking
-  // for QR codes. We say yes only if there looks to be exactly one full
-  // code there. If there are more codes, or only a partial code, we offer
-  // guidance on getting the camera to see just one code.
+  // for QR codes. We say yes only if there looks to be one code there.
+  // We also offer vocal guidance on getting the camera to see just one
+  // code.
   //
   // Note: ownership of bitmap is being transferred to us. We need to
   // free it.
@@ -52,12 +52,30 @@
   NSArray *qrcs = findqrcs(bitmap, width, height);
   free(bitmap);
 
-  // Just offer very crude guidance for now: the number of QR codes we see.
+  // For now, pretty simple guidance. If number of QR codes <> 1, then
+  // say the number seen. If there is 1 code at edge, name the edge.
+  // Otherwise just say "one".
+  //
+  // Note: images are presented in landscape mode with home button to
+  // the right. We're translating here between this orientation and the
+  // expected portrait orientation of the phone while scanning. (This is
+  // something to figure out, however.)
   //
   BOOL guided;
   switch([qrcs count]) {
     case 0: guided = [self.voice offerGuidance: @"zero"]; break;
-    case 1: guided = [self.voice offerGuidance: @"one"]; break;
+    case 1:
+      if ([qrcs[0] touchesTop])
+        guided = [self.voice offerGuidance: @"right"];
+      else if ([qrcs[0] touchesBottom])
+        guided = [self.voice offerGuidance: @"left"];
+      else if ([qrcs[0] touchesLeft])
+        guided = [self.voice offerGuidance: @"top"];
+      else if ([qrcs[0] touchesRight])
+        guided = [self.voice offerGuidance: @"bottom"];
+      else
+        guided = [self.voice offerGuidance: @"one"];
+      break;
     case 2: guided = [self.voice offerGuidance: @"two"]; break;
     case 3: guided = [self.voice offerGuidance: @"three"]; break;
     default: guided = [self.voice offerGuidance: @"many"]; break;
@@ -72,11 +90,22 @@
   free(bitmapCopy);
 #endif
   
-  // For now we just look at the number of codes located. Pretty soon
-  // we'll look at whether they seem to be off the edge.
+  // If there's just one QR code, set the focus on it.
+  //
+  if ([qrcs count] == 1) {
+    Blob *b = qrcs[0];
+    CGFloat x = (b.maxx + b.minx) / 2.0 / width;
+    CGFloat y = (b.maxy + b.miny) / 2.0 / height;
+    CGPoint focusPoint = CGPointMake(x, y);
+    [controller setFocusPointOfInterest: focusPoint];
+    // NSLog(@"set focus point %@", NSStringFromCGPoint(focusPoint));
+  }
+
+  // For now, if we see 1 QR code, it's worth scanning. Even if it's at
+  // the edge. (Something else to figure out.)
   //
 #ifdef NEVERSCAN
-  return NO;
+  return NO; // (Useful for testing the blob finding.)
 #else
   return [qrcs count] == 1;
 #endif
