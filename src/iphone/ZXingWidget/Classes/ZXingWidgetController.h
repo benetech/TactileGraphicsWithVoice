@@ -72,8 +72,10 @@
 - (BOOL)fixedFocus;
 - (void)setTorch:(BOOL)status;
 - (BOOL)torchIsOn;
+- (BOOL) isAdjustingFocus;
 - (void) setFocusPointOfInterest: (CGPoint) point;
-
+- (BOOL) isAdjustingExposure;
+- (BOOL) isAdjustingWhiteBalance;
 @end
 
 @protocol ZXingDelegate

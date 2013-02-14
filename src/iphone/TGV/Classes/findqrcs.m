@@ -8,7 +8,13 @@
 #define max(a, b) ((a) > (b) ? (a) : (b))
 #define min(a, b) ((a) < (b) ? (a) : (b))
 
-# define BPP 4 /* Bytes per pixel */
+// Number of different luminance values we use.
+//
+#define LUMINANCES (1 + 255 * 3)
+
+// Bytes per pixel
+//
+# define BPP 4
 
 typedef struct {
     unsigned char *bitmap;
@@ -123,26 +129,147 @@ static BOOL grayish(unsigned char *pixel)
 }
 #endif /* COULD_BE_USEFUL */
 
+static int lowspot(int *histogram)
+{
+    /* Find a low spot in the histogram that separates the dark pixels
+     * from the light ones.
+     * 
+     * The reference histogram for this application has a big peak at
+     * the right for light pixels, at a luminance around 500. Then there
+     * are one or two much lower peaks at the left for dark pixels, at
+     * luminances in the 300s and 400s.
+     *
+     * Depending on lighting conditions and other factors (such as the
+     * white point setting of the camera), real histograms can differ
+     * from this reference. We accommodate the differences by scaling
+     * things to the width of the histogram.
+     *
+     * Current procedure: smooth the data twice, with two different
+     * radii. Then look in the histogram for the rightmost low spot
+     * that's reasonably far to the left of the peak.  If there's no low
+     * spot, return a fixed distance to the left of the peak.  At the
+     * very end, add an adjustment that was determined empirically, i.e.,
+     * by trying some examples.
+     */
+# define REFERENCE_WIDTH 450
+# define RADIUS1 30
+# define RADIUS2 10
+# define LEEWAY 80       // Low spot must be at least this far below big peak
+# define FLATDELTA 105   // Distance below peak when dark area is flat
+# define ADJUSTMENT 20   // Final empirical adjustment (aka fudge)
+# define ROUND(x, radius) (((x) + radius) / (2 * radius + 1))
+    int left, right;
+    double scale;
+
+    int radius1, radius2, leeway, flatdelta, adjustment;
+
+    int ct;
+    int lumin;
+    int smooth1[LUMINANCES];
+    int smooth2[LUMINANCES];
+    int topcount, toplumin;
+    int lowlumin, descending;
+
+    // Figure out width of histogram. We measure the width from the
+    // rightmost initial zero count to the highest count (the big peak).
+    //
+    left = -1;
+    toplumin = 0;
+    right = 0;
+    topcount = 0;
+    for(lumin = 0; lumin < LUMINANCES; lumin++) {
+        if(left < 0 && histogram[lumin] > 0)
+            left = lumin - 1;
+        if(histogram[lumin] > topcount) {
+            topcount = histogram[lumin];
+            toplumin = lumin;
+        }
+        if(lumin > 0 && histogram[lumin] == 0 && histogram[lumin - 1] > 0)
+            right = lumin;
+    }
+    scale = (double) (toplumin - left) / REFERENCE_WIDTH;
+# define SCALE(x) ((int) ((x) * scale + 0.5))
+
+    // Scale reference values for this histogram.
+    //
+    radius1 = SCALE(RADIUS1);
+    radius2 = SCALE(RADIUS2);
+    leeway = SCALE(LEEWAY);
+    flatdelta = SCALE(FLATDELTA);
+    adjustment = SCALE(ADJUSTMENT);
+
+    // First smoothing, radius1.
+    ct = 0;
+    for(lumin = 0; lumin < radius1 * 2 + 1; lumin++)
+        ct += histogram[lumin];
+    for(lumin = radius1 + 1; lumin < LUMINANCES - radius1; lumin++) {
+        ct = ct - histogram[lumin - radius1 - 1] + histogram[lumin + radius1];
+        smooth1[lumin] = ROUND(ct, radius1);
+    }
+    // Second smoothing, radius2.
+    ct = 0;
+    for(lumin = 0; lumin < radius2 * 2 + 1; lumin++)
+        ct += histogram[lumin];
+    for(lumin = radius2 + 1; lumin < LUMINANCES - radius2; lumin++) {
+        ct = ct - histogram[lumin - radius2 - 1] + histogram[lumin + radius2];
+        smooth2[lumin] = ROUND(ct, radius2);
+    }
+#ifdef WRITE_SMOOTH2
+    printf("smooth2\n");
+    for(int i = lowlim; i < highlim; i++)
+        printf("%d %d\n", i, smooth2[i]);
+#endif
+
+    // Find the big peak in the smoothed data.
+    //
+    topcount = 0;
+    toplumin = 0;
+    for(lumin = left; lumin < right; lumin++)
+        if(smooth2[lumin] > topcount) {
+            topcount = smooth2[lumin];
+            toplumin = lumin;
+        }
+
+    // Look for low spots, i.e., spots where smoothed data changes from
+    // descending to ascending.
+    //
+    descending = 0;
+    lowlumin = left - 1;
+    for(lumin = left + 1; lumin < toplumin - leeway; lumin++) {
+        if(descending) {
+            if(smooth2[lumin] > smooth2[lumin - 1]) {
+//printf("turnaround %d\n", lumin);
+                lowlumin = lumin - 1;
+                descending = 0;
+            }
+        } else {
+            if(smooth2[lumin] < smooth2[lumin - 1])
+                descending = 1;
+        }
+    }
+
+    // If no low spot found, use default.
+    //
+    if(lowlumin <= left)
+        lowlumin = toplumin - flatdelta;
+
+    return lowlumin + adjustment;
+}
+
+
 static void thresholds(BITMAP_PARAMS *bpar,
-                    unsigned char *bitmap, int width, int height, float f)
+                    unsigned char *bitmap, int width, int height)
 {
     /* Calculate threshold luminances: (a) between foreground (dark) and
-     * background (light)--i.e.,the point where the given fraction f of
-     * pixels are darker; (b) between not totally dark and totally
-     * dark--at the point where almost no (currently, 0.5%) pixels are
-     * darker.
-     * 
-     * Note: this code assumes f > TOTALLY_DARK_F.
+     * background (light); (b) between not totally dark and totally
+     * dark.
      */
 # define TOTALLY_DARK_F 0.005
-# define LUMINANCES (255 * 3 + 1)
     int histogram[LUMINANCES], ct, thresh;
-    int bytes, breakpt05, breakpt, i;
+    int bytes, breakpt05, i;
     
-    bytes = width * height * BPP;
-    breakpt05 = width * height * TOTALLY_DARK_F;
-    breakpt = width * height * f;
     memset(histogram, 0, LUMINANCES * sizeof(int));
+    bytes = width * height * BPP;
     for(i = 0; i < bytes; i += BPP)
         histogram[luminance(bitmap + i)]++;
 #ifdef WRITE_HISTOGRAM
@@ -150,13 +277,12 @@ static void thresholds(BITMAP_PARAMS *bpar,
         printf("%d\n", histogram[i]);
 #endif
     ct = 0;
-    bpar->thresh05 = LUMINANCES;
+    bpar->thresh = lowspot(histogram);
+    breakpt05 = width * height * TOTALLY_DARK_F;
     for(thresh = 0; thresh < LUMINANCES; thresh++) {
         ct += histogram[thresh];
-        if(bpar->thresh05 >= LUMINANCES && ct >= breakpt05)
+        if(ct >= breakpt05) {
             bpar->thresh05 = thresh;
-        if(ct >= breakpt) {
-            bpar->thresh = thresh;
             break;
         }
     }
@@ -234,22 +360,13 @@ NSArray *findqrcs_x(RUN ***startsp, uint8_t *bitmap,
     // *startsp, which is useful during development.)
     //
 # define BLUR_RADIUS 3
-    // A fixed value for dark fraction is clearly not such a good idea.
-    // There's a lot of variation in the number of dark pixels. Need to
-    // calculate it from the histogram, if possible.
-    //
-    // History:
-    //     0.125 initially (while blurring was introducing extra dark pixels)
-    //     0.1 after blurring was fixed
-    //     0.2 to try to improve behavior when QRC is close to camera
-# define DARK_FRACTION 0.20
     BITMAP_PARAMS p;
     RUN **starts;
     NSMutableArray *mres = [[[NSMutableArray alloc] init] autorelease];
 
     blur2d(bitmap, width, height, BLUR_RADIUS);
 
-    thresholds(&p, bitmap, width, height, DARK_FRACTION);
+    thresholds(&p, bitmap, width, height);
     
     p.bitmap = bitmap;
     p.width = width;

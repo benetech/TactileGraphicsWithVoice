@@ -132,13 +132,6 @@
   return platform;
 }
 
-- (BOOL)fixedFocus {
-  NSString *platform = [self getPlatform];
-  if ([platform isEqualToString:@"iPhone1,1"] ||
-      [platform isEqualToString:@"iPhone1,2"]) return YES;
-  return NO;
-}
-
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   self.wantsFullScreenLayout = YES;
@@ -632,6 +625,27 @@ dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 12000000000), dispatch_get_main_
 
 #pragma mark - Focus
 
+- (BOOL) fixedFocus
+{
+  NSString *platform = [self getPlatform];
+  if ([platform isEqualToString:@"iPhone1,1"] ||
+      [platform isEqualToString:@"iPhone1,2"]) return YES;
+  return NO;
+}
+
+- (BOOL) isAdjustingFocus
+{
+  BOOL isIt = NO;
+#if HAS_AVFF
+  Class captureDeviceClass = NSClassFromString(@"AVCaptureDevice");
+  if(captureDeviceClass == nil)
+    return NO;
+  AVCaptureDevice *device = [captureDeviceClass defaultDeviceWithMediaType: AVMediaTypeVideo];
+  isIt = device.isAdjustingFocus;
+#endif
+  return isIt;
+}
+
 - (void) setFocusPointOfInterest: (CGPoint) point
 {
 #if HAS_AVFF
@@ -643,11 +657,37 @@ dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 12000000000), dispatch_get_main_
     return;
   if (CGPointEqualToPoint(device.focusPointOfInterest, point))
     return;
+  //NSLog(@"Setting focus point of interest");
   [device lockForConfiguration: nil];
   device.focusPointOfInterest = point;
   [device unlockForConfiguration];
 #endif
 }
 
+- (BOOL) isAdjustingExposure
+{
+  BOOL isIt = NO;
+#ifdef HAS_AVFF
+  Class captureDeviceClass = NSClassFromString(@"AVCaptureDevice");
+  if(captureDeviceClass == nil)
+    return NO;
+  AVCaptureDevice *device = [captureDeviceClass defaultDeviceWithMediaType: AVMediaTypeVideo];
+  isIt = device.isAdjustingExposure;
+#endif
+  return isIt;
+}
+
+- (BOOL) isAdjustingWhiteBalance
+{
+  BOOL isIt = NO;
+#ifdef HAS_AVFF
+  Class captureDeviceClass = NSClassFromString(@"AVCaptureDevice");
+  if(captureDeviceClass == nil)
+    return NO;
+  AVCaptureDevice *device = [captureDeviceClass defaultDeviceWithMediaType: AVMediaTypeVideo];
+  isIt = device.isAdjustingWhiteBalance;
+#endif
+  return isIt;
+}
 
 @end

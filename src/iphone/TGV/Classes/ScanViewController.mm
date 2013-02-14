@@ -8,8 +8,11 @@
 
 
 @interface ScanViewController ()
+{
+  int guidanceCount; // Number of guidance messages; used for timing
+}
 @property (nonatomic, strong) Voice *voice;
-- (void) initialize;
+- (void) setup;
 - (void) didBecomeActive: (NSNotification *) notification;
 @end
 
@@ -52,7 +55,7 @@
   NSArray *qrcs = findqrcs(bitmap, width, height);
   free(bitmap);
 
-  // For now, pretty simple guidance. If number of QR codes <> 1, then
+  // For now, pretty simple guidance. If number of QR codes != 1, then
   // say the number seen. If there is 1 code at edge, name the edge.
   // Otherwise just say "one".
   //
@@ -90,15 +93,22 @@
   free(bitmapCopy);
 #endif
   
-  // If there's just one QR code, set the focus on it.
+  // If there's just one QR code, set the focus on it every now and then.
   //
+  if (guided) guidanceCount++;
   if ([qrcs count] == 1) {
+    //NSLog(@"adjusting %c%c%c",
+    //      [controller isAdjustingFocus] ? 'f' : '-',
+    //      [controller isAdjustingExposure] ? 'e' : '-',
+    //      [controller isAdjustingWhiteBalance] ? 'w' : '-');
     Blob *b = qrcs[0];
     CGFloat x = (b.maxx + b.minx) / 2.0 / width;
     CGFloat y = (b.maxy + b.miny) / 2.0 / height;
     CGPoint focusPoint = CGPointMake(x, y);
-    [controller setFocusPointOfInterest: focusPoint];
+    if (guided && guidanceCount % 2 == 0)
+      [controller setFocusPointOfInterest: focusPoint];
     // NSLog(@"set focus point %@", NSStringFromCGPoint(focusPoint));
+    // NSLog(@"isAdjusting after  %d", (int) [controller isAdjustingFocus]);
   }
 
   // For now, if we see 1 QR code, it's worth scanning. Even if it's at
@@ -130,7 +140,7 @@
 {
   if(!(self = [super initWithDelegate: self showCancel: NO OneDMode:NO showLicense:NO]))
     return nil;
-  [self initialize];
+  [self setup];
   return self;
 }
 
@@ -142,11 +152,11 @@
   self.showCancel = NO;
   self.oneDMode = NO;
   self.showLicense = NO;
-  [self initialize];
+  [self setup];
   return self;
 }
 
-- (void) initialize
+- (void) setup
 {
   // Shared initialization code.
   //
