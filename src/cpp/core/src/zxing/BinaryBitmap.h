@@ -30,7 +30,7 @@ namespace zxing {
 	class BinaryBitmap : public Counted {
 	private:
 		Ref<Binarizer> binarizer_;
-		int cached_y_;
+		int __attribute ((unused)) cached_y_;
 		
 	public:
 		BinaryBitmap(Ref<Binarizer> binarizer);

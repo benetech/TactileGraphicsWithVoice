@@ -39,6 +39,7 @@
 		B94A499516B4B5A100068117 /* Voice.m in Sources */ = {isa = PBXBuildFile; fileRef = B94A499416B4B5A100068117 /* Voice.m */; };
 		B96049D0167D8EEE00A832D4 /* TGVTabDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B96049CF167D8EEE00A832D4 /* TGVTabDelegate.m */; };
 		B96049DE167EBF3B00A832D4 /* ResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B96049DC167EBF3A00A832D4 /* ResultsViewController.m */; };
+		B9C4FE2416D57C560080D925 /* filters.c in Sources */ = {isa = PBXBuildFile; fileRef = B9C4FE2216D57C560080D925 /* filters.c */; };
 		E5345BF11198D81A000CB77F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5345BF01198D81A000CB77F /* AudioToolbox.framework */; };
 		E548755C119C62B9001CC0F8 /* beep-beep.aiff in Resources */ = {isa = PBXBuildFile; fileRef = E548755B119C62B9001CC0F8 /* beep-beep.aiff */; };
 /* End PBXBuildFile section */
@@ -114,6 +115,8 @@
 		B96049DB167EBF3A00A832D4 /* ResultsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultsViewController.h; sourceTree = "<group>"; };
 		B96049DC167EBF3A00A832D4 /* ResultsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.objc; path = ResultsViewController.m; sourceTree = "<group>"; };
 		B96049DD167EBF3A00A832D4 /* ResultsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ResultsViewController.xib; path = Classes/ResultsViewController.xib; sourceTree = "<group>"; };
+		B9C4FE2216D57C560080D925 /* filters.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = filters.c; sourceTree = "<group>"; };
+		B9C4FE2316D57C560080D925 /* filters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filters.h; sourceTree = "<group>"; };
 		E5345BF01198D81A000CB77F /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		E5345FD6119B27D2000CB77F /* libZXingWidget.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libZXingWidget.a; path = "build/Debug-iphoneos/libZXingWidget.a"; sourceTree = "<group>"; };
 		E548755B119C62B9001CC0F8 /* beep-beep.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = "beep-beep.aiff"; sourceTree = "<group>"; };
@@ -147,6 +150,8 @@
 				B94A498B16B4674000068117 /* runle.c */,
 				B94A498716B4674000068117 /* Blob.h */,
 				B94A498816B4674000068117 /* Blob.m */,
+				B9C4FE2216D57C560080D925 /* filters.c */,
+				B9C4FE2316D57C560080D925 /* filters.h */,
 				B94A498916B4674000068117 /* findblobs.h */,
 				B94A498A16B4674000068117 /* findblobs.m */,
 				B94A499016B486C600068117 /* findqrcs.h */,
@@ -356,6 +361,7 @@
 				B94A498F16B4674000068117 /* runle.c in Sources */,
 				B94A499216B486C600068117 /* findqrcs.m in Sources */,
 				B94A499516B4B5A100068117 /* Voice.m in Sources */,
+				B9C4FE2416D57C560080D925 /* filters.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

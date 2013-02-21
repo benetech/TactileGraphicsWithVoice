@@ -32,7 +32,7 @@ namespace zxing {
 	 private:
     Ref<BitMatrix> matrix_;
 	  Ref<BitArray> cached_row_;
-	  int cached_row_num_;
+	  int __attribute__ ((unused)) cached_row_num_;
 
 	public:
 		HybridBinarizer(Ref<LuminanceSource> source);

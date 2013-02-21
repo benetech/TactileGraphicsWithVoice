@@ -32,7 +32,7 @@ private:
   int characterCountBitsForVersions0To9_;
   int characterCountBitsForVersions10To26_;
   int characterCountBitsForVersions27AndHigher_;
-  int bits_;
+  int __attribute__ ((unused)) bits_;
   std::string name_;
 
   Mode(int cbv0_9, int cbv10_26, int cbv27, int bits, char const* name);

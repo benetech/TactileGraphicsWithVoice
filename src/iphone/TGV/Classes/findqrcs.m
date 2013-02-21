@@ -1,6 +1,7 @@
 /* findqrcs.m     Find and classify QR codes in an image
  */
 #import "runle.h"
+#import "filters.h"
 #import "findqrcs.h"
 #import "Blob.h"
 #import "findblobs.h"
@@ -8,141 +9,29 @@
 #define max(a, b) ((a) > (b) ? (a) : (b))
 #define min(a, b) ((a) < (b) ? (a) : (b))
 
-// Number of different luminance values we use.
-//
-#define LUMINANCES (1 + 255 * 3)
-
-// Bytes per pixel
-//
-# define BPP 4
-
 typedef struct {
-    unsigned char *bitmap;
+    uint16_t *lumi_orig; // Original grayscale (luminance) bitmap image
+    uint16_t *lumi_dil;  // Dilated grayscale (luminance) bitmap image
     int width, height;
-    int thresh;        // Threshold between dark and light
-    int thresh05;      // Threshold of very very dark (0.5% are darker)
+    int thresh;          // Threshold between dark and light
+    int thresh05;        // Threshold of very very dark (0.5% are darker)
 } BITMAP_PARAMS;
 
-static void blur2d(unsigned char *bitmap, int width, int height, int radius)
-{
-# define LCOMP(b, x) ((x) >= 0 ? b[x] : b[((x)+stride)%BPP])
-# define RCOMP(b, x) ((x) < stride ? b[x] : b[stride-BPP+(x)%BPP])
-# define LCOMPV(b, x) ((x) >= 0 ? b[x] : b[(totbytes+(x))%stride])
-# define RCOMPV(b, x) ((x) < totbytes ? b[x] : b[totbytes-stride+(x)%stride])
-    struct rgb { int b, g, r; } accum;
-    int stride = width * BPP;
-    int totbytes = width * height * BPP;
-    unsigned char *end;
-    unsigned char *base;
-    int denom = radius * 2 + 1;
-    int l, c, r, i;
-    int scratchlen = (width > height ? width : height) * BPP;
-    unsigned char *scratch = malloc(scratchlen);
-    
-    end = bitmap + height * stride;
-    for(base = bitmap; base < end; base += stride) {
-        accum.b = (radius + 1) * base[0];
-        accum.g = (radius + 1) * base[1];
-        accum.r = (radius + 1) * base[2];
-        for(c = 0; c < radius * BPP; c += BPP) {
-            accum.b += base[c + 0];
-            accum.g += base[c + 1];
-            accum.r += base[c + 2];
-        }
-        for(    l = -BPP * (radius + 1), c = 0, r = BPP * radius;
-                c < stride;
-                l += BPP, c += BPP, r += BPP) {
-            accum.b -= LCOMP(base, l + 0);
-            accum.g -= LCOMP(base, l + 1);
-            accum.r -= LCOMP(base, l + 2);
-            accum.b += RCOMP(base, r + 0);
-            accum.g += RCOMP(base, r + 1);
-            accum.r += RCOMP(base, r + 2);
-            scratch[c + 0] = (accum.b + radius) / denom;
-            scratch[c + 1] = (accum.g + radius) / denom;
-            scratch[c + 2] = (accum.r + radius) / denom;
-            scratch[c + 3] = base[c + 3];
-        }
-        memcpy(base, scratch, stride);
-    }
-    
-    end = bitmap + stride;
-    for(base = bitmap; base < end; base += BPP) {
-        accum.b = (radius + 1) * base[0];
-        accum.g = (radius + 1) * base[1];
-        accum.r = (radius + 1) * base[2];
-        for(c = 0; c < radius * stride; c += stride) {
-            accum.b += base[c + 0];
-            accum.g += base[c + 1];
-            accum.r += base[c + 2];
-        }
-        for(    l = -stride * (radius + 1), i = 0, c = 0, r = stride * radius;
-                c < totbytes;
-                l += stride, i += BPP, c += stride, r += stride) {
-            accum.b -= LCOMPV(base, l + 0);
-            accum.g -= LCOMPV(base, l + 1);
-            accum.r -= LCOMPV(base, l + 2);
-            accum.b += RCOMPV(base, r + 0);
-            accum.g += RCOMPV(base, r + 1);
-            accum.r += RCOMPV(base, r + 2);
-            scratch[i + 0] = (accum.b + radius) / denom;
-            scratch[i + 1] = (accum.g + radius) / denom;
-            scratch[i + 2] = (accum.r + radius) / denom;
-            scratch[i + 3] = base[c + 3];
-        }
-        for(i = 0, c = 0; c < totbytes; i += BPP, c += stride)
-            * (int32_t *) (base + c) = * (int32_t *) (scratch + i);
-    }
-    
-    free(scratch);
-}
-
-static int luminance(unsigned char *pixel)
-{
-    /* Return the luminance of the given pixel, which I'm defining as
-     * b + g + r.
-     */
-    return pixel[0] + pixel[1] + pixel[2];
-    // Alternate luminance def based on human perception.
-    //return (int)
-    //(pixel[0] * (.0722 * 3.0) +
-     //pixel[1] * (.7152 * 3.0) +
-     //pixel[2] * (.2126 * 3.0));
-}
-
-#ifdef COULD_BE_USEFUL
-static float saturation(unsigned char *pixel)
-{
-    /* Return the saturation (density of hue) of the given pixel.
-     */
-    int low = min(min(pixel[0], pixel[1]), pixel[2]);
-    int high = max(max(pixel[0], pixel[1]), pixel[2]);
-    return high == 0 ? 0.0 : ((float) (high - low) / high);
-}
-
-static BOOL grayish(unsigned char *pixel)
-{
-    /* Return true if the given pixel (R,G,B,x) is reasonably close to
-     * gray. I.e., if the saturation is below a certain level.
-     */
-    return saturation(pixel) < 0.2;
-}
-#endif /* COULD_BE_USEFUL */
 
 static int lowspot(int *histogram)
 {
     /* Find a low spot in the histogram that separates the dark pixels
      * from the light ones.
      * 
-     * The reference histogram for this application has a big peak at
-     * the right for light pixels, at a luminance around 500. Then there
-     * are one or two much lower peaks at the left for dark pixels, at
+     * The typical histogram for this application has a big peak at the
+     * right for light pixels, at a luminance around 500. Then there are
+     * one or two much lower peaks at the left for dark pixels, at
      * luminances in the 300s and 400s.
      *
      * Depending on lighting conditions and other factors (such as the
      * white point setting of the camera), real histograms can differ
-     * from this reference. We accommodate the differences by scaling
-     * things to the width of the histogram.
+     * from this. We accommodate the differences by scaling distances to
+     * the width of the histogram.
      *
      * Current procedure: smooth the data twice, with two different
      * radii. Then look in the histogram for the rightmost low spot
@@ -154,9 +43,9 @@ static int lowspot(int *histogram)
 # define REFERENCE_WIDTH 450
 # define RADIUS1 30
 # define RADIUS2 10
-# define LEEWAY 80       // Low spot must be at least this far below big peak
-# define FLATDELTA 105   // Distance below peak when dark area is flat
-# define ADJUSTMENT 20   // Final empirical adjustment (aka fudge)
+# define LEEWAY 80        // Low spot must be at least this far below big peak
+# define FLATDELTA 105    // Distance below peak when dark area is flat
+# define ADJUSTMENT 10    // Final empirical adjustment (aka fudge)
 # define ROUND(x, radius) (((x) + radius) / (2 * radius + 1))
     int left, right;
     double scale;
@@ -171,7 +60,7 @@ static int lowspot(int *histogram)
     int lowlumin, descending;
 
     // Figure out width of histogram. We measure the width from the
-    // rightmost initial zero count to the highest count (the big peak).
+    // leftmost nonzero count to the highest count (the big peak).
     //
     left = -1;
     toplumin = 0;
@@ -199,6 +88,7 @@ static int lowspot(int *histogram)
     adjustment = SCALE(ADJUSTMENT);
 
     // First smoothing, radius1.
+    memset(smooth1, 0, LUMINANCES * sizeof(int));
     ct = 0;
     for(lumin = 0; lumin < radius1 * 2 + 1; lumin++)
         ct += histogram[lumin];
@@ -207,6 +97,7 @@ static int lowspot(int *histogram)
         smooth1[lumin] = ROUND(ct, radius1);
     }
     // Second smoothing, radius2.
+    memset(smooth2, 0, LUMINANCES * sizeof(int));
     ct = 0;
     for(lumin = 0; lumin < radius2 * 2 + 1; lumin++)
         ct += histogram[lumin];
@@ -214,9 +105,12 @@ static int lowspot(int *histogram)
         ct = ct - histogram[lumin - radius2 - 1] + histogram[lumin + radius2];
         smooth2[lumin] = ROUND(ct, radius2);
     }
+
 #ifdef WRITE_SMOOTH2
+    printf("left %d toplumin %d leeway %d radii %d %d\n",
+        left, toplumin, leeway, radius1, radius2);
     printf("smooth2\n");
-    for(int i = lowlim; i < highlim; i++)
+    for(int i = radius2 + 1; i < LUMINANCES - radius2; i++)
         printf("%d %d\n", i, smooth2[i]);
 #endif
 
@@ -238,7 +132,7 @@ static int lowspot(int *histogram)
     for(lumin = left + 1; lumin < toplumin - leeway; lumin++) {
         if(descending) {
             if(smooth2[lumin] > smooth2[lumin - 1]) {
-//printf("turnaround %d\n", lumin);
+// printf("turnaround %d\n", lumin);
                 lowlumin = lumin - 1;
                 descending = 0;
             }
@@ -258,7 +152,7 @@ static int lowspot(int *histogram)
 
 
 static void thresholds(BITMAP_PARAMS *bpar,
-                    unsigned char *bitmap, int width, int height)
+                    uint16_t *lumimage, int width, int height)
 {
     /* Calculate threshold luminances: (a) between foreground (dark) and
      * background (light); (b) between not totally dark and totally
@@ -266,16 +160,15 @@ static void thresholds(BITMAP_PARAMS *bpar,
      */
 # define TOTALLY_DARK_F 0.005
     int histogram[LUMINANCES], ct, thresh;
-    int bytes, breakpt05, i;
+    int breakpt05;
     
-    memset(histogram, 0, LUMINANCES * sizeof(int));
-    bytes = width * height * BPP;
-    for(i = 0; i < bytes; i += BPP)
-        histogram[luminance(bitmap + i)]++;
+    lumi_histogram(histogram, lumimage, width, height);
+
 #ifdef WRITE_HISTOGRAM
-    for(i = 0; i < LUMINANCES; i++)
+    for(int i = 0; i < LUMINANCES; i++)
         printf("%d\n", histogram[i]);
 #endif
+
     ct = 0;
     bpar->thresh = lowspot(histogram);
     breakpt05 = width * height * TOTALLY_DARK_F;
@@ -291,40 +184,39 @@ static void thresholds(BITMAP_PARAMS *bpar,
 
 static int classify(void *ck, int x, int y)
 {
+    // Classify the given pixel as light (0) or dark (1).
+    //
     BITMAP_PARAMS *p = ck;
-    return luminance(p->bitmap + (p->width * y + x) * BPP) <= p->thresh;
+    return p->lumi_dil[p->width * y + x] <= p->thresh;
 }
 
 
 static int slopect(void *ck, int x, int y, int wd)
 {
-    // Count the number of significant downslopes of luminance. This is
-    // an attempt to measure the amount of variegation in a blob. QR
-    // codes are noticeably variegated even when out of focus.
+    // Count the number of significant downslopes of luminance in the
+    // original (undilated) image. This is an attempt to measure the
+    // amount of variegation in a blob. QR codes are noticeably
+    // variegated even when out of focus. The dilation operation can
+    // hide the variegations, which is why we look at the original.
     //
+# define MINWIDTH 3
     BITMAP_PARAMS *p = ck;
-    int minbytes = 3 * BPP;
-    int mindepth = (p->thresh - p->thresh05) / 4;
-    int bytes = wd * BPP;
-    unsigned char *base = p->bitmap + (p->width * y + x) * BPP;
+    // int mindepth = (p->thresh - p->thresh05) / 4;
+    int mindepth = (p->thresh - p->thresh05) / 3;
+    uint16_t *base = p->lumi_orig + p->width * y + x;
     int sct, start, i;
 
     sct = 0;
-    i = BPP;
-    while(i < bytes) {
-        for(    ;
-                i < bytes && luminance(base + i) >= luminance(base + i - BPP);
-                i += BPP)
+    i = 1;
+    while(i < wd) {
+        for(; i < wd && base[i] >= base[i - 1]; i += BPP)
             ;
-        if(i >= bytes)
+        if(i >= wd)
             break;
         start = i;
-        for(    ;
-                i < bytes && luminance(base + i) <= luminance(base + i - BPP);
-                i += BPP)
+        for(; i < wd && base[i] <= base[i - 1]; i += BPP)
             ;
-        if(     i - start >= minbytes &&
-                luminance(base + start) - luminance(base + i - BPP) >= mindepth)
+        if(i - start >= MINWIDTH && base[start] - base[i - 1] >= mindepth)
             sct++;
     }
     return sct;
@@ -341,11 +233,11 @@ static int qr_candidate(Blob *blob)
         return 0;
     int width = blob.maxx - blob.minx + 1;
     int height = blob.maxy - blob.miny + 1;
-#ifdef DEVELOP
+#ifdef WRITE_PROPS
     printf("class %d w %d h %d runCount %d slope %f\n",
         blob.bclass, width, height, blob.runCount, 
         blob.slopeCount / (double) blob.runCount);
-#endif /* DEVELOP */
+#endif /* WRITE_PROPS */
     return
         blob.bclass == 1 && QRSIZE(width) && QRSIZE(height) &&
             // blob.runCount < height + height && /* TRY AFTER COALESCE */
@@ -359,19 +251,33 @@ NSArray *findqrcs_x(RUN ***startsp, uint8_t *bitmap,
     // (This internal function returns the calculated runs through
     // *startsp, which is useful during development.)
     //
-# define BLUR_RADIUS 3
+    // Plan: overwrite incoming bitmap with two smaller grayscale
+    // (luminance) bitmaps. First is just a grayscale representation of
+    // incoming image. Second is dilated, which makes QR codes easier to
+    // recognize. Use original image to determine light/dark thresholds.
+    // Use dilated image for recognizing QR codes as blobs.
+    //
+# define BLUR_RADIUS 3   // (Formerly used blurring instead of dilation)
+# define DILATE_RADIUS 3
     BITMAP_PARAMS p;
     RUN **starts;
     NSMutableArray *mres = [[[NSMutableArray alloc] init] autorelease];
+    uint16_t *lumi_orig;  // Original image in grayscale (luminance)
+    uint16_t *lumi_dil;   // Dilated image in grayscale (luminance)
 
-    blur2d(bitmap, width, height, BLUR_RADIUS);
+    lumi_orig = (uint16_t *) bitmap;
+    lumi_dil = (uint16_t *) (bitmap + width * height * sizeof(uint16_t));
 
-    thresholds(&p, bitmap, width, height);
+    lumi_of_rgba(lumi_orig, bitmap, width, height);
+    lumi_dilate(lumi_dil, lumi_orig, width, height, DILATE_RADIUS);
+
+    thresholds(&p, lumi_orig, width, height);
     
-    p.bitmap = bitmap;
+    p.lumi_orig = lumi_orig;
+    p.lumi_dil = lumi_dil;
     p.width = width;
     p.height = height;
-
+    
     starts = encode(classify, slopect, &p, width, height);
     if(starts == NULL) {
         *startsp = NULL;
