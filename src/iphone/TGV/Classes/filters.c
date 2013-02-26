@@ -70,7 +70,7 @@ void lumi_dilate(uint16_t *out, uint16_t *in,
     /* Perform dilation of grayscale (luminance) image. in and out must
      * not overlap.
      *
-     * Dilation sounds fancy:
+     * Dilation sounds a little fancy:
      *
      *   http://en.wikipedia.org/wiki/Dilation_(morphology)
      *
@@ -173,58 +173,3 @@ void lumi_boxblur(uint16_t *out, uint16_t *in,
             *p = *a++;
     }
 }
-
-
-#if TARGET_MAC
-
-void lumi_writefile(char *filename, uint16_t *in, int width, int height)
-{
-    /* Write the grayscale (luminance) image to a PNG file.
-     *
-     * Note: our luminance values are from 0 .. LUMINANCES-1. To get a
-     * good PNG file, need to scale to 0..UINT16_MAX.
-     */
-# define PNGSCALE (UINT16_MAX / (LUMINANCES - 1))
-    CFDataRef data;
-    CGDataProviderRef prov;
-    CGColorSpaceRef colorspace;
-    CGImageRef image;
-
-    /* Scale to full 16-bit dynamic range.
-     */
-    for(int i = 0; i < width * height; i++)
-        in[i] *= PNGSCALE;
-
-    data =
-        CFDataCreateWithBytesNoCopy(
-            NULL, (uint8_t *) in, width * height * sizeof(uint16_t),
-            kCFAllocatorNull);
-    prov = CGDataProviderCreateWithCFData(data);
-    CFRelease(data);
-    colorspace = CGColorSpaceCreateDeviceGray();
-    image =
-        CGImageCreate(
-            width, height, 16, 16, width * sizeof(uint16_t),
-            colorspace, kCGImageAlphaNone | kCGBitmapByteOrder16Little,
-            prov, NULL, false, kCGRenderingIntentDefault);
-    CGColorSpaceRelease(colorspace);
-    CGDataProviderRelease(prov);
-
-    CFStringRef path =
-        CFStringCreateWithCString(NULL, filename, kCFStringEncodingUTF8);
-    CFURLRef url =
-        CFURLCreateWithFileSystemPath(NULL, path, kCFURLPOSIXPathStyle, false);
-    CFRelease(path);
-    CGImageDestinationRef dst =
-        CGImageDestinationCreateWithURL(url, kUTTypePNG, 1, NULL);
-    CGImageDestinationAddImage(dst, image, nil);
-    CGImageDestinationFinalize(dst);
-    CFRelease(dst);
-
-    /* Rescale back to input values.
-     */
-    for(int i = 0; i < width * height; i++)
-        in[i] /= PNGSCALE;
-}
-
-#endif

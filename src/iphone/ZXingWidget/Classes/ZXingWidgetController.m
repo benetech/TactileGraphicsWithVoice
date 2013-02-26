@@ -287,15 +287,21 @@
   decoder.delegate = nil;
 }
 
-- (void)notifyDelegate:(id)text {
-  // if (!isStatusBarHidden) [[UIApplication sharedApplication] setStatusBarHidden:NO];
-  [delegate zxingController:self didScanResult:text];
-  [text release];
+- (void)decoder:(Decoder *)decoder failedToDecodeImage:(UIImage *)image usingSubset:(UIImage *)subset reason:(NSString *)reason {
+  [self.overlayView setPoints:nil];
+  [self performSelector:@selector(notifyDelegate:) withObject:nil afterDelay:0.0];
+  decoder.delegate = nil;
 }
 
-- (void)decoder:(Decoder *)decoder failedToDecodeImage:(UIImage *)image usingSubset:(UIImage *)subset reason:(NSString *)reason {
-  decoder.delegate = nil;
-  [self.overlayView setPoints:nil];
+- (void)notifyDelegate:(id)text {
+  // If text is nil, decoding failed.
+  //
+  if (text) {
+    [delegate zxingController:self didScanResult:text];
+    [text release];
+  } else {
+    [delegate zxingControllerDidNotScan:self];
+  }
 }
 
 - (void)decoder:(Decoder *)decoder foundPossibleResultPoint:(CGPoint)point {
@@ -662,6 +668,19 @@ dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 12000000000), dispatch_get_main_
   device.focusPointOfInterest = point;
   [device unlockForConfiguration];
 #endif
+}
+
+- (void) setFocusMode: (AVCaptureFocusMode) focusMode
+{
+#if HAS_AVFF
+  Class captureDeviceClass = NSClassFromString(@"AVCaptureDevice");
+  if (captureDeviceClass == nil)
+    return;
+  AVCaptureDevice *device = [captureDeviceClass defaultDeviceWithMediaType:AVMediaTypeVideo];
+  [device lockForConfiguration: nil];
+  device.focusMode = focusMode;
+  [device unlockForConfiguration];
+#endif // HAS_AVFF
 }
 
 - (BOOL) isAdjustingExposure

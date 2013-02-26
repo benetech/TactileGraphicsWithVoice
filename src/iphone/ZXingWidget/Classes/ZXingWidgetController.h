@@ -73,6 +73,7 @@
 - (void)setTorch:(BOOL)status;
 - (BOOL)torchIsOn;
 - (BOOL) isAdjustingFocus;
+- (void) setFocusMode: (AVCaptureFocusMode) focusMode;
 - (void) setFocusPointOfInterest: (CGPoint) point;
 - (BOOL) isAdjustingExposure;
 - (BOOL) isAdjustingWhiteBalance;
@@ -81,5 +82,6 @@
 @protocol ZXingDelegate
 - (BOOL)zxingController:(ZXingWidgetController*)controller shouldScanBitmap:(uint8_t *)bitmap width:(size_t)width height:(size_t)height;
 - (void)zxingController:(ZXingWidgetController*)controller didScanResult:(NSString *)result;
+- (void)zxingControllerDidNotScan:(ZXingWidgetController*)controller;
 - (void)zxingControllerDidCancel:(ZXingWidgetController*)controller;
 @end

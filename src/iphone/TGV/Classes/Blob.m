@@ -19,6 +19,16 @@
 @synthesize leftPixels = _leftPixels;
 @synthesize rightPixels = _rightPixels;
 
+- (int) width
+{
+    return self.maxx - self.minx + 1;
+}
+
+- (int) height
+{
+    return self.maxy - self.miny + 1;
+}
+
 - (BOOL) touchesTop
 {
     return self.topPixels > kTouchThresh;

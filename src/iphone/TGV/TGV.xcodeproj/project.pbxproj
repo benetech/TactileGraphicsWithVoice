@@ -40,6 +40,11 @@
 		B96049D0167D8EEE00A832D4 /* TGVTabDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B96049CF167D8EEE00A832D4 /* TGVTabDelegate.m */; };
 		B96049DE167EBF3B00A832D4 /* ResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B96049DC167EBF3A00A832D4 /* ResultsViewController.m */; };
 		B9C4FE2416D57C560080D925 /* filters.c in Sources */ = {isa = PBXBuildFile; fileRef = B9C4FE2216D57C560080D925 /* filters.c */; };
+		B9CAD4D416D74D7900035210 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9CAD4D316D74D7900035210 /* CoreMotion.framework */; };
+		B9CAD4D816D7E86300035210 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B9CAD4D616D7E86300035210 /* SettingsViewController.m */; };
+		B9CAD4D916D7E86300035210 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B9CAD4D716D7E86300035210 /* SettingsViewController.xib */; };
+		B9CAD4DB16D856C400035210 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9CAD4DA16D856C400035210 /* QuartzCore.framework */; };
+		B9CAD4DF16DAF72000035210 /* TGVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B9CAD4DE16DAF72000035210 /* TGVViewController.m */; };
 		E5345BF11198D81A000CB77F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5345BF01198D81A000CB77F /* AudioToolbox.framework */; };
 		E548755C119C62B9001CC0F8 /* beep-beep.aiff in Resources */ = {isa = PBXBuildFile; fileRef = E548755B119C62B9001CC0F8 /* beep-beep.aiff */; };
 /* End PBXBuildFile section */
@@ -117,6 +122,14 @@
 		B96049DD167EBF3A00A832D4 /* ResultsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ResultsViewController.xib; path = Classes/ResultsViewController.xib; sourceTree = "<group>"; };
 		B9C4FE2216D57C560080D925 /* filters.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = filters.c; sourceTree = "<group>"; };
 		B9C4FE2316D57C560080D925 /* filters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filters.h; sourceTree = "<group>"; };
+		B9CAD4D316D74D7900035210 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		B9CAD4D516D7E86300035210 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		B9CAD4D616D7E86300035210 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
+		B9CAD4D716D7E86300035210 /* SettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SettingsViewController.xib; path = Classes/SettingsViewController.xib; sourceTree = "<group>"; };
+		B9CAD4DA16D856C400035210 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B9CAD4DC16D893F100035210 /* TGVSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TGVSettings.h; sourceTree = "<group>"; };
+		B9CAD4DD16DAF72000035210 /* TGVViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TGVViewController.h; sourceTree = "<group>"; };
+		B9CAD4DE16DAF72000035210 /* TGVViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TGVViewController.m; sourceTree = "<group>"; };
 		E5345BF01198D81A000CB77F /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		E5345FD6119B27D2000CB77F /* libZXingWidget.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libZXingWidget.a; path = "build/Debug-iphoneos/libZXingWidget.a"; sourceTree = "<group>"; };
 		E548755B119C62B9001CC0F8 /* beep-beep.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = "beep-beep.aiff"; sourceTree = "<group>"; };
@@ -127,6 +140,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9CAD4DB16D856C400035210 /* QuartzCore.framework in Frameworks */,
 				B911DA7C16AF1BDB00FDD76C /* CoreImage.framework in Frameworks */,
 				3B43FDCB15939575001CD5C9 /* libZXingWidget.a in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
@@ -137,6 +151,7 @@
 				3BCED5C8120F84C900131FA0 /* AVFoundation.framework in Frameworks */,
 				3BCED5CE120F84E000131FA0 /* CoreVideo.framework in Frameworks */,
 				3BCED5EB120F885C00131FA0 /* CoreMedia.framework in Frameworks */,
+				B9CAD4D416D74D7900035210 /* CoreMotion.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,25 +165,30 @@
 				B94A498B16B4674000068117 /* runle.c */,
 				B94A498716B4674000068117 /* Blob.h */,
 				B94A498816B4674000068117 /* Blob.m */,
-				B9C4FE2216D57C560080D925 /* filters.c */,
 				B9C4FE2316D57C560080D925 /* filters.h */,
+				B9C4FE2216D57C560080D925 /* filters.c */,
 				B94A498916B4674000068117 /* findblobs.h */,
 				B94A498A16B4674000068117 /* findblobs.m */,
 				B94A499016B486C600068117 /* findqrcs.h */,
 				B94A499116B486C600068117 /* findqrcs.m */,
 				B94A499316B4B5A100068117 /* Voice.h */,
 				B94A499416B4B5A100068117 /* Voice.m */,
+				B911CD42169959A500CE5CA0 /* TGVResults.h */,
+				B9CAD4DC16D893F100035210 /* TGVSettings.h */,
 				B96049CD167D368C00A832D4 /* ScanViewController.h */,
 				28C286E00D94DF7D0034E888 /* ScanViewController.mm */,
-				B911CD42169959A500CE5CA0 /* TGVResults.h */,
 				B96049DB167EBF3A00A832D4 /* ResultsViewController.h */,
 				B96049DC167EBF3A00A832D4 /* ResultsViewController.m */,
 				B911CD3D16992B6E00CE5CA0 /* ResultsTViewController.h */,
 				B911CD3E16992B6E00CE5CA0 /* ResultsTViewController.m */,
+				B9CAD4D516D7E86300035210 /* SettingsViewController.h */,
+				B9CAD4D616D7E86300035210 /* SettingsViewController.m */,
 				1D3623240D0F684500981E51 /* TGVAppDelegate.h */,
 				1D3623250D0F684500981E51 /* TGVAppDelegate.m */,
 				B96049CE167D8D9400A832D4 /* TGVTabDelegate.h */,
 				B96049CF167D8EEE00A832D4 /* TGVTabDelegate.m */,
+				B9CAD4DD16DAF72000035210 /* TGVViewController.h */,
+				B9CAD4DE16DAF72000035210 /* TGVViewController.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -194,6 +214,8 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				B9CAD4DA16D856C400035210 /* QuartzCore.framework */,
+				B9CAD4D316D74D7900035210 /* CoreMotion.framework */,
 				B911DA7B16AF1BDB00FDD76C /* CoreImage.framework */,
 				3B331CED161BB74E007313B6 /* Default-568h@2x.png */,
 				1F027F7611A7BAD4006B06DE /* ZXingWidget.xcodeproj */,
@@ -223,6 +245,7 @@
 				E548755B119C62B9001CC0F8 /* beep-beep.aiff */,
 				B96049DD167EBF3A00A832D4 /* ResultsViewController.xib */,
 				B911CD3F16992B6E00CE5CA0 /* ResultsTViewController.xib */,
+				B9CAD4D716D7E86300035210 /* SettingsViewController.xib */,
 				28AD735F0D9D9599002E5188 /* MainWindow.xib */,
 				B911CD391698DB0E00CE5CA0 /* list-tabbar.png */,
 				B911CD3A1698DB0E00CE5CA0 /* list-tabbar@2x.png */,
@@ -340,6 +363,7 @@
 				B911CD3B1698DB0E00CE5CA0 /* list-tabbar.png in Resources */,
 				B911CD3C1698DB0E00CE5CA0 /* list-tabbar@2x.png in Resources */,
 				B911CD4116992B6E00CE5CA0 /* ResultsTViewController.xib in Resources */,
+				B9CAD4D916D7E86300035210 /* SettingsViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -362,6 +386,8 @@
 				B94A499216B486C600068117 /* findqrcs.m in Sources */,
 				B94A499516B4B5A100068117 /* Voice.m in Sources */,
 				B9C4FE2416D57C560080D925 /* filters.c in Sources */,
+				B9CAD4D816D7E86300035210 /* SettingsViewController.m in Sources */,
+				B9CAD4DF16DAF72000035210 /* TGVViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

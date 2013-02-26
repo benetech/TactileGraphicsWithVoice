@@ -79,6 +79,7 @@ static void blob_create(NSMutableDictionary *dict, int imgwd, int imght,
     blob.maxy = y;
     blob.slopeCount = r->slopes;
     blob.runCount = 1;
+    blob.pixelCount = r->width;
     if (y == 0) blob.topPixels = r->width;
     if (y == imght - 1) blob.botPixels = r->width;
     if (x == 0) blob.leftPixels = 1;
@@ -128,6 +129,7 @@ static void blob_union(NSMutableDictionary *dict, int imgwd, int imght,
             oldblob.maxy = newblob.maxy;
         oldblob.slopeCount = oldblob.slopeCount + newblob.slopeCount;
         oldblob.runCount = oldblob.runCount + newblob.runCount;
+        oldblob.pixelCount = oldblob.pixelCount + newblob.pixelCount;
         oldblob.topPixels = oldblob.topPixels + newblob.topPixels;
         oldblob.botPixels = oldblob.botPixels + newblob.botPixels;
         oldblob.leftPixels = oldblob.leftPixels + newblob.leftPixels;
@@ -147,7 +149,8 @@ static void blob_union(NSMutableDictionary *dict, int imgwd, int imght,
             oldblob.maxy = newy;
         oldblob.slopeCount = oldblob.slopeCount + newr->slopes;
         oldblob.runCount = oldblob.runCount + 1;
-        // (New run can't be on top row. That's where old blob is.)
+        oldblob.pixelCount = oldblob.pixelCount + newr->width;
+        // (New run can't be on top row. Old blob is always on row above.)
         if (newy == imght - 1) oldblob.botPixels = oldblob.botPixels + newr->width;
         if (newx == 0) oldblob.leftPixels = oldblob.leftPixels + 1;
         if (newx + newr->width == imgwd) oldblob.rightPixels = oldblob.rightPixels + 1;

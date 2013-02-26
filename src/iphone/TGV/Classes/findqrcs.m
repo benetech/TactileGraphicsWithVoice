@@ -199,7 +199,13 @@ static int slopect(void *ck, int x, int y, int wd)
     // variegated even when out of focus. The dilation operation can
     // hide the variegations, which is why we look at the original.
     //
+    // The slope count for the run must be at least MINCOUNT to be
+    // included in the overall total. Counts smaller than this don't
+    // really characterize variegation. It's more like a simple
+    // gradation.
+    //
 # define MINWIDTH 3
+# define MINCOUNT 2
     BITMAP_PARAMS *p = ck;
     // int mindepth = (p->thresh - p->thresh05) / 4;
     int mindepth = (p->thresh - p->thresh05) / 3;
@@ -219,7 +225,7 @@ static int slopect(void *ck, int x, int y, int wd)
         if(i - start >= MINWIDTH && base[start] - base[i - 1] >= mindepth)
             sct++;
     }
-    return sct;
+    return sct < MINCOUNT ? 0 : sct;
 }
 
 
@@ -227,21 +233,25 @@ static int qr_candidate(Blob *blob)
 {
     /* Determine whether the blob is a potential QR code.
      */
-# define VARIEGATION_THRESH 1.0             /* CRUDE FOR NOW */
-# define QRSIZE(x) ((x) >= 30 && (x) < 240) /* CRUDE FOR NOW */
+# define OLD_VARIEGATION_THRESH 0.78            /* Set by eye */
+# define NEW_VARIEGATION_THRESH 0.078           /* Set by experiment */
+# define QRSIZE(x) ((x) >= 50 && (x) < 240)     /* Low set by experiment */
     if(blob == nil)
         return 0;
     int width = blob.maxx - blob.minx + 1;
     int height = blob.maxy - blob.miny + 1;
 #ifdef WRITE_PROPS
-    printf("class %d w %d h %d runCount %d slope %f\n",
-        blob.bclass, width, height, blob.runCount, 
-        blob.slopeCount / (double) blob.runCount);
-#endif /* WRITE_PROPS */
+    printf("class %d w %d h %d pxct %d runct %d slopect %d ovar %f nvar %f\n",
+        blob.bclass, width, height, blob.pixelCount, blob.runCount,
+           blob.slopeCount,
+           blob.slopeCount / (double) blob.runCount,
+           blob.slopeCount / sqrt(height * blob.pixelCount));
+#endif // WRITE_PROPS
     return
         blob.bclass == 1 && QRSIZE(width) && QRSIZE(height) &&
             // blob.runCount < height + height && /* TRY AFTER COALESCE */
-            blob.slopeCount / (double) blob.runCount >= VARIEGATION_THRESH;
+            // blob.slopeCount / (double) blob.runCount >= VARIEGATION_THRESH;
+            blob.slopeCount / sqrt(height * blob.pixelCount) >= NEW_VARIEGATION_THRESH;
 }
 
 
@@ -290,6 +300,10 @@ NSArray *findqrcs_x(RUN ***startsp, uint8_t *bitmap,
         if(qr_candidate(b))
             [mres addObject: b];
     }
+#ifdef WRITE_PROPS
+    printf("----------\n");
+    fflush(stdout);
+#endif // WRITE_PROPS
 
     *startsp = starts;
     return [mres copy];

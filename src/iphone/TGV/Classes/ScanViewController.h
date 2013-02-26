@@ -2,6 +2,7 @@
 //  ScanViewController.h
 
 #import <UIKit/UIKit.h>
+#import <CoreMotion/CoreMotion.h>
 #import "ZXingWidgetController.h"
 #import "ResultsViewController.h"
 
