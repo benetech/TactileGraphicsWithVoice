@@ -31,6 +31,7 @@
 }
 
 @property (nonatomic, retain) NSMutableArray*  points;
+@property (nonatomic, retain) NSArray *trackedPoints;
 @property (nonatomic, assign) id<CancelDelegate> delegate;
 @property (nonatomic, assign) BOOL oneDMode;
 @property (nonatomic, assign) CGRect cropRect;

@@ -35,6 +35,7 @@
 @interface ZXingWidgetController ()
 
 @property BOOL isStatusBarHidden;
+@property (nonatomic, retain) OverlayView *overlayView;
 
 - (void)initCapture;
 - (void)stopCapture;
@@ -49,7 +50,7 @@
 @synthesize prevLayer;
 #endif
 @synthesize result, soundToPlay;
-@synthesize overlayView;
+@synthesize overlayView = _overlayView;
 @synthesize isStatusBarHidden;
 @synthesize readers;
 
@@ -105,9 +106,19 @@
 
   [result release];
   [soundToPlay release];
-  [overlayView release];
+  [_overlayView release];
   [readers release];
   [super dealloc];
+}
+
+- (NSArray *) trackedPoints
+{
+  return self.overlayView.trackedPoints;
+}
+
+- (void) setTrackedPoints: (NSArray *) points
+{
+  self.overlayView.trackedPoints = points;
 }
 
 - (void)cancelled {
@@ -152,7 +163,7 @@
   // Initialize the overlay view lazily, i.e., the first time
   // it is needed. Currently its properties are fixed after that.
   //
-  if(!overlayView)
+  if(!self.overlayView)
     [self initOverlayView];
 
   decoding = YES;
@@ -161,6 +172,7 @@
   [self.view addSubview: self.overlayView];
   
   [self.overlayView setPoints:nil];
+  self.overlayView.trackedPoints = nil;
   wasCancelled = NO;
 }
 
@@ -283,25 +295,23 @@
   [self presentResultForString:[twoDResult text]];
   [self presentResultPoints:[twoDResult points] forImage:image usingSubset:subset];
   // now, in a selector, call the delegate to give this overlay time to show the points
-  [self performSelector:@selector(notifyDelegate:) withObject:[[twoDResult text] copy] afterDelay:0.0];
+  [self performSelector:@selector(notifyDelegateOfSuccess:) withObject:[[twoDResult text] copy] afterDelay:0.0];
   decoder.delegate = nil;
 }
 
 - (void)decoder:(Decoder *)decoder failedToDecodeImage:(UIImage *)image usingSubset:(UIImage *)subset reason:(NSString *)reason {
   [self.overlayView setPoints:nil];
-  [self performSelector:@selector(notifyDelegate:) withObject:nil afterDelay:0.0];
+  [self performSelector:@selector(notifyDelegateOfFailure:) withObject:reason afterDelay:0.0];
   decoder.delegate = nil;
 }
 
-- (void)notifyDelegate:(id)text {
-  // If text is nil, decoding failed.
-  //
-  if (text) {
+- (void)notifyDelegateOfSuccess:(NSString *)text {
     [delegate zxingController:self didScanResult:text];
     [text release];
-  } else {
-    [delegate zxingControllerDidNotScan:self];
-  }
+}
+
+- (void)notifyDelegateOfFailure:(NSString *)reason {
+  [delegate zxingController:self didNotScanReason: reason];
 }
 
 - (void)decoder:(Decoder *)decoder foundPossibleResultPoint:(CGPoint)point {
@@ -602,7 +612,8 @@ dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 12000000000), dispatch_get_main_
     [device lockForConfiguration:nil];
     if ( [device hasTorch] ) {
       if ( status ) {
-        [device setTorchMode:AVCaptureTorchModeOn];
+        //[device setTorchMode:AVCaptureTorchModeOn];
+        [device setTorchModeOnWithLevel: 0.5 error: nil];
       } else {
         [device setTorchMode:AVCaptureTorchModeOff];
       }

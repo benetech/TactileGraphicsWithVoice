@@ -97,12 +97,12 @@ ZXingWidgetControllerCallback(Decoder* _decoder) : decoder(_decoder) {}
   
   subsetBytesPerRow = ((subsetWidth + 0xf) >> 4) << 4;
 #ifdef DEBUG
-  NSLog(@"decoding: image to decode is (%d x %d) (%d bytes/row)", subsetWidth, subsetHeight, subsetBytesPerRow);
+  NSLog(@"decoding: image to decode is (%d x %d) (%d bytes/row)", (int) subsetWidth, (int) subsetHeight, (int) subsetBytesPerRow);
 #endif
   
   subsetData = (unsigned char *)malloc(subsetBytesPerRow * subsetHeight);
 #ifdef DEBUG
-  NSLog(@"allocated %d bytes of memory", subsetBytesPerRow * subsetHeight);
+  NSLog(@"allocated %d bytes of memory", (int) (subsetBytesPerRow * subsetHeight));
 #endif
   
   CGColorSpaceRef grayColorSpace = CGColorSpaceCreateDeviceGray();
@@ -119,7 +119,7 @@ ZXingWidgetControllerCallback(Decoder* _decoder) : decoder(_decoder) {}
   CGContextScaleCTM(ctx, 1.0, -1.0);  
   
 #ifdef DEBUG
-  NSLog(@"created %dx%d bitmap context", subsetWidth, subsetHeight);
+  NSLog(@"created %dx%d bitmap context", (int) subsetWidth, (int) subsetHeight);
 #endif
   
   UIGraphicsPushContext(ctx);
@@ -131,7 +131,7 @@ ZXingWidgetControllerCallback(Decoder* _decoder) : decoder(_decoder) {}
   UIGraphicsPopContext();
   
 #ifdef DEBUG
-  NSLog(@"drew image into %d(%d)x%d  bitmap context", subsetWidth, subsetBytesPerRow, subsetHeight);
+  NSLog(@"drew image into %d(%d)x%d  bitmap context", (int) subsetWidth, (int) subsetBytesPerRow, (int) subsetHeight);
 #endif
   CGContextFlush(ctx);
 #ifdef DEBUG
@@ -168,7 +168,7 @@ ZXingWidgetControllerCallback(Decoder* _decoder) : decoder(_decoder) {}
     binarizer = 0;
 #ifdef DEBUG
     NSLog(@"created GreyscaleLuminanceSource(%p,%d,%d,%d,%d,%d,%d)",
-          subsetData, subsetBytesPerRow, subsetHeight, 0, 0, subsetWidth, subsetHeight);
+          subsetData, (int) subsetBytesPerRow, (int) subsetHeight, 0, 0, (int) subsetWidth, (int) subsetHeight);
     NSLog(@"grayImage count = %d", grayImage->count());
 #endif
     

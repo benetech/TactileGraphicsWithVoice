@@ -40,6 +40,18 @@
     [defaults synchronize];
 }
 
+- (void) setTrackTouches: (UISwitch *) sender
+{
+    [defaults setBool: sender.isOn forKey: kSettingsTrackTouches];
+    [defaults synchronize];
+}
+
+- (void) setLogEvents: (UISwitch *) sender
+{
+    [defaults setBool: sender.isOn forKey: kSettingsLogEvents];
+    [defaults synchronize];
+}
+
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 2;
@@ -58,7 +70,12 @@
 {
     switch (section) {
         case 0: return 1;
-        case 1: return 3;
+        case 1:
+#if TGV_EXPERIMENTAL
+            return 5;
+#else
+            return 3;
+#endif
         default: return 0;
     }
 }
@@ -94,6 +111,18 @@
             action = @selector(setSaveFailedCounts:);
             initialValue = [defaults boolForKey: kSettingsSaveFailedCounts];
             break;
+#if TGV_EXPERIMENTAL
+        case 13:
+            label = @"Highlight scan touch";
+            action = @selector(setTrackTouches:);
+            initialValue = [defaults boolForKey: kSettingsTrackTouches];
+            break;
+        case 14:
+            label = @"Log Events";
+            action = @selector(setLogEvents:);
+            initialValue = [defaults boolForKey: kSettingsLogEvents];
+            break;
+#endif
         default:
             label = nil;
             break;

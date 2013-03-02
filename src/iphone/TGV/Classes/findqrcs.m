@@ -18,6 +18,52 @@ typedef struct {
 } BITMAP_PARAMS;
 
 
+static int otsu(int *histogram, int width, int height)
+{
+    /* Find a good threshold between dark and light pixels using Otsu's
+     * method:
+     *
+     *   http://en.wikipedia.org/wiki/Otsu's_method
+     *
+     * It's a clustering algorithm that maximizes the variance of the
+     * difference between the two groups of pixels.
+     */
+    double total;     // Total number of pixels
+    double pxbelow;   // Number of pixels below current threshold
+    double sumbelow;  // sum of luminance * count over all pixels below
+    double sumabove;  // sum of luminance * count over all pixels above
+    int maxlum;       // luminance with maximum variance so far
+    double maxvar;    // maximum variance so far
+    double var, md; 
+    int i;
+
+    total = width * height;
+    sumabove = 0.0;
+    for(i = 0; i < LUMINANCES; i++)
+        sumabove += i * histogram[i];
+    maxlum = 0;
+    maxvar = 0.0;
+    pxbelow = 0.0;
+    sumbelow = 0.0;
+    for(i = 0; i < LUMINANCES; i++) {
+        if(pxbelow == 0.0 || pxbelow == total)
+            md = 0.0;
+        else
+            md = sumbelow / pxbelow - sumabove / (total - pxbelow);
+        var = pxbelow * (total - pxbelow) * md * md;
+        if(var > maxvar) {
+            maxvar = var;
+            maxlum = i;
+        }
+        pxbelow += histogram[i];
+        sumbelow += i * histogram[i];
+        sumabove -= i * histogram[i];
+    }
+    return maxlum;
+}
+
+
+#ifdef FORMER_METHOD
 static int lowspot(int *histogram)
 {
     /* Find a low spot in the histogram that separates the dark pixels
@@ -113,6 +159,9 @@ static int lowspot(int *histogram)
     for(int i = radius2 + 1; i < LUMINANCES - radius2; i++)
         printf("%d %d\n", i, smooth2[i]);
 #endif
+    printf("otsu(histogram) %d\n", otsu(histogram));
+    printf("otsu(smooth1) %d\n", otsu(smooth1));
+    printf("otsu(smooth2) %d\n", otsu(smooth2));
 
     // Find the big peak in the smoothed data.
     //
@@ -146,9 +195,9 @@ static int lowspot(int *histogram)
     //
     if(lowlumin <= left)
         lowlumin = toplumin - flatdelta;
-
     return lowlumin + adjustment;
 }
+#endif // FORMER_METHOD
 
 
 static void thresholds(BITMAP_PARAMS *bpar,
@@ -170,7 +219,7 @@ static void thresholds(BITMAP_PARAMS *bpar,
 #endif
 
     ct = 0;
-    bpar->thresh = lowspot(histogram);
+    bpar->thresh = otsu(histogram, width, height);
     breakpt05 = width * height * TOTALLY_DARK_F;
     for(thresh = 0; thresh < LUMINANCES; thresh++) {
         ct += histogram[thresh];
@@ -232,6 +281,18 @@ static int slopect(void *ck, int x, int y, int wd)
 static int qr_candidate(Blob *blob)
 {
     /* Determine whether the blob is a potential QR code.
+     *
+     * Variegation metric: First, we track the number of luminance
+     * downslopes in the rows of the blob (slopect, above). Then we
+     * normalize according to the size of the blob. There are two
+     * reasons for different sized blobs: (A) distance from camera--in
+     * this case, the count of the downslopes scales according to the
+     * number of rows (the height). The number of downslopes doesn't
+     * change much, but the number of rows increases. (B) how much of
+     * the QRC is inside the frame--in this case, the count of
+     * downslopes scales with the area (total number of pixels). To
+     * compromise, we normalize by the geometric mean of the height and
+     * the area.
      */
 # define OLD_VARIEGATION_THRESH 0.78            /* Set by eye */
 # define NEW_VARIEGATION_THRESH 0.078           /* Set by experiment */
@@ -301,7 +362,7 @@ NSArray *findqrcs_x(RUN ***startsp, uint8_t *bitmap,
             [mres addObject: b];
     }
 #ifdef WRITE_PROPS
-    printf("----------\n");
+    printf("----- %d QRC -----\n", (int) [mres count]);
     fflush(stdout);
 #endif // WRITE_PROPS
 

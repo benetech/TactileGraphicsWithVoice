@@ -36,7 +36,7 @@
                                                     > {
   NSSet *readers;
   ParsedResult *result;
-  OverlayView *overlayView;
+  // OverlayView *overlayView; // Moved to private property
   SystemSoundID beepSound;
   // BOOL showCancel;
   NSURL *soundToPlay;
@@ -64,10 +64,13 @@
 @property (nonatomic, retain ) NSSet *readers;
 @property (nonatomic, retain) NSURL *soundToPlay;
 @property (nonatomic, retain) ParsedResult *result;
-@property (nonatomic, retain) OverlayView *overlayView;
+// @property (nonatomic, retain) OverlayView *overlayView; // moved to private property
 
 - (id)initWithDelegate:(id<ZXingDelegate>)delegate showCancel:(BOOL)shouldShowCancel OneDMode:(BOOL)shouldUseoOneDMode;
 - (id)initWithDelegate:(id<ZXingDelegate>)scanDelegate showCancel:(BOOL)shouldShowCancel OneDMode:(BOOL)shouldUseoOneDMode showLicense:(BOOL)shouldShowLicense;
+
+- (NSArray *) trackedPoints;
+- (void) setTrackedPoints: (NSArray *) points;
 
 - (BOOL)fixedFocus;
 - (void)setTorch:(BOOL)status;
@@ -82,6 +85,6 @@
 @protocol ZXingDelegate
 - (BOOL)zxingController:(ZXingWidgetController*)controller shouldScanBitmap:(uint8_t *)bitmap width:(size_t)width height:(size_t)height;
 - (void)zxingController:(ZXingWidgetController*)controller didScanResult:(NSString *)result;
-- (void)zxingControllerDidNotScan:(ZXingWidgetController*)controller;
+- (void)zxingController:(ZXingWidgetController*)controller didNotScanReason: (NSString *)reason;
 - (void)zxingControllerDidCancel:(ZXingWidgetController*)controller;
 @end

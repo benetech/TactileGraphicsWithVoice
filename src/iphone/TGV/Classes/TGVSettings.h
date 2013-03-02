@@ -12,3 +12,7 @@
 #define kSettingsSaveFailedScans    @"SaveFailedScans"
 #define kSettingsSaveSucceededScans @"SaveSucceededScans"
 #define kSettingsSaveFailedCounts   @"SaveFailedCounts"
+
+// Used in the experimental version
+#define kSettingsTrackTouches       @"TrackTouches"
+#define kSettingsLogEvents          @"LogEvents"

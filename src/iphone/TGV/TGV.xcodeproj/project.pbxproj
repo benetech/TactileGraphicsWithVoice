@@ -45,6 +45,50 @@
 		B9CAD4D916D7E86300035210 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B9CAD4D716D7E86300035210 /* SettingsViewController.xib */; };
 		B9CAD4DB16D856C400035210 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9CAD4DA16D856C400035210 /* QuartzCore.framework */; };
 		B9CAD4DF16DAF72000035210 /* TGVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B9CAD4DE16DAF72000035210 /* TGVViewController.m */; };
+		B9FBD4A516DFE9880063A76D /* ScanView.m in Sources */ = {isa = PBXBuildFile; fileRef = B9FBD4A416DFE9880063A76D /* ScanView.m */; };
+		B9FBD4AB16E024E50063A76D /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD735F0D9D9599002E5188 /* MainWindow.xib */; };
+		B9FBD4AC16E024E50063A76D /* beep-beep.aiff in Resources */ = {isa = PBXBuildFile; fileRef = E548755B119C62B9001CC0F8 /* beep-beep.aiff */; };
+		B9FBD4AD16E024E50063A76D /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B0A5DB81444C492000EC568 /* Icon.png */; };
+		B9FBD4AE16E024E50063A76D /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B331CED161BB74E007313B6 /* Default-568h@2x.png */; };
+		B9FBD4AF16E024E50063A76D /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B949FF9816961C52003C545B /* Icon@2x.png */; };
+		B9FBD4B016E024E50063A76D /* ResultsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B96049DD167EBF3A00A832D4 /* ResultsViewController.xib */; };
+		B9FBD4B116E024E50063A76D /* qr-tabbar.png in Resources */ = {isa = PBXBuildFile; fileRef = B911CD311698CB3700CE5CA0 /* qr-tabbar.png */; };
+		B9FBD4B216E024E50063A76D /* qr-tabbar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B911CD321698CB3700CE5CA0 /* qr-tabbar@2x.png */; };
+		B9FBD4B316E024E50063A76D /* gears-tabbar.png in Resources */ = {isa = PBXBuildFile; fileRef = B911CD351698D9F700CE5CA0 /* gears-tabbar.png */; };
+		B9FBD4B416E024E50063A76D /* gears-tabbar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B911CD361698D9F700CE5CA0 /* gears-tabbar@2x.png */; };
+		B9FBD4B516E024E50063A76D /* list-tabbar.png in Resources */ = {isa = PBXBuildFile; fileRef = B911CD391698DB0E00CE5CA0 /* list-tabbar.png */; };
+		B9FBD4B616E024E50063A76D /* list-tabbar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B911CD3A1698DB0E00CE5CA0 /* list-tabbar@2x.png */; };
+		B9FBD4B716E024E50063A76D /* ResultsTViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B911CD3F16992B6E00CE5CA0 /* ResultsTViewController.xib */; };
+		B9FBD4B816E024E50063A76D /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B9CAD4D716D7E86300035210 /* SettingsViewController.xib */; };
+		B9FBD4BA16E024E50063A76D /* TGVAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* TGVAppDelegate.m */; };
+		B9FBD4BB16E024E50063A76D /* ScanViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 28C286E00D94DF7D0034E888 /* ScanViewController.mm */; };
+		B9FBD4BC16E024E50063A76D /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1FF586FC11BBD81D00E8E868 /* main.mm */; };
+		B9FBD4BD16E024E50063A76D /* TGVTabDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B96049CF167D8EEE00A832D4 /* TGVTabDelegate.m */; };
+		B9FBD4BE16E024E50063A76D /* ResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B96049DC167EBF3A00A832D4 /* ResultsViewController.m */; };
+		B9FBD4BF16E024E50063A76D /* ResultsTViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B911CD3E16992B6E00CE5CA0 /* ResultsTViewController.m */; };
+		B9FBD4C016E024E50063A76D /* Blob.m in Sources */ = {isa = PBXBuildFile; fileRef = B94A498816B4674000068117 /* Blob.m */; };
+		B9FBD4C116E024E50063A76D /* findblobs.m in Sources */ = {isa = PBXBuildFile; fileRef = B94A498A16B4674000068117 /* findblobs.m */; };
+		B9FBD4C216E024E50063A76D /* runle.c in Sources */ = {isa = PBXBuildFile; fileRef = B94A498B16B4674000068117 /* runle.c */; };
+		B9FBD4C316E024E50063A76D /* findqrcs.m in Sources */ = {isa = PBXBuildFile; fileRef = B94A499116B486C600068117 /* findqrcs.m */; };
+		B9FBD4C416E024E50063A76D /* Voice.m in Sources */ = {isa = PBXBuildFile; fileRef = B94A499416B4B5A100068117 /* Voice.m */; };
+		B9FBD4C516E024E50063A76D /* filters.c in Sources */ = {isa = PBXBuildFile; fileRef = B9C4FE2216D57C560080D925 /* filters.c */; };
+		B9FBD4C616E024E50063A76D /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B9CAD4D616D7E86300035210 /* SettingsViewController.m */; };
+		B9FBD4C716E024E50063A76D /* TGVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B9CAD4DE16DAF72000035210 /* TGVViewController.m */; };
+		B9FBD4C816E024E50063A76D /* ScanView.m in Sources */ = {isa = PBXBuildFile; fileRef = B9FBD4A416DFE9880063A76D /* ScanView.m */; };
+		B9FBD4CA16E024E50063A76D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9CAD4DA16D856C400035210 /* QuartzCore.framework */; };
+		B9FBD4CB16E024E50063A76D /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B911DA7B16AF1BDB00FDD76C /* CoreImage.framework */; };
+		B9FBD4CC16E024E50063A76D /* libZXingWidget.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F027F7E11A7BAD4006B06DE /* libZXingWidget.a */; };
+		B9FBD4CD16E024E50063A76D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		B9FBD4CE16E024E50063A76D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		B9FBD4CF16E024E50063A76D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2892E40F0DC94CBA00A64D0F /* CoreGraphics.framework */; };
+		B9FBD4D016E024E50063A76D /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5345BF01198D81A000CB77F /* AudioToolbox.framework */; };
+		B9FBD4D116E024E50063A76D /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F027F8411A7BB77006B06DE /* libiconv.dylib */; };
+		B9FBD4D216E024E50063A76D /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BCED5C7120F84C900131FA0 /* AVFoundation.framework */; };
+		B9FBD4D316E024E50063A76D /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BCED5CD120F84E000131FA0 /* CoreVideo.framework */; };
+		B9FBD4D416E024E50063A76D /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BCED5EA120F885C00131FA0 /* CoreMedia.framework */; };
+		B9FBD4D516E024E50063A76D /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9CAD4D316D74D7900035210 /* CoreMotion.framework */; };
+		B9FBD4DD16E11FFE0063A76D /* EventLog.m in Sources */ = {isa = PBXBuildFile; fileRef = B9FBD4DC16E11FFE0063A76D /* EventLog.m */; };
+		B9FBD4DE16E11FFE0063A76D /* EventLog.m in Sources */ = {isa = PBXBuildFile; fileRef = B9FBD4DC16E11FFE0063A76D /* EventLog.m */; };
 		E5345BF11198D81A000CB77F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5345BF01198D81A000CB77F /* AudioToolbox.framework */; };
 		E548755C119C62B9001CC0F8 /* beep-beep.aiff in Resources */ = {isa = PBXBuildFile; fileRef = E548755B119C62B9001CC0F8 /* beep-beep.aiff */; };
 /* End PBXBuildFile section */
@@ -70,6 +114,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 1D60398D13DF7CAD006F4B51;
 			remoteInfo = ZXingTests;
+		};
+		B9FBD4A916E024E50063A76D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1F027F7611A7BAD4006B06DE /* ZXingWidget.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC07D0554694100DB518D;
+			remoteInfo = ZXingWidget;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -130,6 +181,12 @@
 		B9CAD4DC16D893F100035210 /* TGVSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TGVSettings.h; sourceTree = "<group>"; };
 		B9CAD4DD16DAF72000035210 /* TGVViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TGVViewController.h; sourceTree = "<group>"; };
 		B9CAD4DE16DAF72000035210 /* TGVViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TGVViewController.m; sourceTree = "<group>"; };
+		B9FBD4A316DFE9880063A76D /* ScanView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScanView.h; sourceTree = "<group>"; };
+		B9FBD4A416DFE9880063A76D /* ScanView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScanView.m; sourceTree = "<group>"; };
+		B9FBD4D916E024E50063A76D /* TGVE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TGVE.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B9FBD4DA16E024E60063A76D /* TGVE-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "TGVE-Info.plist"; path = "/Users/jeffsco/Work/MobileAccess/TGViOS/src/iphone/TGV/TGVE-Info.plist"; sourceTree = "<absolute>"; };
+		B9FBD4DB16E11FFE0063A76D /* EventLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventLog.h; sourceTree = "<group>"; };
+		B9FBD4DC16E11FFE0063A76D /* EventLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventLog.m; sourceTree = "<group>"; };
 		E5345BF01198D81A000CB77F /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		E5345FD6119B27D2000CB77F /* libZXingWidget.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libZXingWidget.a; path = "build/Debug-iphoneos/libZXingWidget.a"; sourceTree = "<group>"; };
 		E548755B119C62B9001CC0F8 /* beep-beep.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = "beep-beep.aiff"; sourceTree = "<group>"; };
@@ -155,40 +212,63 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B9FBD4C916E024E50063A76D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B9FBD4CA16E024E50063A76D /* QuartzCore.framework in Frameworks */,
+				B9FBD4CB16E024E50063A76D /* CoreImage.framework in Frameworks */,
+				B9FBD4CC16E024E50063A76D /* libZXingWidget.a in Frameworks */,
+				B9FBD4CD16E024E50063A76D /* Foundation.framework in Frameworks */,
+				B9FBD4CE16E024E50063A76D /* UIKit.framework in Frameworks */,
+				B9FBD4CF16E024E50063A76D /* CoreGraphics.framework in Frameworks */,
+				B9FBD4D016E024E50063A76D /* AudioToolbox.framework in Frameworks */,
+				B9FBD4D116E024E50063A76D /* libiconv.dylib in Frameworks */,
+				B9FBD4D216E024E50063A76D /* AVFoundation.framework in Frameworks */,
+				B9FBD4D316E024E50063A76D /* CoreVideo.framework in Frameworks */,
+				B9FBD4D416E024E50063A76D /* CoreMedia.framework in Frameworks */,
+				B9FBD4D516E024E50063A76D /* CoreMotion.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				B94A498C16B4674000068117 /* runle.h */,
-				B94A498B16B4674000068117 /* runle.c */,
 				B94A498716B4674000068117 /* Blob.h */,
 				B94A498816B4674000068117 /* Blob.m */,
-				B9C4FE2316D57C560080D925 /* filters.h */,
+				B9FBD4DB16E11FFE0063A76D /* EventLog.h */,
+				B9FBD4DC16E11FFE0063A76D /* EventLog.m */,
 				B9C4FE2216D57C560080D925 /* filters.c */,
+				B9C4FE2316D57C560080D925 /* filters.h */,
 				B94A498916B4674000068117 /* findblobs.h */,
 				B94A498A16B4674000068117 /* findblobs.m */,
 				B94A499016B486C600068117 /* findqrcs.h */,
 				B94A499116B486C600068117 /* findqrcs.m */,
-				B94A499316B4B5A100068117 /* Voice.h */,
-				B94A499416B4B5A100068117 /* Voice.m */,
-				B911CD42169959A500CE5CA0 /* TGVResults.h */,
-				B9CAD4DC16D893F100035210 /* TGVSettings.h */,
-				B96049CD167D368C00A832D4 /* ScanViewController.h */,
-				28C286E00D94DF7D0034E888 /* ScanViewController.mm */,
-				B96049DB167EBF3A00A832D4 /* ResultsViewController.h */,
-				B96049DC167EBF3A00A832D4 /* ResultsViewController.m */,
 				B911CD3D16992B6E00CE5CA0 /* ResultsTViewController.h */,
 				B911CD3E16992B6E00CE5CA0 /* ResultsTViewController.m */,
+				B96049DB167EBF3A00A832D4 /* ResultsViewController.h */,
+				B96049DC167EBF3A00A832D4 /* ResultsViewController.m */,
+				B94A498B16B4674000068117 /* runle.c */,
+				B94A498C16B4674000068117 /* runle.h */,
+				B9FBD4A316DFE9880063A76D /* ScanView.h */,
+				B9FBD4A416DFE9880063A76D /* ScanView.m */,
+				B96049CD167D368C00A832D4 /* ScanViewController.h */,
+				28C286E00D94DF7D0034E888 /* ScanViewController.mm */,
 				B9CAD4D516D7E86300035210 /* SettingsViewController.h */,
 				B9CAD4D616D7E86300035210 /* SettingsViewController.m */,
 				1D3623240D0F684500981E51 /* TGVAppDelegate.h */,
 				1D3623250D0F684500981E51 /* TGVAppDelegate.m */,
+				B911CD42169959A500CE5CA0 /* TGVResults.h */,
+				B9CAD4DC16D893F100035210 /* TGVSettings.h */,
 				B96049CE167D8D9400A832D4 /* TGVTabDelegate.h */,
 				B96049CF167D8EEE00A832D4 /* TGVTabDelegate.m */,
 				B9CAD4DD16DAF72000035210 /* TGVViewController.h */,
 				B9CAD4DE16DAF72000035210 /* TGVViewController.m */,
+				B94A499316B4B5A100068117 /* Voice.h */,
+				B94A499416B4B5A100068117 /* Voice.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -198,6 +278,7 @@
 			children = (
 				1D6058910D05DD3D006BFB54 /* TGV.app */,
 				E5345FD6119B27D2000CB77F /* libZXingWidget.a */,
+				B9FBD4D916E024E50063A76D /* TGVE.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -254,6 +335,7 @@
 				B911CD311698CB3700CE5CA0 /* qr-tabbar.png */,
 				B911CD321698CB3700CE5CA0 /* qr-tabbar@2x.png */,
 				8D1107310486CEB800E47090 /* TGV-Info.plist */,
+				B9FBD4DA16E024E60063A76D /* TGVE-Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -294,6 +376,24 @@
 			productReference = 1D6058910D05DD3D006BFB54 /* TGV.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B9FBD4A716E024E50063A76D /* TGVE */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B9FBD4D616E024E50063A76D /* Build configuration list for PBXNativeTarget "TGVE" */;
+			buildPhases = (
+				B9FBD4AA16E024E50063A76D /* Resources */,
+				B9FBD4B916E024E50063A76D /* Sources */,
+				B9FBD4C916E024E50063A76D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B9FBD4A816E024E50063A76D /* PBXTargetDependency */,
+			);
+			name = TGVE;
+			productName = TGV;
+			productReference = B9FBD4D916E024E50063A76D /* TGVE.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -324,6 +424,7 @@
 			projectRoot = "";
 			targets = (
 				1D6058900D05DD3D006BFB54 /* TGV */,
+				B9FBD4A716E024E50063A76D /* TGVE */,
 			);
 		};
 /* End PBXProject section */
@@ -367,6 +468,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B9FBD4AA16E024E50063A76D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B9FBD4AB16E024E50063A76D /* MainWindow.xib in Resources */,
+				B9FBD4AC16E024E50063A76D /* beep-beep.aiff in Resources */,
+				B9FBD4AD16E024E50063A76D /* Icon.png in Resources */,
+				B9FBD4AE16E024E50063A76D /* Default-568h@2x.png in Resources */,
+				B9FBD4AF16E024E50063A76D /* Icon@2x.png in Resources */,
+				B9FBD4B016E024E50063A76D /* ResultsViewController.xib in Resources */,
+				B9FBD4B116E024E50063A76D /* qr-tabbar.png in Resources */,
+				B9FBD4B216E024E50063A76D /* qr-tabbar@2x.png in Resources */,
+				B9FBD4B316E024E50063A76D /* gears-tabbar.png in Resources */,
+				B9FBD4B416E024E50063A76D /* gears-tabbar@2x.png in Resources */,
+				B9FBD4B516E024E50063A76D /* list-tabbar.png in Resources */,
+				B9FBD4B616E024E50063A76D /* list-tabbar@2x.png in Resources */,
+				B9FBD4B716E024E50063A76D /* ResultsTViewController.xib in Resources */,
+				B9FBD4B816E024E50063A76D /* SettingsViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -388,6 +510,31 @@
 				B9C4FE2416D57C560080D925 /* filters.c in Sources */,
 				B9CAD4D816D7E86300035210 /* SettingsViewController.m in Sources */,
 				B9CAD4DF16DAF72000035210 /* TGVViewController.m in Sources */,
+				B9FBD4A516DFE9880063A76D /* ScanView.m in Sources */,
+				B9FBD4DD16E11FFE0063A76D /* EventLog.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B9FBD4B916E024E50063A76D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B9FBD4BA16E024E50063A76D /* TGVAppDelegate.m in Sources */,
+				B9FBD4BB16E024E50063A76D /* ScanViewController.mm in Sources */,
+				B9FBD4BC16E024E50063A76D /* main.mm in Sources */,
+				B9FBD4BD16E024E50063A76D /* TGVTabDelegate.m in Sources */,
+				B9FBD4BE16E024E50063A76D /* ResultsViewController.m in Sources */,
+				B9FBD4BF16E024E50063A76D /* ResultsTViewController.m in Sources */,
+				B9FBD4C016E024E50063A76D /* Blob.m in Sources */,
+				B9FBD4C116E024E50063A76D /* findblobs.m in Sources */,
+				B9FBD4C216E024E50063A76D /* runle.c in Sources */,
+				B9FBD4C316E024E50063A76D /* findqrcs.m in Sources */,
+				B9FBD4C416E024E50063A76D /* Voice.m in Sources */,
+				B9FBD4C516E024E50063A76D /* filters.c in Sources */,
+				B9FBD4C616E024E50063A76D /* SettingsViewController.m in Sources */,
+				B9FBD4C716E024E50063A76D /* TGVViewController.m in Sources */,
+				B9FBD4C816E024E50063A76D /* ScanView.m in Sources */,
+				B9FBD4DE16E11FFE0063A76D /* EventLog.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -398,6 +545,11 @@
 			isa = PBXTargetDependency;
 			name = ZXingWidget;
 			targetProxy = 3B43FDC915939570001CD5C9 /* PBXContainerItemProxy */;
+		};
+		B9FBD4A816E024E50063A76D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ZXingWidget;
+			targetProxy = B9FBD4A916E024E50063A76D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -443,6 +595,54 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = TGV;
 				PROVISIONING_PROFILE = "61978E9B-3E04-4769-B29E-AFA1C0365795";
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B9FBD4D716E024E50063A76D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Jeffrey Scofield (PP36DPP7BP)";
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = NO;
+				EXPORTED_SYMBOLS_FILE = "";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = TGV_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = "TGV_EXPERIMENTAL=1";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
+				INFOPLIST_FILE = "TGVE-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
+				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
+				PRODUCT_NAME = TGVE;
+				PROVISIONING_PROFILE = "C1F25C9E-FB7C-4FE8-B2D5-3FCC8D32A6D3";
+				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		B9FBD4D816E024E50063A76D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Jeffrey Scofield";
+				COPY_PHASE_STRIP = YES;
+				EXPORTED_SYMBOLS_FILE = "";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = TGV_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = "TGV_EXPERIMENTAL=1";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
+				INFOPLIST_FILE = "TGVE-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				PRODUCT_NAME = TGVE;
+				PROVISIONING_PROFILE = "F7F60D82-EA6A-4B23-83CC-DB2C3C881DD3";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -519,6 +719,15 @@
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				1D6058950D05DD3E006BFB54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B9FBD4D616E024E50063A76D /* Build configuration list for PBXNativeTarget "TGVE" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B9FBD4D716E024E50063A76D /* Debug */,
+				B9FBD4D816E024E50063A76D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -32,6 +32,7 @@ static const CGFloat kLicenseButtonPadding = 10;
 
 @synthesize delegate, oneDMode;
 @synthesize points = _points;
+@synthesize trackedPoints = _trackedPoints;
 @synthesize cancelButton;
 @synthesize licenseButton;
 @synthesize cropRect;
@@ -88,6 +89,13 @@ static const CGFloat kLicenseButtonPadding = 10;
   return self;
 }
 
+- (void) setTrackedPoints:(NSArray *)trackedPoints
+{
+    _trackedPoints = trackedPoints;
+    [trackedPoints retain];
+    [self setNeedsDisplay];
+}
+
 - (void)cancel:(id)sender {
 	// call delegate to cancel this scanner
 	if (delegate != nil) {
@@ -132,6 +140,26 @@ static const CGFloat kLicenseButtonPadding = 10;
 	CGContextStrokePath(context);
 }
 
+- (void) drawTrackedPoints: (NSArray *) points inContext: (CGContextRef) context
+{
+#define RADIUS 20
+    NSValue *nsv;
+    CGPoint p;
+
+    if([points count] == 0)
+        return;
+
+    CGFloat color[4] = {0.510, 0.4, 0.396, 0.85};
+    CGContextSetStrokeColor(context, color);
+    CGContextSetFillColor(context, color);
+
+    for(nsv in points) {
+        p = [nsv CGPointValue];
+        CGContextAddEllipseInRect(context, CGRectMake(p.x - RADIUS, p.y - RADIUS, RADIUS * 2, RADIUS * 2));
+        CGContextFillPath(context);
+    }
+}
+
 - (CGPoint)map:(CGPoint)point {
     CGPoint center;
     center.x = cropRect.size.width/2;
@@ -164,13 +192,16 @@ static const CGFloat kLicenseButtonPadding = 10;
 
 #define kTextMargin 10
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-- (void)drawRect:(CGRect)rect {
-	[super drawRect:rect];
+- (void) drawRect: (CGRect) rect {
+    [super drawRect:rect];
+    
+    CGContextRef c = UIGraphicsGetCurrentContext();
+    [self drawTrackedPoints: self.trackedPoints inContext: c];
+    
+#ifdef FORMERLY
   if (displayedMessage == nil) {
     self.displayedMessage = NSLocalizedStringWithDefaultValue(@"OverlayView displayed message", nil, [NSBundle mainBundle], @"Place a barcode inside the viewfinder rectangle to scan it.", @"Place a barcode inside the viewfinder rectangle to scan it.");
   }
-	CGContextRef c = UIGraphicsGetCurrentContext();
   
 	CGFloat white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
 	CGContextSetStrokeColor(c, white);
@@ -232,10 +263,10 @@ static const CGFloat kLicenseButtonPadding = 10;
 			}
 		}
 	}
+#endif // FORMERLY
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
 - (void) setPoints:(NSMutableArray*)pnts {
     [pnts retain];
     [_points release];

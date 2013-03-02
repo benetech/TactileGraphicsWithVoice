@@ -5,6 +5,7 @@
 #import "ScanViewController.h"
 #import "QRCodeReader.h"
 #import "filters.h"
+#import "EventLog.h"
 #import "Voice.h"
 #import "Blob.h"
 #import "findqrcs.h"
@@ -25,6 +26,7 @@
   BOOL copyGuided;        // Copy was of a guided bitmap
   CMAcceleration gravity; // Gravity at last sample, for failure analysis
 }
+@property (nonatomic, strong) EventLog *eventLog;
 @property (nonatomic, strong) CMMotionManager *motionManager;
 @property (nonatomic, strong) Voice *voice;
 - (void) setup;
@@ -36,8 +38,20 @@
 
 @synthesize tabController = _tabController;
 @synthesize resultsController = _resultsController;
+@synthesize eventLog = _eventLog;
 @synthesize motionManager = _motionManager;
 @synthesize voice = _voice;
+
+
+- (EventLog *) eventLog
+{
+  if (!_eventLog) {
+    _eventLog = [[EventLog alloc] init];
+    _eventLog.delegate = self;
+  }
+  return _eventLog;
+}
+
 
 - (CMMotionManager *) motionManager
 {
@@ -127,9 +141,8 @@
   //
   if ([defaults boolForKey: kSettingsSaveFailedCounts] && [qrcs count] != 1 &&
       bitmapCopy && savedFailCounts++ < MAX_SAVES) {
-    static char buf[32];
-    sprintf(buf, "Counted %d QR codes", [qrcs count]);
-    [self saveFrame: bitmapCopy width: copyWidth height: copyHeight annotation: buf];
+    NSString *anno = [NSString stringWithFormat:@"Counted %d QR codes", [qrcs count]];
+    [self saveFrame: bitmapCopy width: copyWidth height: copyHeight annotation: anno];
   }
 
   // If number of QRCs != 1, no further use for the bitmap copy. Otherwise,
@@ -167,6 +180,18 @@
   //
   if (guided)
     [controller setFocusMode: AVCaptureFocusModeAutoFocus];
+  
+#if TGV_EXPERIMENTAL
+  // If we offered guidance and don't see 0 QRCs, log some events in the
+  // experimental version.
+  //
+  int qrcsCount = [qrcs count];
+  if (guided && qrcsCount != 0 && [defaults boolForKey: kSettingsLogEvents]) {
+    NSString *grav = [self gravityDescription: @"" gravity: self.motionManager.deviceMotion.gravity];
+    NSString *line = [NSString stringWithFormat:@"Saw %d code%@, %@", qrcsCount, qrcsCount == 1 ? @"" : @"s", grav];
+    [self.eventLog log: line];
+  }
+#endif
 
   // For now, if we see 1 QR code, it's worth scanning. Even if it's at
   // the edge or is too small. (Something else to figure out.)
@@ -201,23 +226,27 @@
            didScanResult: (NSString *) scanres
 {
   if ([defaults boolForKey: kSettingsSaveSucceededScans] && bitmapCopy && savedSuccScans++ < MAX_SAVES) {
-    char *anno = [self gravityDescription: "Y " gravity: gravity];
+    NSString *anno = [self gravityDescription: @"Y " gravity: gravity];
     [self saveFrame: bitmapCopy width:copyWidth height:copyHeight annotation: anno];
   }
+#if TGV_EXPERIMENTAL
+  NSString *line = [NSString stringWithFormat: @"Scan succeeded, text %@", scanres];
+  [self.eventLog log: line];
+#endif
   [self.resultsController addResult: scanres];
   self.tabController.selectedViewController = self.resultsController;
   if (bitmapCopy) free(bitmapCopy);
   bitmapCopy = NULL;
 }
 
-- (void) zxingControllerDidNotScan:(ZXingWidgetController *) controller
+- (void) zxingController:(ZXingWidgetController *) controller didNotScanReason:(NSString *)reason
 {
   // To avoid saving too many similar images, only save failed images when
   // there was guidance (around once a second).
   //
   if ([defaults boolForKey: kSettingsSaveFailedScans] && bitmapCopy &&
       copyGuided && savedFailScans++ < MAX_SAVES) {
-    char *anno = [self gravityDescription: "N " gravity: gravity];
+    NSString *anno = [self gravityDescription: @"N " gravity: gravity];
     [self saveFrame: bitmapCopy width:copyWidth height:copyHeight annotation: anno];
   }
   if (bitmapCopy) free(bitmapCopy);
@@ -226,6 +255,9 @@
 
 - (void) zxingControllerDidCancel: (ZXingWidgetController *) controller
 {
+#if TGV_EXPERIMENTAL
+  [self.eventLog log: @"Scan cancelled"];
+#endif
   self.tabController.selectedViewController = self.resultsController;
   if (bitmapCopy) free(bitmapCopy);
   bitmapCopy = NULL;
@@ -280,6 +312,9 @@
 
 - (void) viewDidAppear:(BOOL)animated
 {
+#if TGV_EXPERIMENTAL
+  [self.eventLog log: @"Scanning started"];
+#endif
   [super viewDidAppear:animated];
   [self.voice initializeGuidance];
   if ([defaults boolForKey: kSettingsIlluminateScans]) {
@@ -306,6 +341,9 @@
 {
   if ([self.tabBarController selectedViewController] != self)
     return;
+#if TGV_EXPERIMENTAL
+  [self.eventLog log: @"Scanning restarted from background"];
+#endif
   [self.voice initializeGuidance];
   if ([defaults boolForKey: kSettingsIlluminateScans]) {
     [self setTorch: YES];
@@ -323,17 +361,37 @@
   savedFailCounts = 0;
 }
 
+- (BOOL) scanViewShouldReportTouches:(ScanView *)scanView
+{
+#if TGV_EXPERIMENTAL
+  return [defaults boolForKey: kSettingsTrackTouches];
+#else
+  return NO;
+#endif
+}
+
+- (void) scanView: scanView didFeelTouchesAtPoints: (NSArray *) points
+{
+  self.trackedPoints = points;
+}
+
+- (BOOL) eventLogShouldLogEvent:(EventLog *)eventLog
+{
+  return [defaults boolForKey: kSettingsLogEvents];
+}
+
 - (void) saveFrame: (uint8_t *) bitmap
              width: (size_t) width
             height: (size_t) height
-        annotation: (const char *) annotation
+        annotation: (NSString *) annotation
 {
   CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
   CGContextRef ctx =
     CGBitmapContextCreate(bitmap, width, height, 8, width * BPP, colorSpace,
                         kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipFirst);
   CGContextSelectFont(ctx, "Helvetica", ANNOT_HEIGHT - 6, kCGEncodingMacRoman);
-  CGContextShowTextAtPoint(ctx, 5, 5, annotation, strlen(annotation));
+  const char *text = [annotation UTF8String];
+  CGContextShowTextAtPoint(ctx, 5, 5, text, strlen(text));
   CGImageRef image = CGBitmapContextCreateImage(ctx);
   CGContextRelease(ctx);
   CGColorSpaceRelease(colorSpace);
@@ -341,22 +399,19 @@
   CGImageRelease(image);
 }
 
-- (char *) gravityDescription: (const char *) prefix gravity: (CMAcceleration) accel
+- (NSString *) gravityDescription: (NSString *) prefix gravity: (CMAcceleration) accel
 {
 # define DOT(x0,y0,z0,x1,y1,z1) (x0*x1 + y0*y1 + z0*z1)
 # define MAG(x,y,z) sqrt(x*x + y*y + z*z)
 # define BETWEEN(x0,y0,z0,x1,y1,z1) \
    acos(DOT(x0,y0,z0,x1,y1,z1)/(MAG(x0,y0,z0)*MAG(x1,y1,z1)))
 # define DEGREES(theta) ((int) (theta * 57.29577951308232 + 0.5))
-  static char buf[128]; // Not thread safe
   
   // Gravity reports as (0.0, 0.0, 0.0) when not warmed up. Otherwise
   // it's a unit vector.
   //
-  if(MAG(accel.x, accel.y, accel.z) < 0.5) {
-    sprintf(buf, "%s(No gravity data)", prefix);
-    return buf;
-  }
+  if(MAG(accel.x, accel.y, accel.z) < 0.5)
+    return [NSString stringWithFormat:@"%@(No gravity data)", prefix];
   
   // Our expected down direction is (0.0, 0.0, -1.0) in device coordinates
   double slant = BETWEEN(accel.x, accel.y, accel.z, 0.0, 0.0, -1.0);
@@ -367,11 +422,10 @@
   high += M_PI / 8.0; // Round to octant
   if (high < 0.0) high += 2.0 * M_PI;
   int hidir = (int) (high / M_PI * 4.0);
-  const char *dirs[] = { "E", "NE", "N", "NW", "W", "SW", "S", "SE" };
+  NSString *dirs[] = { @"E", @"NE", @"N", @"NW", @"W", @"SW", @"S", @"SE" };
   
-  sprintf(buf, "%stilt %d, hi pt %s (%6.3f, %6.3f, %6.3f)",
-          prefix, DEGREES(slant), dirs[hidir], accel.x, accel.y, accel.z);
-  return buf;
+  return [NSString stringWithFormat: @"%@tilt %d, hi pt %@ (%6.3f, %6.3f, %6.3f)",
+           prefix, DEGREES(slant), dirs[hidir], accel.x, accel.y, accel.z];
 }
 
 - (void) dealloc
