@@ -293,10 +293,13 @@ static int qr_candidate(Blob *blob)
      * downslopes scales with the area (total number of pixels). To
      * compromise, we normalize by the geometric mean of the height and
      * the area.
+     *
+     * Max for QRSIZE was 240 for a while. Recent tests suggest it's
+     * OK to make it bigger. But keep an eye on it.
      */
 # define OLD_VARIEGATION_THRESH 0.78            /* Set by eye */
 # define NEW_VARIEGATION_THRESH 0.078           /* Set by experiment */
-# define QRSIZE(x) ((x) >= 50 && (x) < 240)     /* Low set by experiment */
+# define QRSIZE(x) ((x) >= 50 && (x) < 300)     /* Set by experiment */
     if(blob == nil)
         return 0;
     int width = blob.maxx - blob.minx + 1;

@@ -8,7 +8,10 @@
 
 // Names for settings
 
+#define kSettingsGuideWithBeeps     @"GuideWithBeeps"
 #define kSettingsIlluminateScans    @"IlluminateScans"
+
+// Used for troubleshooting
 #define kSettingsSaveFailedScans    @"SaveFailedScans"
 #define kSettingsSaveSucceededScans @"SaveSucceededScans"
 #define kSettingsSaveFailedCounts   @"SaveFailedCounts"

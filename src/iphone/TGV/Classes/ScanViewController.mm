@@ -6,7 +6,9 @@
 #import "QRCodeReader.h"
 #import "filters.h"
 #import "EventLog.h"
+#import "Synchronizer.h"
 #import "Voice.h"
+#import "Signal.h"
 #import "Blob.h"
 #import "findqrcs.h"
 
@@ -16,19 +18,20 @@
 @interface ScanViewController ()
 {
   NSUserDefaults *defaults;
-  int guidanceCount;      // Number of guidance messages; mostly for timing
-  int savedFailScans;     // Number of images saved so far for failed scans
-  int savedSuccScans;     // Number of images saved so far for successful scans
-  int savedFailCounts;    // Number of images saved so far for failed counts
-  uint8_t *bitmapCopy;    // Copy of bitmap for failure analysis
-  size_t copyWidth;       // Width of copied bitmap
-  size_t copyHeight;      // Height of copied bitmap (includes annotation)
-  BOOL copyGuided;        // Copy was of a guided bitmap
-  CMAcceleration gravity; // Gravity at last sample, for failure analysis
+  int savedFailScans;      // Number of images saved so far for failed scans
+  int savedSuccScans;      // Number of images saved so far for successful scans
+  int savedFailCounts;     // Number of images saved so far for failed counts
+  uint8_t *bitmapCopy;     // Copy of bitmap for failure analysis
+  size_t copyWidth;        // Width of copied bitmap
+  size_t copyHeight;       // Height of copied bitmap (includes annotation)
+  BOOL copyGoodTime;       // Copy was made at a good time for periodic actions
+  CMAcceleration copyGrav; // Gravity at time of copy, for failure analysis
 }
 @property (nonatomic, strong) EventLog *eventLog;
 @property (nonatomic, strong) CMMotionManager *motionManager;
+@property (nonatomic, strong) Synchronizer *synchronizer;
 @property (nonatomic, strong) Voice *voice;
+@property (nonatomic, strong) Signal *signal;
 - (void) setup;
 - (void) didBecomeActive: (NSNotification *) notification;
 @end
@@ -40,7 +43,9 @@
 @synthesize resultsController = _resultsController;
 @synthesize eventLog = _eventLog;
 @synthesize motionManager = _motionManager;
+@synthesize synchronizer = _synchronizer;
 @synthesize voice = _voice;
+@synthesize signal = _signal;
 
 
 - (EventLog *) eventLog
@@ -62,12 +67,30 @@
   return _motionManager;
 }
 
+- (Synchronizer *) synchronizer
+{
+  if (!_synchronizer)
+    _synchronizer = [[Synchronizer alloc] init];
+  return _synchronizer;
+}
+
 - (Voice *) voice
 {
   if(!_voice) {
     _voice = [[Voice alloc] init];
   }
   return _voice;
+}
+
+- (Signal *) signal
+{
+  if(!_signal) {
+    _signal = [[Signal alloc] init];
+    NSBundle *mainBundle = [NSBundle mainBundle];
+    _signal.signalToIssue =
+      [NSURL fileURLWithPath: [mainBundle pathForResource: @"epianodb4" ofType: @"aif"] isDirectory:NO];
+  }
+  return _signal;
 }
 
 - (BOOL) zxingController:(ZXingWidgetController *)controller
@@ -93,46 +116,18 @@
     bitmapCopy = (uint8_t *) malloc(copyWidth * copyHeight * BPP);
     memset(bitmapCopy, 0xff, copyWidth * copyHeight * BPP);
     memcpy(bitmapCopy, bitmap, width * height * BPP);
-    gravity = self.motionManager.deviceMotion.gravity;
+    copyGrav = self.motionManager.deviceMotion.gravity;
   }
 
   NSArray *qrcs = findqrcs(bitmap, width, height);
   free(bitmap);
-
-  // For now, pretty simple guidance. If number of QR codes != 1, then
-  // say the number seen. If there is 1 code at edge, name the edge.
-  // If there's 1 code that seems too small, say "too high".
-  // Otherwise just say "one".
+  
+  // Offer some audible guidance.
   //
-  // Note: images are presented in landscape mode with home button to
-  // the right. We're translating here between this orientation and the
-  // expected portrait orientation of the phone while scanning. (This is
-  // something to figure out, however.)
-  //
-# define SMALLEST_QRC 60
-  BOOL guided;
-  Blob *qrc1;
-  switch([qrcs count]) {
-    case 0: guided = [self.voice offerGuidance: @"zero"]; break;
-    case 1:
-      qrc1 = qrcs[0];
-      if ([qrc1 touchesTop])
-        guided = [self.voice offerGuidance: @"right"];
-      else if ([qrc1 touchesBottom])
-        guided = [self.voice offerGuidance: @"left"];
-      else if ([qrc1 touchesLeft])
-        guided = [self.voice offerGuidance: @"top"];
-      else if ([qrc1 touchesRight])
-        guided = [self.voice offerGuidance: @"bottom"];
-      else if ([qrc1 width] < SMALLEST_QRC && [qrc1 height] < SMALLEST_QRC)
-        guided = [self.voice offerGuidance: @"too high"];
-      else
-        guided = [self.voice offerGuidance: @"one"];
-      break;
-    case 2: guided = [self.voice offerGuidance: @"two"]; break;
-    case 3: guided = [self.voice offerGuidance: @"three"]; break;
-    default: guided = [self.voice offerGuidance: @"many"]; break;
-  }
+  if ([defaults boolForKey:kSettingsGuideWithBeeps])
+    [self guideByBeep: qrcs width: width height: height];
+  else
+    [self guideByVoice: qrcs width: width height: height];
   
   // The "save failed counts" setting asks to save images whose count
   // isn't 1. The way to test is to aim the camera at exactly one QRC.
@@ -146,22 +141,18 @@
   }
 
   // If number of QRCs != 1, no further use for the bitmap copy. Otherwise,
-  // save guidedness for deciding when to save images.
+  // remember whether it's a good time to save an image.
   //
   if ([qrcs count] != 1 && bitmapCopy) {
     free(bitmapCopy);
     bitmapCopy = NULL;
   }
   if (bitmapCopy)
-    copyGuided = guided;
-
-  // Track number of guidances. This is just used as a rough timer.
-  // (Actually, it's not used at all right now.)
-  //
-  if (guided) guidanceCount++;
+    copyGoodTime = self.synchronizer.isGoodTime;
 
 #ifdef WANT_TO_SET_FOCUS_POINT
   // If there's just one QR code, set the focus on it every now and then.
+  // Note: this didn't seem to help, disabled for now.
   //
   if ([qrcs count] == 1) {
     Blob *b = qrcs[0];
@@ -178,15 +169,16 @@
   // At any rate, things seem to go far better if you ask for a refocus
   // now and then.
   //
-  if (guided)
+  if (self.synchronizer.isGoodTime)
     [controller setFocusMode: AVCaptureFocusModeAutoFocus];
   
 #if TGV_EXPERIMENTAL
-  // If we offered guidance and don't see 0 QRCs, log some events in the
-  // experimental version.
+  // In experimental version, if good time for periodic actions, and
+  // don't see 0 QRCs, log some events.
   //
   int qrcsCount = [qrcs count];
-  if (guided && qrcsCount != 0 && [defaults boolForKey: kSettingsLogEvents]) {
+  if (self.synchronizer.isGoodTime && qrcsCount != 0 &&
+      [defaults boolForKey: kSettingsLogEvents]) {
     NSString *grav = [self gravityDescription: @"" gravity: self.motionManager.deviceMotion.gravity];
     NSString *line = [NSString stringWithFormat:@"Saw %d code%@, %@", qrcsCount, qrcsCount == 1 ? @"" : @"s", grav];
     [self.eventLog log: line];
@@ -221,12 +213,81 @@
   return NO;
 }
 
+- (void) guideByVoice: (NSArray *) qrcs width: (size_t) width height: (size_t) height
+{
+  // For now, pretty simple guidance. If number of QR codes != 1, then
+  // say the number seen. If there is 1 code at edge, name the edge.
+  // If there's 1 code that seems too small, say "too high". If there's 1
+  // code that seems too large, say "too low". Otherwise just say "one".
+  //
+  // Note: images are presented in landscape mode with home button to
+  // the right. We're translating here between this orientation and the
+  // expected portrait orientation of the phone while scanning. (This is
+  // something to figure out, however.)
+  //
+# define LARGEST_QRC_PX 48400
+# define SMALLEST_QRC 60
+  BOOL guided;
+  Blob *qrc1;
+  self.signal.period = SIGNAL_INF_PERIOD; // Make sure no beeps
+  switch([qrcs count]) {
+    case 0: guided = [self.voice offerGuidance: @"zero"]; break;
+    case 1:
+      qrc1 = qrcs[0];
+      if ([qrc1 touchesTop])
+        guided = [self.voice offerGuidance: @"right"];
+      else if ([qrc1 touchesBottom])
+        guided = [self.voice offerGuidance: @"left"];
+      else if ([qrc1 touchesLeft])
+        guided = [self.voice offerGuidance: @"top"];
+      else if ([qrc1 touchesRight])
+        guided = [self.voice offerGuidance: @"bottom"];
+      else if ([qrc1 width] < SMALLEST_QRC && [qrc1 height] < SMALLEST_QRC)
+        guided = [self.voice offerGuidance: @"too high"];
+      else if (qrc1.pixelCount > LARGEST_QRC_PX)
+        guided = [self.voice offerGuidance: @"too low"];
+      else
+        guided = [self.voice offerGuidance: @"one"];
+      break;
+    case 2: guided = [self.voice offerGuidance: @"two"]; break;
+    case 3: guided = [self.voice offerGuidance: @"three"]; break;
+    default: guided = [self.voice offerGuidance: @"many"]; break;
+  }
+  self.synchronizer.goodTime = guided;
+}
+
+- (void) guideByBeep: (NSArray *) qrcs width: (int) width height: (int) height
+{
+  // For now, issue beeps when there is just one QRC. Beep faster
+  // when it's near the center of the display.
+  //
+  CFTimeInterval period;
+  Blob *qrc1;
+  int dist;
+# define SMALL_DIST 90
+# define LARGE_DIST 240
+
+  if ([qrcs count] == 1) {
+    qrc1 = qrcs[0];
+    dist = abs(qrc1.minx - width / 2);
+    dist = MAX(dist, abs(qrc1.maxx - width / 2));
+    dist = MAX(dist, abs(qrc1.miny - height / 2));
+    dist = MAX(dist, abs(qrc1.maxy - height / 2));
+    dist = MAX(SMALL_DIST, dist);
+    dist = MIN(LARGE_DIST, dist);
+    period = 0.4 + 1.1 * ((double) (dist - SMALL_DIST) / (double) (LARGE_DIST - SMALL_DIST));
+  } else {
+    period = SIGNAL_INF_PERIOD;
+  }
+  self.signal.period = period;
+  [self.synchronizer step];
+}
 
 - (void) zxingController: (ZXingWidgetController *) controller
            didScanResult: (NSString *) scanres
 {
   if ([defaults boolForKey: kSettingsSaveSucceededScans] && bitmapCopy && savedSuccScans++ < MAX_SAVES) {
-    NSString *anno = [self gravityDescription: @"Y " gravity: gravity];
+    NSString *anno = [self gravityDescription: @"Y " gravity: copyGrav];
     [self saveFrame: bitmapCopy width:copyWidth height:copyHeight annotation: anno];
   }
 #if TGV_EXPERIMENTAL
@@ -242,11 +303,11 @@
 - (void) zxingController:(ZXingWidgetController *) controller didNotScanReason:(NSString *)reason
 {
   // To avoid saving too many similar images, only save failed images when
-  // there was guidance (around once a second).
+  // it's a good time (around once a second).
   //
   if ([defaults boolForKey: kSettingsSaveFailedScans] && bitmapCopy &&
-      copyGuided && savedFailScans++ < MAX_SAVES) {
-    NSString *anno = [self gravityDescription: @"N " gravity: gravity];
+      copyGoodTime && savedFailScans++ < MAX_SAVES) {
+    NSString *anno = [self gravityDescription: @"N " gravity: copyGrav];
     [self saveFrame: bitmapCopy width:copyWidth height:copyHeight annotation: anno];
   }
   if (bitmapCopy) free(bitmapCopy);
@@ -306,8 +367,7 @@
   
   NSBundle *mainBundle = [NSBundle mainBundle];
   self.soundToPlay =
-  [NSURL fileURLWithPath:[mainBundle pathForResource:@"beep-beep" ofType:@"aiff"] isDirectory:NO];
-
+    [NSURL fileURLWithPath:[mainBundle pathForResource:@"epianodbmaj" ofType:@"aif"] isDirectory:NO];
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -430,11 +490,14 @@
 
 - (void) dealloc
 {
+  self.eventLog = nil;
   if (self.motionManager) {
     [self.motionManager stopDeviceMotionUpdates];
     self.motionManager = nil;
   }
+  self.synchronizer = nil;
   self.voice = nil;
+  self.signal = nil;
   [super dealloc];
 }
 @end

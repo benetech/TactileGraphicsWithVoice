@@ -39,6 +39,14 @@
 		B94A499516B4B5A100068117 /* Voice.m in Sources */ = {isa = PBXBuildFile; fileRef = B94A499416B4B5A100068117 /* Voice.m */; };
 		B96049D0167D8EEE00A832D4 /* TGVTabDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B96049CF167D8EEE00A832D4 /* TGVTabDelegate.m */; };
 		B96049DE167EBF3B00A832D4 /* ResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B96049DC167EBF3A00A832D4 /* ResultsViewController.m */; };
+		B96119B516EACA0B006503FB /* epianodb4.aif in Resources */ = {isa = PBXBuildFile; fileRef = B96119B416EACA0B006503FB /* epianodb4.aif */; };
+		B96119B616EACA0B006503FB /* epianodb4.aif in Resources */ = {isa = PBXBuildFile; fileRef = B96119B416EACA0B006503FB /* epianodb4.aif */; };
+		B96119BA16EACA5D006503FB /* Signal.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119B916EACA5D006503FB /* Signal.m */; };
+		B96119BB16EACA5D006503FB /* Signal.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119B916EACA5D006503FB /* Signal.m */; };
+		B96119BE16EBC55C006503FB /* Synchronizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119BD16EBC55C006503FB /* Synchronizer.m */; };
+		B96119BF16EBC55C006503FB /* Synchronizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119BD16EBC55C006503FB /* Synchronizer.m */; };
+		B96119C116EC4733006503FB /* epianodbmaj.aif in Resources */ = {isa = PBXBuildFile; fileRef = B96119C016EC4733006503FB /* epianodbmaj.aif */; };
+		B96119C216EC4733006503FB /* epianodbmaj.aif in Resources */ = {isa = PBXBuildFile; fileRef = B96119C016EC4733006503FB /* epianodbmaj.aif */; };
 		B9C4FE2416D57C560080D925 /* filters.c in Sources */ = {isa = PBXBuildFile; fileRef = B9C4FE2216D57C560080D925 /* filters.c */; };
 		B9CAD4D416D74D7900035210 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9CAD4D316D74D7900035210 /* CoreMotion.framework */; };
 		B9CAD4D816D7E86300035210 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B9CAD4D616D7E86300035210 /* SettingsViewController.m */; };
@@ -47,7 +55,7 @@
 		B9CAD4DF16DAF72000035210 /* TGVViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B9CAD4DE16DAF72000035210 /* TGVViewController.m */; };
 		B9FBD4A516DFE9880063A76D /* ScanView.m in Sources */ = {isa = PBXBuildFile; fileRef = B9FBD4A416DFE9880063A76D /* ScanView.m */; };
 		B9FBD4AB16E024E50063A76D /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD735F0D9D9599002E5188 /* MainWindow.xib */; };
-		B9FBD4AC16E024E50063A76D /* beep-beep.aiff in Resources */ = {isa = PBXBuildFile; fileRef = E548755B119C62B9001CC0F8 /* beep-beep.aiff */; };
+		B9FBD4AC16E024E50063A76D /* plink.aif in Resources */ = {isa = PBXBuildFile; fileRef = E548755B119C62B9001CC0F8 /* plink.aif */; };
 		B9FBD4AD16E024E50063A76D /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B0A5DB81444C492000EC568 /* Icon.png */; };
 		B9FBD4AE16E024E50063A76D /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B331CED161BB74E007313B6 /* Default-568h@2x.png */; };
 		B9FBD4AF16E024E50063A76D /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B949FF9816961C52003C545B /* Icon@2x.png */; };
@@ -90,7 +98,7 @@
 		B9FBD4DD16E11FFE0063A76D /* EventLog.m in Sources */ = {isa = PBXBuildFile; fileRef = B9FBD4DC16E11FFE0063A76D /* EventLog.m */; };
 		B9FBD4DE16E11FFE0063A76D /* EventLog.m in Sources */ = {isa = PBXBuildFile; fileRef = B9FBD4DC16E11FFE0063A76D /* EventLog.m */; };
 		E5345BF11198D81A000CB77F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5345BF01198D81A000CB77F /* AudioToolbox.framework */; };
-		E548755C119C62B9001CC0F8 /* beep-beep.aiff in Resources */ = {isa = PBXBuildFile; fileRef = E548755B119C62B9001CC0F8 /* beep-beep.aiff */; };
+		E548755C119C62B9001CC0F8 /* plink.aif in Resources */ = {isa = PBXBuildFile; fileRef = E548755B119C62B9001CC0F8 /* plink.aif */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -171,6 +179,12 @@
 		B96049DB167EBF3A00A832D4 /* ResultsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultsViewController.h; sourceTree = "<group>"; };
 		B96049DC167EBF3A00A832D4 /* ResultsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.objc; path = ResultsViewController.m; sourceTree = "<group>"; };
 		B96049DD167EBF3A00A832D4 /* ResultsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ResultsViewController.xib; path = Classes/ResultsViewController.xib; sourceTree = "<group>"; };
+		B96119B416EACA0B006503FB /* epianodb4.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = epianodb4.aif; sourceTree = "<group>"; };
+		B96119B816EACA5D006503FB /* Signal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signal.h; sourceTree = "<group>"; };
+		B96119B916EACA5D006503FB /* Signal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Signal.m; sourceTree = "<group>"; };
+		B96119BC16EBC55C006503FB /* Synchronizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Synchronizer.h; sourceTree = "<group>"; };
+		B96119BD16EBC55C006503FB /* Synchronizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Synchronizer.m; sourceTree = "<group>"; };
+		B96119C016EC4733006503FB /* epianodbmaj.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = epianodbmaj.aif; sourceTree = "<group>"; };
 		B9C4FE2216D57C560080D925 /* filters.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = filters.c; sourceTree = "<group>"; };
 		B9C4FE2316D57C560080D925 /* filters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filters.h; sourceTree = "<group>"; };
 		B9CAD4D316D74D7900035210 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
@@ -189,7 +203,7 @@
 		B9FBD4DC16E11FFE0063A76D /* EventLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventLog.m; sourceTree = "<group>"; };
 		E5345BF01198D81A000CB77F /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		E5345FD6119B27D2000CB77F /* libZXingWidget.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libZXingWidget.a; path = "build/Debug-iphoneos/libZXingWidget.a"; sourceTree = "<group>"; };
-		E548755B119C62B9001CC0F8 /* beep-beep.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = "beep-beep.aiff"; sourceTree = "<group>"; };
+		E548755B119C62B9001CC0F8 /* plink.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = plink.aif; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -259,6 +273,10 @@
 				28C286E00D94DF7D0034E888 /* ScanViewController.mm */,
 				B9CAD4D516D7E86300035210 /* SettingsViewController.h */,
 				B9CAD4D616D7E86300035210 /* SettingsViewController.m */,
+				B96119B816EACA5D006503FB /* Signal.h */,
+				B96119B916EACA5D006503FB /* Signal.m */,
+				B96119BC16EBC55C006503FB /* Synchronizer.h */,
+				B96119BD16EBC55C006503FB /* Synchronizer.m */,
 				1D3623240D0F684500981E51 /* TGVAppDelegate.h */,
 				1D3623250D0F684500981E51 /* TGVAppDelegate.m */,
 				B911CD42169959A500CE5CA0 /* TGVResults.h */,
@@ -323,7 +341,9 @@
 			children = (
 				3B0A5DB81444C492000EC568 /* Icon.png */,
 				B949FF9816961C52003C545B /* Icon@2x.png */,
-				E548755B119C62B9001CC0F8 /* beep-beep.aiff */,
+				E548755B119C62B9001CC0F8 /* plink.aif */,
+				B96119B416EACA0B006503FB /* epianodb4.aif */,
+				B96119C016EC4733006503FB /* epianodbmaj.aif */,
 				B96049DD167EBF3A00A832D4 /* ResultsViewController.xib */,
 				B911CD3F16992B6E00CE5CA0 /* ResultsTViewController.xib */,
 				B9CAD4D716D7E86300035210 /* SettingsViewController.xib */,
@@ -452,7 +472,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				28AD73600D9D9599002E5188 /* MainWindow.xib in Resources */,
-				E548755C119C62B9001CC0F8 /* beep-beep.aiff in Resources */,
+				E548755C119C62B9001CC0F8 /* plink.aif in Resources */,
 				3B0A5DB91444C492000EC568 /* Icon.png in Resources */,
 				3B331CEE161BB74E007313B6 /* Default-568h@2x.png in Resources */,
 				B949FF9916961C52003C545B /* Icon@2x.png in Resources */,
@@ -465,6 +485,8 @@
 				B911CD3C1698DB0E00CE5CA0 /* list-tabbar@2x.png in Resources */,
 				B911CD4116992B6E00CE5CA0 /* ResultsTViewController.xib in Resources */,
 				B9CAD4D916D7E86300035210 /* SettingsViewController.xib in Resources */,
+				B96119B516EACA0B006503FB /* epianodb4.aif in Resources */,
+				B96119C116EC4733006503FB /* epianodbmaj.aif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -473,7 +495,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B9FBD4AB16E024E50063A76D /* MainWindow.xib in Resources */,
-				B9FBD4AC16E024E50063A76D /* beep-beep.aiff in Resources */,
+				B9FBD4AC16E024E50063A76D /* plink.aif in Resources */,
 				B9FBD4AD16E024E50063A76D /* Icon.png in Resources */,
 				B9FBD4AE16E024E50063A76D /* Default-568h@2x.png in Resources */,
 				B9FBD4AF16E024E50063A76D /* Icon@2x.png in Resources */,
@@ -486,6 +508,8 @@
 				B9FBD4B616E024E50063A76D /* list-tabbar@2x.png in Resources */,
 				B9FBD4B716E024E50063A76D /* ResultsTViewController.xib in Resources */,
 				B9FBD4B816E024E50063A76D /* SettingsViewController.xib in Resources */,
+				B96119B616EACA0B006503FB /* epianodb4.aif in Resources */,
+				B96119C216EC4733006503FB /* epianodbmaj.aif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -512,6 +536,8 @@
 				B9CAD4DF16DAF72000035210 /* TGVViewController.m in Sources */,
 				B9FBD4A516DFE9880063A76D /* ScanView.m in Sources */,
 				B9FBD4DD16E11FFE0063A76D /* EventLog.m in Sources */,
+				B96119BA16EACA5D006503FB /* Signal.m in Sources */,
+				B96119BE16EBC55C006503FB /* Synchronizer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -535,6 +561,8 @@
 				B9FBD4C716E024E50063A76D /* TGVViewController.m in Sources */,
 				B9FBD4C816E024E50063A76D /* ScanView.m in Sources */,
 				B9FBD4DE16E11FFE0063A76D /* EventLog.m in Sources */,
+				B96119BB16EACA5D006503FB /* Signal.m in Sources */,
+				B96119BF16EBC55C006503FB /* Synchronizer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

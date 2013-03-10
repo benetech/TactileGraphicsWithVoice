@@ -36,7 +36,10 @@ float AlignmentPatternFinder::centerFromEnd(vector<int> &stateCount, int end) {
 }
 
 bool AlignmentPatternFinder::foundPatternCross(vector<int> &stateCount) {
-  float maxVariance = moduleSize_ / 2.0f;
+  // ORIGINAL float maxVariance = moduleSize_ / 2.0f;
+  // (This is a TGV mod to allow the alignment pattern to be found when
+  // it's a little out of focus.)
+  float maxVariance = moduleSize_ * 0.6;
   for (size_t i = 0; i < 3; i++) {
     if (abs(moduleSize_ - stateCount[i]) >= maxVariance) {
       return false;
@@ -97,7 +100,10 @@ float AlignmentPatternFinder::crossCheckVertical(size_t startI, size_t centerJ, 
 Ref<AlignmentPattern> AlignmentPatternFinder::handlePossibleCenter(vector<int> &stateCount, size_t i, size_t j) {
   int stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2];
   float centerJ = centerFromEnd(stateCount, j);
-  float centerI = crossCheckVertical(i, (int)centerJ, 2 * stateCount[1], stateCountTotal);
+  // ORIGINAL float centerI = crossCheckVertical(i, (int)centerJ, 2 * stateCount[1], stateCountTotal);
+  // (This is a TGV mod that's supposed to find alignment patterns when
+  // they're a little bit out of focus.)
+  float centerI = crossCheckVertical(i, (int) centerJ, (2 * stateCountTotal) / 3, stateCountTotal);
   if (!isnan(centerI)) {
     float estimatedModuleSize = (float)(stateCount[0] + stateCount[1] + stateCount[2]) / 3.0f;
     int max = possibleCenters_->size();

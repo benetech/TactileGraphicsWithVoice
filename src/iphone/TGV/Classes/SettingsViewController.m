@@ -16,6 +16,12 @@
 
 @implementation SettingsViewController
 
+- (void) setGuideWithBeeps: (UISwitch *) sender
+{
+    [defaults setBool: sender.isOn forKey: kSettingsGuideWithBeeps];
+    [defaults synchronize];
+}
+
 - (void) setIlluminateScans: (UISwitch *) sender
 {
     [defaults setBool: sender.isOn forKey: kSettingsIlluminateScans];
@@ -69,7 +75,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     switch (section) {
-        case 0: return 1;
+        case 0: return 2;
         case 1:
 #if TGV_EXPERIMENTAL
             return 5;
@@ -92,6 +98,11 @@
     BOOL initialValue;
     switch (indexPath.section * 10 + indexPath.row) {
         case 0:
+            label = @"Guide With Beeps";
+            action = @selector(setGuideWithBeeps:);
+            initialValue = [defaults boolForKey: kSettingsGuideWithBeeps];
+            break;
+        case 1:
             label = @"Illuminate Scans";
             action = @selector(setIlluminateScans:);
             initialValue = [defaults boolForKey: kSettingsIlluminateScans];

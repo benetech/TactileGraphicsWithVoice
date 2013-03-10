@@ -14,6 +14,7 @@
 @synthesize maxy = _maxy;
 @synthesize slopeCount = _slopeCount;
 @synthesize runCount = _runCount;
+@synthesize pixelCount = _pixelCount;
 @synthesize topPixels = _topPixels;
 @synthesize botPixels = _botPixels;
 @synthesize leftPixels = _leftPixels;
