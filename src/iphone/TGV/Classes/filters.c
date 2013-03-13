@@ -53,14 +53,93 @@ void lumi_of_rgba(uint16_t *out, uint8_t *in, int width, int height)
 }
 
 
-void lumi_histogram(int *out, uint16_t *in, int width, int height)
+int lumi_rect_downslopes(uint16_t *in, int inwidth, int inheight,
+                    int x, int y, int w, int h, int dsminwid, int dsmindep)
 {
-    /* Calculate a histogram of the given grayscale (luminance) image.
+    /* Count the number of downslopes in luminosity in a rectangle of
+     * pixels (x, y, w, h).  A downslope must be of at least the given
+     * width and depth. This is a rough measure of variegation in the
+     * rectangle.
      */
-    uint16_t *end = in + width * height;
+# define MINROWSLOPES 2  /* Fewer downslopes in one row is insignificant */
+    uint16_t *b, *p;
+    uint16_t *bend, *pend, *dsstart;
+    int rowslopect, slopect;
+
+    if(x + w > inwidth) w = inwidth - x;
+    if(y + h > inheight) h = inheight - y;
+    slopect = 0;
+    bend = in + (y + h) * inwidth;
+    for(b = in + y * inwidth + x; b < bend; b += inwidth) {
+        p = b + 1;
+        pend = b + w;
+        rowslopect = 0;
+        while(p < pend) {
+            for(; p < pend && *p >= *(p - 1); p++)
+                ;
+            if(p >= pend)
+                break;
+            dsstart = p;
+            for(; p < pend && *p <= *(p - 1); p++)
+                ;
+            if(p - dsstart >= dsminwid && *dsstart - *(p - 1) >= dsmindep)
+                rowslopect++;
+        }
+        if(rowslopect >= MINROWSLOPES)
+            slopect += rowslopect;
+    }
+    return slopect;
+}
+
+
+int lumi_rect_mean(uint16_t *in, int inwidth, int inheight,
+                    int x, int y, int w, int h)
+{
+    /* Return the mean luminosity of the rectangle of pixels (x, y, w, h).
+     */
+    int total, pixelct;
+    uint16_t *b, *p;
+    uint16_t *bend, *pend;
+
+    if(x + w > inwidth) w = inwidth - x;
+    if(y + h > inheight) h = inheight - y;
+    total = 0;
+    bend = in + (y + h) * inwidth;
+    for(b = in + y * inwidth + x; b < bend; b += inwidth) {
+        pend = b + w;
+        for(p = b; p < pend; p++)
+            total += *p;
+    }
+    pixelct = w * h;
+    return (total + pixelct / 2) / pixelct;
+}
+
+
+void lumi_rect_cumu_histogram(int *out, uint16_t *in, int inwidth, int inheight,
+                    int x, int y, int w, int h)
+{
+    /* Cumulative histogram for the rectangle of pixels (x, y, w, h).
+     * I.e., it adds to whatever is already in out[].
+     */
+    uint16_t *b, *p;
+    uint16_t *bend, *pend;
+
+    if(x + w > inwidth) w = inwidth - x;
+    if(y + h > inheight) h = inheight - y;
+    bend = in + (y + h) * inwidth;
+    for(b = in + y * inwidth + x; b < bend; b += inwidth) {
+        pend = b + w;
+        for(p = b; p < pend; p++)
+            out[*p]++;
+    }
+}
+
+
+void lumi_rect_histogram(int *out, uint16_t *in, int inwidth, int inheight,
+                    int x, int y, int w, int h)
+{
     memset(out, 0, LUMINANCES * sizeof(int));
-    while(in < end)
-        out[*in++]++;
+    lumi_rect_cumu_histogram(out, in, inwidth, inheight, x, y, w, h);
 }
 
 
@@ -172,4 +251,81 @@ void lumi_boxblur(uint16_t *out, uint16_t *in,
         for(p = col; p < end; p += width)
             *p = *a++;
     }
+}
+
+
+#ifdef FORMERLY
+void lumi_histogram(int *out, uint16_t *in, int width, int height)
+{
+    /* Calculate a histogram of the given grayscale (luminance) image.
+     */
+    uint16_t *end = in + width * height;
+    memset(out, 0, LUMINANCES * sizeof(int));
+    while(in < end)
+        out[*in++]++;
+}
+#endif /* FORMERLY */
+
+
+int histo_otsu_thresh(int *histogram, int pixels)
+{
+    /* Find a good threshold between dark and light pixels using Otsu's
+     * method:
+     *
+     *   http://en.wikipedia.org/wiki/Otsu's_method
+     *
+     * It's a clustering algorithm that minimizes the variance in
+     * luminosity within each group of pixels. It does this by
+     * maximizing the difference between the groups.
+     */
+    double total;     // Total number of pixels
+    double pxbelow;   // Number of pixels below current threshold
+    double sumbelow;  // sum of luminance * count over all pixels below
+    double sumabove;  // sum of luminance * count over all pixels above
+    int maxlum;       // luminance with maximum variance so far
+    double maxvar;    // maximum variance so far
+    double var, md; 
+    int i;
+
+    total = pixels;
+    sumabove = 0.0;
+    for(i = 0; i < LUMINANCES; i++)
+        sumabove += i * histogram[i];
+    maxlum = 0;
+    maxvar = 0.0;
+    pxbelow = 0.0;
+    sumbelow = 0.0;
+    for(i = 0; i < LUMINANCES; i++) {
+        if(pxbelow == 0.0 || pxbelow == total)
+            md = 0.0;
+        else
+            md = sumbelow / pxbelow - sumabove / (total - pxbelow);
+        var = pxbelow * (total - pxbelow) * md * md;
+        if(var > maxvar) {
+            maxvar = var;
+            maxlum = i;
+        }
+        pxbelow += histogram[i];
+        sumbelow += i * histogram[i];
+        sumabove -= i * histogram[i];
+    }
+    return maxlum;
+}
+
+
+int histo_vvd_thresh(int *histogram, int pixels)
+{
+    /* Find the threshold between very very dark pixels and the rest.
+     */
+# define TOTALLY_DARK_F 0.005
+    int breakpt05, ct, i;
+    
+    breakpt05 = pixels * TOTALLY_DARK_F;
+    ct = 0;
+    for(i = 0; i < LUMINANCES; i++) {
+        ct += histogram[i];
+        if(ct >= breakpt05)
+            break;
+    }
+    return i;
 }

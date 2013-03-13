@@ -47,6 +47,12 @@
 		B96119BF16EBC55C006503FB /* Synchronizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119BD16EBC55C006503FB /* Synchronizer.m */; };
 		B96119C116EC4733006503FB /* epianodbmaj.aif in Resources */ = {isa = PBXBuildFile; fileRef = B96119C016EC4733006503FB /* epianodbmaj.aif */; };
 		B96119C216EC4733006503FB /* epianodbmaj.aif in Resources */ = {isa = PBXBuildFile; fileRef = B96119C016EC4733006503FB /* epianodbmaj.aif */; };
+		B96119C516F0474F006503FB /* Analysis.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119C416F0474E006503FB /* Analysis.m */; };
+		B96119C616F0474F006503FB /* Analysis.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119C416F0474E006503FB /* Analysis.m */; };
+		B96119C916F04765006503FB /* makesects.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119C816F04765006503FB /* makesects.m */; };
+		B96119CA16F04765006503FB /* makesects.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119C816F04765006503FB /* makesects.m */; };
+		B96119CD16F0477F006503FB /* Section.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119CC16F0477F006503FB /* Section.m */; };
+		B96119CE16F0477F006503FB /* Section.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119CC16F0477F006503FB /* Section.m */; };
 		B9C4FE2416D57C560080D925 /* filters.c in Sources */ = {isa = PBXBuildFile; fileRef = B9C4FE2216D57C560080D925 /* filters.c */; };
 		B9CAD4D416D74D7900035210 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9CAD4D316D74D7900035210 /* CoreMotion.framework */; };
 		B9CAD4D816D7E86300035210 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B9CAD4D616D7E86300035210 /* SettingsViewController.m */; };
@@ -185,6 +191,12 @@
 		B96119BC16EBC55C006503FB /* Synchronizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Synchronizer.h; sourceTree = "<group>"; };
 		B96119BD16EBC55C006503FB /* Synchronizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Synchronizer.m; sourceTree = "<group>"; };
 		B96119C016EC4733006503FB /* epianodbmaj.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = epianodbmaj.aif; sourceTree = "<group>"; };
+		B96119C316F0474E006503FB /* Analysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Analysis.h; sourceTree = "<group>"; };
+		B96119C416F0474E006503FB /* Analysis.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Analysis.m; sourceTree = "<group>"; };
+		B96119C716F04765006503FB /* makesects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = makesects.h; sourceTree = "<group>"; };
+		B96119C816F04765006503FB /* makesects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = makesects.m; sourceTree = "<group>"; };
+		B96119CB16F0477F006503FB /* Section.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Section.h; sourceTree = "<group>"; };
+		B96119CC16F0477F006503FB /* Section.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Section.m; sourceTree = "<group>"; };
 		B9C4FE2216D57C560080D925 /* filters.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = filters.c; sourceTree = "<group>"; };
 		B9C4FE2316D57C560080D925 /* filters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filters.h; sourceTree = "<group>"; };
 		B9CAD4D316D74D7900035210 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
@@ -251,16 +263,20 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				B96119C316F0474E006503FB /* Analysis.h */,
+				B96119C416F0474E006503FB /* Analysis.m */,
 				B94A498716B4674000068117 /* Blob.h */,
 				B94A498816B4674000068117 /* Blob.m */,
 				B9FBD4DB16E11FFE0063A76D /* EventLog.h */,
 				B9FBD4DC16E11FFE0063A76D /* EventLog.m */,
-				B9C4FE2216D57C560080D925 /* filters.c */,
 				B9C4FE2316D57C560080D925 /* filters.h */,
+				B9C4FE2216D57C560080D925 /* filters.c */,
 				B94A498916B4674000068117 /* findblobs.h */,
 				B94A498A16B4674000068117 /* findblobs.m */,
 				B94A499016B486C600068117 /* findqrcs.h */,
 				B94A499116B486C600068117 /* findqrcs.m */,
+				B96119C716F04765006503FB /* makesects.h */,
+				B96119C816F04765006503FB /* makesects.m */,
 				B911CD3D16992B6E00CE5CA0 /* ResultsTViewController.h */,
 				B911CD3E16992B6E00CE5CA0 /* ResultsTViewController.m */,
 				B96049DB167EBF3A00A832D4 /* ResultsViewController.h */,
@@ -271,6 +287,8 @@
 				B9FBD4A416DFE9880063A76D /* ScanView.m */,
 				B96049CD167D368C00A832D4 /* ScanViewController.h */,
 				28C286E00D94DF7D0034E888 /* ScanViewController.mm */,
+				B96119CB16F0477F006503FB /* Section.h */,
+				B96119CC16F0477F006503FB /* Section.m */,
 				B9CAD4D516D7E86300035210 /* SettingsViewController.h */,
 				B9CAD4D616D7E86300035210 /* SettingsViewController.m */,
 				B96119B816EACA5D006503FB /* Signal.h */,
@@ -538,6 +556,9 @@
 				B9FBD4DD16E11FFE0063A76D /* EventLog.m in Sources */,
 				B96119BA16EACA5D006503FB /* Signal.m in Sources */,
 				B96119BE16EBC55C006503FB /* Synchronizer.m in Sources */,
+				B96119C516F0474F006503FB /* Analysis.m in Sources */,
+				B96119C916F04765006503FB /* makesects.m in Sources */,
+				B96119CD16F0477F006503FB /* Section.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -563,6 +584,9 @@
 				B9FBD4DE16E11FFE0063A76D /* EventLog.m in Sources */,
 				B96119BB16EACA5D006503FB /* Signal.m in Sources */,
 				B96119BF16EBC55C006503FB /* Synchronizer.m in Sources */,
+				B96119C616F0474F006503FB /* Analysis.m in Sources */,
+				B96119CA16F04765006503FB /* makesects.m in Sources */,
+				B96119CE16F0477F006503FB /* Section.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

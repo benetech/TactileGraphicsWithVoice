@@ -10,9 +10,11 @@
 extern "C" {
 #endif
     
-NSArray *findqrcs_x(RUN ***startsp, uint8_t *bitmap,
-                    size_t width, size_t height);
-NSArray *findqrcs(uint8_t *bitmap, size_t width, size_t height);
+NSArray *findqrcs_x(RUN ***startsp, uint16_t *lumi, uint16_t *dil,
+                    size_t width, size_t height,
+                    int ld_thresh, int vvd_thresh);
+NSArray *findqrcs(uint16_t *lumi, uint16_t *dil, size_t width, size_t height,
+                    int ld_thresh, int vvd_thresh);
 
 #ifdef __cplusplus
 }

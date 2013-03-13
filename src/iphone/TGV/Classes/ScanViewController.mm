@@ -9,6 +9,7 @@
 #import "Synchronizer.h"
 #import "Voice.h"
 #import "Signal.h"
+#import "Analysis.h"
 #import "Blob.h"
 #import "findqrcs.h"
 
@@ -118,32 +119,37 @@
     memcpy(bitmapCopy, bitmap, width * height * BPP);
     copyGrav = self.motionManager.deviceMotion.gravity;
   }
-
-  NSArray *qrcs = findqrcs(bitmap, width, height);
+  
+  Analysis *analysis =
+    [Analysis analysisWithBitmap: bitmap width: width height: height];
+  //NSArray *qrcs = findqrcs(bitmap, width, height);
   free(bitmap);
   
   // Offer some audible guidance.
   //
   if ([defaults boolForKey:kSettingsGuideWithBeeps])
-    [self guideByBeep: qrcs width: width height: height];
+    [self guideByBeep: analysis.QRBlobs width: width height: height];
   else
-    [self guideByVoice: qrcs width: width height: height];
+    [self guideByVoice: analysis.QRBlobs width: width height: height];
   
   // The "save failed counts" setting asks to save images whose count
   // isn't 1. The way to test is to aim the camera at exactly one QRC.
   // For now, have to change this line of code to test with other numbers
   // of QRCs.
   //
-  if ([defaults boolForKey: kSettingsSaveFailedCounts] && [qrcs count] != 1 &&
+  if ([defaults boolForKey: kSettingsSaveFailedCounts] &&
+      [analysis.QRBlobs count] != 1 &&
       bitmapCopy && savedFailCounts++ < MAX_SAVES) {
-    NSString *anno = [NSString stringWithFormat:@"Counted %d QR codes", [qrcs count]];
+    NSString *anno =
+      [NSString stringWithFormat:@"Counted %d QR codes",
+        [analysis.QRBlobs count]];
     [self saveFrame: bitmapCopy width: copyWidth height: copyHeight annotation: anno];
   }
 
   // If number of QRCs != 1, no further use for the bitmap copy. Otherwise,
   // remember whether it's a good time to save an image.
   //
-  if ([qrcs count] != 1 && bitmapCopy) {
+  if ([analysis.QRBlobs count] != 1 && bitmapCopy) {
     free(bitmapCopy);
     bitmapCopy = NULL;
   }
@@ -154,8 +160,8 @@
   // If there's just one QR code, set the focus on it every now and then.
   // Note: this didn't seem to help, disabled for now.
   //
-  if ([qrcs count] == 1) {
-    Blob *b = qrcs[0];
+  if ([analysis.QRBlobs count] == 1) {
+    Blob *b = analysis.QRBlobs[0];
     CGFloat x = (b.maxx + b.minx) / 2.0 / width;
     CGFloat y = (b.maxy + b.miny) / 2.0 / height;
     CGPoint focusPoint = CGPointMake(x, y);
@@ -171,12 +177,12 @@
   //
   if (self.synchronizer.isGoodTime)
     [controller setFocusMode: AVCaptureFocusModeAutoFocus];
-  
+
 #if TGV_EXPERIMENTAL
   // In experimental version, if good time for periodic actions, and
   // don't see 0 QRCs, log some events.
   //
-  int qrcsCount = [qrcs count];
+  int qrcsCount = [analysis.QRBlobs count];
   if (self.synchronizer.isGoodTime && qrcsCount != 0 &&
       [defaults boolForKey: kSettingsLogEvents]) {
     NSString *grav = [self gravityDescription: @"" gravity: self.motionManager.deviceMotion.gravity];
@@ -195,7 +201,7 @@
   }
   return NO; // (Useful for testing the blob finding.)
 #else
-  return [qrcs count] == 1;
+  return [analysis.QRBlobs count] == 1;
 #endif
 }
 

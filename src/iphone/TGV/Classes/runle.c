@@ -51,10 +51,11 @@ RUN **encode(int classify(void *, int, int),
             cl = classify(ck, x, y);
             if(cl != curcl) {
                 iruns[rct].pclass = curcl;
-                if(curcl > 0)
+                if(curcl > 0) {
                     iruns[rct].slopes = slopect(ck, startx, y, x - startx);
-                else
+                } else {
                     iruns[rct].slopes = 0;
+                }
                 iruns[rct].width = x - startx;
                 iruns[rct].component = NULL;
                 curcl = cl;
@@ -63,10 +64,11 @@ RUN **encode(int classify(void *, int, int),
             }
         }
         iruns[rct].pclass = curcl;
-        if(curcl > 0)
+        if(curcl > 0) {
             iruns[rct].slopes = slopect(ck, startx, y, x - startx);
-        else
+        } else {
             iruns[rct].slopes = 0;
+        }
         iruns[rct].width = x - startx;
         iruns[rct].component = NULL;
         rct++;
