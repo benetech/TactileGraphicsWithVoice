@@ -19,6 +19,12 @@
 }
 
 
+- (void) applicationDidReceiveMemoryWarning:(UIApplication *)application
+{
+    NSLog(@"memory warning"); // TEMP
+}
+
+
 - (void)dealloc {
 	[navigationController release];
 	[window release];

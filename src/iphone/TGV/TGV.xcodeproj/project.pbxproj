@@ -53,6 +53,10 @@
 		B96119CA16F04765006503FB /* makesects.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119C816F04765006503FB /* makesects.m */; };
 		B96119CD16F0477F006503FB /* Section.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119CC16F0477F006503FB /* Section.m */; };
 		B96119CE16F0477F006503FB /* Section.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119CC16F0477F006503FB /* Section.m */; };
+		B96119D116F53D45006503FB /* FrameLog.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119D016F53D45006503FB /* FrameLog.m */; };
+		B96119D216F53D45006503FB /* FrameLog.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119D016F53D45006503FB /* FrameLog.m */; };
+		B96119D516F78516006503FB /* Majority.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119D416F78515006503FB /* Majority.m */; };
+		B96119D616F78516006503FB /* Majority.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119D416F78515006503FB /* Majority.m */; };
 		B9C4FE2416D57C560080D925 /* filters.c in Sources */ = {isa = PBXBuildFile; fileRef = B9C4FE2216D57C560080D925 /* filters.c */; };
 		B9CAD4D416D74D7900035210 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9CAD4D316D74D7900035210 /* CoreMotion.framework */; };
 		B9CAD4D816D7E86300035210 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B9CAD4D616D7E86300035210 /* SettingsViewController.m */; };
@@ -197,6 +201,10 @@
 		B96119C816F04765006503FB /* makesects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = makesects.m; sourceTree = "<group>"; };
 		B96119CB16F0477F006503FB /* Section.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Section.h; sourceTree = "<group>"; };
 		B96119CC16F0477F006503FB /* Section.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Section.m; sourceTree = "<group>"; };
+		B96119CF16F53D44006503FB /* FrameLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLog.h; sourceTree = "<group>"; };
+		B96119D016F53D45006503FB /* FrameLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrameLog.m; sourceTree = "<group>"; };
+		B96119D316F78515006503FB /* Majority.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Majority.h; sourceTree = "<group>"; };
+		B96119D416F78515006503FB /* Majority.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Majority.m; sourceTree = "<group>"; };
 		B9C4FE2216D57C560080D925 /* filters.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = filters.c; sourceTree = "<group>"; };
 		B9C4FE2316D57C560080D925 /* filters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filters.h; sourceTree = "<group>"; };
 		B9CAD4D316D74D7900035210 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
@@ -275,6 +283,10 @@
 				B94A498A16B4674000068117 /* findblobs.m */,
 				B94A499016B486C600068117 /* findqrcs.h */,
 				B94A499116B486C600068117 /* findqrcs.m */,
+				B96119CF16F53D44006503FB /* FrameLog.h */,
+				B96119D016F53D45006503FB /* FrameLog.m */,
+				B96119D316F78515006503FB /* Majority.h */,
+				B96119D416F78515006503FB /* Majority.m */,
 				B96119C716F04765006503FB /* makesects.h */,
 				B96119C816F04765006503FB /* makesects.m */,
 				B911CD3D16992B6E00CE5CA0 /* ResultsTViewController.h */,
@@ -559,6 +571,8 @@
 				B96119C516F0474F006503FB /* Analysis.m in Sources */,
 				B96119C916F04765006503FB /* makesects.m in Sources */,
 				B96119CD16F0477F006503FB /* Section.m in Sources */,
+				B96119D116F53D45006503FB /* FrameLog.m in Sources */,
+				B96119D516F78516006503FB /* Majority.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -587,6 +601,8 @@
 				B96119C616F0474F006503FB /* Analysis.m in Sources */,
 				B96119CA16F04765006503FB /* makesects.m in Sources */,
 				B96119CE16F0477F006503FB /* Section.m in Sources */,
+				B96119D216F53D45006503FB /* FrameLog.m in Sources */,
+				B96119D616F78516006503FB /* Majority.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

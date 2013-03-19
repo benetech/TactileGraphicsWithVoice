@@ -3,22 +3,19 @@
  * (Coding this in straight C for speed.)
  */
 #include <stdlib.h>
+#include <string.h>
 #include "runle.h"
 
 
-RUN **encode(int classify(void *, int, int),
-             int slopect(void *, int, int, int),
-             void *ck, int width, int height)
+RUN **encode(int classify(void *, int, int), void *ck, int width, int height)
 {
     /* Do run length encoding of bitmap data. The classify() function
      * takes the given opaque cookie and classifies a pixel at a given
-     * (x, y) position, for 0 <= x < width and 0 <= y < height. The
-     * slopect() function takes the given opaque cookie and counts
-     * gradation changes in a run starting at a given (x, y) with a
-     * given width. Return an array that points to the start of the runs
-     * for each row. The runs all occupy the same array, so runs for one
-     * row end at the beginning of the runs of the next.  The last entry
-     * in the array points just past the runs of the last row.
+     * (x, y) position, for 0 <= x < width and 0 <= y < height.  Return
+     * an array that points to the start of the runs for each row. The
+     * runs all occupy the same array, so runs for one row end at the
+     * beginning of the runs of the next.  The last entry in the array
+     * points just past the runs of the last row.
      * 
      * This function retains ownership of the returned values, which are
      * potentially freed or overwritten at the next call.
@@ -42,6 +39,7 @@ RUN **encode(int classify(void *, int, int),
 
     if(iruns == NULL || istarts == NULL)
         return NULL;
+    memset(iruns, 0, cursz * sizeof(RUN));
     rct = 0;
     for(y = 0; y < height; y++) {
         istarts[y] = iruns + rct;
@@ -51,11 +49,6 @@ RUN **encode(int classify(void *, int, int),
             cl = classify(ck, x, y);
             if(cl != curcl) {
                 iruns[rct].pclass = curcl;
-                if(curcl > 0) {
-                    iruns[rct].slopes = slopect(ck, startx, y, x - startx);
-                } else {
-                    iruns[rct].slopes = 0;
-                }
                 iruns[rct].width = x - startx;
                 iruns[rct].component = NULL;
                 curcl = cl;
@@ -64,11 +57,6 @@ RUN **encode(int classify(void *, int, int),
             }
         }
         iruns[rct].pclass = curcl;
-        if(curcl > 0) {
-            iruns[rct].slopes = slopect(ck, startx, y, x - startx);
-        } else {
-            iruns[rct].slopes = 0;
-        }
         iruns[rct].width = x - startx;
         iruns[rct].component = NULL;
         rct++;

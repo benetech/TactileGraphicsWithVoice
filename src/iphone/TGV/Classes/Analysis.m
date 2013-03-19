@@ -69,7 +69,13 @@
     res.QRBlobs =
         findqrcs_x(&starts, lumi_orig, lumi_dil, width, height,
                         fg_thresh, vvd_thresh);
-    res.starts = starts; // Info for troubleshooting
+    res.starts = starts; // Info for development
+    
+    // Fill in thresholds.
+    //
+    res.otsu_thresh = otsu_thresh;
+    res.vvd_thresh = vvd_thresh;
+    res.fg_thresh = fg_thresh;
 
     return res;
 }
@@ -124,8 +130,27 @@
     [_QRBlobs retain];
 }
 
+
 - (void) setStarts: (RUN **) starts
 {
     _starts = starts;
+}
+
+
+- (void) setOtsu_thresh:(int)otsu_thresh
+{
+    _otsu_thresh = otsu_thresh;
+}
+
+
+- (void) setVvd_thresh:(int)vvd_thresh
+{
+    _vvd_thresh = vvd_thresh;
+}
+
+
+- (void) setFg_thresh:(int)fg_thresh
+{
+    _fg_thresh = fg_thresh;
 }
 @end

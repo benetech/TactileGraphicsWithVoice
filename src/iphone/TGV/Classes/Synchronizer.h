@@ -17,4 +17,5 @@
 @property (nonatomic, getter=isGoodTime) BOOL goodTime;
 - (void) step;
 - (void) stepNow: (CFAbsoluteTime) now;
+- (BOOL) isGoodTimeWithPeriod: (int) period;
 @end

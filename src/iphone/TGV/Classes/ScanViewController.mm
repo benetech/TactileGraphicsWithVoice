@@ -1,4 +1,4 @@
-// ScanViewController.mm
+// ScanViewController.mm     Controller for the view that scans QR codes
 //
 #import <CoreGraphics/CoreGraphics.h>
 #import "TGVSettings.h"
@@ -6,22 +6,29 @@
 #import "QRCodeReader.h"
 #import "filters.h"
 #import "EventLog.h"
+#import "FrameLog.h"
 #import "Synchronizer.h"
+#import "Majority.h"
 #import "Voice.h"
 #import "Signal.h"
 #import "Analysis.h"
+#import "Section.h"
 #import "Blob.h"
 #import "findqrcs.h"
 
-#define ANNOT_HEIGHT 30  // Add pixels of annotation to saved images
-#define MAX_SAVES 10     // Don't save too many images per scan
+#define GUIDE_MAX_QRS 4u     // 4 or more QRs get the same guidance ("many")
+#define ANNOT_HEIGHT 30      // Add pixels of annotation to saved images
+#define MAX_SAVES 10         // Don't save too many images per scan
+#define AUTO_ILLUM_FRAMES 75 // How many failed frames before auto illumination
+
+static NSString *kIllumIsOn = @"illumination is on";
 
 @interface ScanViewController ()
 {
   NSUserDefaults *defaults;
-  int savedFailScans;      // Number of images saved so far for failed scans
-  int savedSuccScans;      // Number of images saved so far for successful scans
-  int savedFailCounts;     // Number of images saved so far for failed counts
+  int savedFailScans;      // Count of images saved so far for failed scans
+  int savedSuccScans;      // Count of images saved so far for successful scans
+  int savedFailCounts;     // Count of images saved so far for failed counts
   uint8_t *bitmapCopy;     // Copy of bitmap for failure analysis
   size_t copyWidth;        // Width of copied bitmap
   size_t copyHeight;       // Height of copied bitmap (includes annotation)
@@ -29,25 +36,19 @@
   CMAcceleration copyGrav; // Gravity at time of copy, for failure analysis
 }
 @property (nonatomic, strong) EventLog *eventLog;
+@property (nonatomic, strong) FrameLog *frameLog;
 @property (nonatomic, strong) CMMotionManager *motionManager;
 @property (nonatomic, strong) Synchronizer *synchronizer;
+@property (nonatomic, strong) Majority *majority;
 @property (nonatomic, strong) Voice *voice;
 @property (nonatomic, strong) Signal *signal;
+@property (nonatomic, retain) NSString *specialMessage;
 - (void) setup;
 - (void) didBecomeActive: (NSNotification *) notification;
 @end
 
 
 @implementation ScanViewController
-
-@synthesize tabController = _tabController;
-@synthesize resultsController = _resultsController;
-@synthesize eventLog = _eventLog;
-@synthesize motionManager = _motionManager;
-@synthesize synchronizer = _synchronizer;
-@synthesize voice = _voice;
-@synthesize signal = _signal;
-
 
 - (EventLog *) eventLog
 {
@@ -56,6 +57,13 @@
     _eventLog.delegate = self;
   }
   return _eventLog;
+}
+
+- (FrameLog *) frameLog
+{
+  if (!_frameLog)
+    _frameLog = [[FrameLog alloc] init];
+  return _frameLog;
 }
 
 
@@ -73,6 +81,17 @@
   if (!_synchronizer)
     _synchronizer = [[Synchronizer alloc] init];
   return _synchronizer;
+}
+
+- (Majority *) majority
+{
+  if(!_majority) {
+    _majority = [[Majority alloc] init];
+    _majority.quorum = 7;     // Look at last 7 values
+    _majority.maxValue = GUIDE_MAX_QRS;
+    _majority.keepCount = AUTO_ILLUM_FRAMES;
+  }
+  return _majority;
 }
 
 - (Voice *) voice
@@ -107,6 +126,11 @@
   // Note: ownership of bitmap is being transferred to us. We need to
   // free it.
   //
+  BOOL shouldScan = NO; // Value to be returned by this method
+  
+  // DEBUG Track the state of the camera
+  // DEBUG [self cameraStats: bitmap width: width height: height];
+  // DEBUG
 
   if ([self anyReasonToSave]) {
     // Make copy of original bitmap for failure analysis. Also save the
@@ -122,8 +146,35 @@
   
   Analysis *analysis =
     [Analysis analysisWithBitmap: bitmap width: width height: height];
-  //NSArray *qrcs = findqrcs(bitmap, width, height);
   free(bitmap);
+  
+  // Register the latest count with the majority tracker. Treat anything
+  // >= GUIDE_MAX_QRS the same. (Guidance says "many" for this case.)
+  //
+  [self.majority newValue: MIN([analysis.QRBlobs count], GUIDE_MAX_QRS)];
+  
+  // TEMP DEBUG
+  //printf("votes ");
+  //NSArray *mmaa = [self.majority votes];
+  //for(NSNumber *nnuu in mmaa) {
+  //  printf(" %d", [nnuu intValue]);
+  //}
+  //printf("\n");
+  //fflush(stdout);
+  // TEMP DEBUG
+  
+  // Our result is going to be YES if there's 1 QR code there now, and
+  // the majority result is also 1.  The majority result means there have
+  // been mostly counts of 1 recently. For now we scan even if the 1 QR
+  // code is at the edge or is too small or too large. The risk seems
+  // minimal, though it does make the guidance sound overly fussy in some
+  // cases.
+  //
+  shouldScan = [analysis.QRBlobs count] == 1 && [self.majority vote] == 1;
+  
+  // See whether turning on illumination might help the scan.
+  //
+  [self autoIlluminateForAnalysis: analysis];
   
   // Offer some audible guidance.
   //
@@ -133,23 +184,27 @@
     [self guideByVoice: analysis.QRBlobs width: width height: height];
   
   // The "save failed counts" setting asks to save images whose count
-  // isn't 1. The way to test is to aim the camera at exactly one QRC.
-  // For now, have to change this line of code to test with other numbers
-  // of QRCs.
+  // isn't 1. If guiding by voice, only save images whose count was
+  // announced. If guiding by beeps, save every so often.
   //
-  if ([defaults boolForKey: kSettingsSaveFailedCounts] &&
+  // The way to test is to aim the camera at exactly one QRC. For now,
+  // have to change this line of code to test with other numbers of QRCs.
+  //
+  if (self.synchronizer.isGoodTime && bitmapCopy &&
+      [defaults boolForKey: kSettingsSaveFailedCounts] &&
       [analysis.QRBlobs count] != 1 &&
-      bitmapCopy && savedFailCounts++ < MAX_SAVES) {
+      savedFailCounts < MAX_SAVES) {
     NSString *anno =
-      [NSString stringWithFormat:@"Counted %d QR codes",
+      [NSString stringWithFormat: @"Counted %d QR codes",
         [analysis.QRBlobs count]];
     [self saveFrame: bitmapCopy width: copyWidth height: copyHeight annotation: anno];
+    savedFailCounts++;
   }
 
-  // If number of QRCs != 1, no further use for the bitmap copy. Otherwise,
-  // remember whether it's a good time to save an image.
+  // If we're not going to scan, no further use for the bitmap copy.
+  // Otherwise, bitmap copy will be freed in succeed/fail methods below.
   //
-  if ([analysis.QRBlobs count] != 1 && bitmapCopy) {
+  if (!shouldScan && bitmapCopy) {
     free(bitmapCopy);
     bitmapCopy = NULL;
   }
@@ -160,13 +215,14 @@
   // If there's just one QR code, set the focus on it every now and then.
   // Note: this didn't seem to help, disabled for now.
   //
-  if ([analysis.QRBlobs count] == 1) {
+  if ([self.majority vote] == 1 &&
+      [analysis QRBlobs count] == 1 &&
+      [self.synchronizer isGoodTimeWithPeriod: 2]) {
     Blob *b = analysis.QRBlobs[0];
     CGFloat x = (b.maxx + b.minx) / 2.0 / width;
     CGFloat y = (b.maxy + b.miny) / 2.0 / height;
     CGPoint focusPoint = CGPointMake(x, y);
-    if (guided && guidanceCount % 2 == 0)
-      [controller setFocusPointOfInterest: focusPoint];
+    [controller setFocusPointOfInterest: focusPoint];
   }
 #endif // WANT_TO_SET_FOCUS_POINT
 
@@ -175,15 +231,15 @@
   // At any rate, things seem to go far better if you ask for a refocus
   // now and then.
   //
-  if (self.synchronizer.isGoodTime)
+  if ([self.synchronizer isGoodTimeWithPeriod: 2])
     [controller setFocusMode: AVCaptureFocusModeAutoFocus];
 
 #if TGV_EXPERIMENTAL
   // In experimental version, if good time for periodic actions, and
   // don't see 0 QRCs, log some events.
   //
-  int qrcsCount = [analysis.QRBlobs count];
-  if (self.synchronizer.isGoodTime && qrcsCount != 0 &&
+  int qrcsCount = [self.majority vote];
+  if (self.synchronizer.isGoodTime && qrcsCount > 0 &&
       [defaults boolForKey: kSettingsLogEvents]) {
     NSString *grav = [self gravityDescription: @"" gravity: self.motionManager.deviceMotion.gravity];
     NSString *line = [NSString stringWithFormat:@"Saw %d code%@, %@", qrcsCount, qrcsCount == 1 ? @"" : @"s", grav];
@@ -191,17 +247,17 @@
   }
 #endif
 
-  // For now, if we see 1 QR code, it's worth scanning. Even if it's at
-  // the edge or is too small. (Something else to figure out.)
-  //
 #ifdef NEVERSCAN
+  // (This code is useful for testing blob finding. Don't need to keep
+  // restarting the scan, because it never succeeds.)
+  //
   if(bitmapCopy) {
     free(bitmapCopy);
     bitmapCopy = NULL;
   }
-  return NO; // (Useful for testing the blob finding.)
+  return NO;
 #else
-  return [analysis.QRBlobs count] == 1;
+  return shouldScan;
 #endif
 }
 
@@ -219,45 +275,113 @@
   return NO;
 }
 
+
+- (void) autoIlluminateForAnalysis: (Analysis *) analysis
+{
+  // If we've seen no QR codes for a while and the image looks shadowy,
+  // turn on the torch.
+  //
+  // Note: voting errors mean it's too early to act (no quorum) or that
+  // different numbers of QR codes have been seen (no majority). In either
+  // case we don't want to autoilluminate (yet).
+  //
+  if ([self torchIsOn])
+    return; // Nothing to do if torch is already on
+  if ([self.majority vote] != 0)
+    return; // We see a QR code (or error)
+  NSArray *votes = [self.majority votes];
+  if ([votes count] < AUTO_ILLUM_FRAMES)
+    return; // Haven't seen enough frames to decide.
+  for(NSNumber *n in votes)
+    if ([n intValue] != 0)
+      return; // We saw a QR code (or error) recently
+  
+  // An image with fg_thresh really close to otsu_thresh doesn't have
+  // much in the way of foreground. Treat it as a blank image.
+  //
+  if (ABS((float) analysis.fg_thresh - analysis.otsu_thresh) / analysis.otsu_thresh < 0.01)
+    return;
+  
+  // We'll consider the image to be shadowy if there are some number of
+  // plain dark sections and some number of variegated dark sections.
+  // There should be more plain than variegated.
+  //
+  // A more stringent test might be to verify that the plain sections are
+  // next to the variegated ones.
+  //
+  int darkvaried = 0, darkplain = 0;
+  for(Section *s in analysis.sections)
+    if (s.meanLuminance <= analysis.fg_thresh) {
+      if (s.variegation < 0.015) // XXX, use a name
+        darkplain++;
+      else
+        darkvaried++;
+    }
+
+  if(darkvaried > 3 && darkplain > darkvaried && darkplain > 5) {
+    // Autoillumination seems warranted.
+    //
+    [self setTorch: YES];
+    self.specialMessage = kIllumIsOn;
+  }
+}
+
+
 - (void) guideByVoice: (NSArray *) qrcs width: (size_t) width height: (size_t) height
 {
   // For now, pretty simple guidance. If number of QR codes != 1, then
   // say the number seen. If there is 1 code at edge, name the edge.
-  // If there's 1 code that seems too small, say "too high". If there's 1
-  // code that seems too large, say "too low". Otherwise just say "one".
+  // If there's 1 code that seems too small, say "too far". If there's 1
+  // code that seems too large, say "too close". If the camera is in the
+  // middle focusing, say "focusing". Otherwise just say "one".
   //
   // Note: images are presented in landscape mode with home button to
   // the right. We're translating here between this orientation and the
   // expected portrait orientation of the phone while scanning. (This is
   // something to figure out, however.)
   //
-# define LARGEST_QRC_PX 48400
+# define LARGEST_QRC_PX 32400 // WAS 48400
 # define SMALLEST_QRC 60
   BOOL guided;
   Blob *qrc1;
+  int qrcsCount = [self.majority vote];
   self.signal.period = SIGNAL_INF_PERIOD; // Make sure no beeps
-  switch([qrcs count]) {
-    case 0: guided = [self.voice offerGuidance: @"zero"]; break;
+  if(qrcsCount < 0) {
+    // Not enough activity to get a good count, or no clear count.
+    // Remain silent for now.
+    //
+    self.synchronizer.goodTime = NO;
+    return;
+  }
+  switch(qrcsCount) {
+    case 0: guided = [self guide: @"zero"]; break;
     case 1:
-      qrc1 = qrcs[0];
-      if ([qrc1 touchesTop])
-        guided = [self.voice offerGuidance: @"right"];
+      qrc1 = [qrcs count] == 1 ? qrcs[0] : nil;
+      if (qrc1 == nil)
+        // There has been one QRC a lot recently, but not right now.
+        // Just keep quiet for now, I guess.
+        //
+        guided = NO;
+      else if ([qrc1 touchesTop])
+        guided = [self guide: @"right"];
       else if ([qrc1 touchesBottom])
-        guided = [self.voice offerGuidance: @"left"];
+        guided = [self guide: @"left"];
       else if ([qrc1 touchesLeft])
-        guided = [self.voice offerGuidance: @"top"];
+        guided = [self guide: @"top"];
       else if ([qrc1 touchesRight])
-        guided = [self.voice offerGuidance: @"bottom"];
+        guided = [self guide: @"bottom"];
       else if ([qrc1 width] < SMALLEST_QRC && [qrc1 height] < SMALLEST_QRC)
-        guided = [self.voice offerGuidance: @"too high"];
+        guided = [self guide: @"too far"];
       else if (qrc1.pixelCount > LARGEST_QRC_PX)
-        guided = [self.voice offerGuidance: @"too low"];
+        guided = [self guide: @"too close"];
+      else if([self isAdjustingFocus])
+        guided = [self guide: @"focusing"];
       else
-        guided = [self.voice offerGuidance: @"one"];
+        guided = [self guide: @"one"];
       break;
-    case 2: guided = [self.voice offerGuidance: @"two"]; break;
-    case 3: guided = [self.voice offerGuidance: @"three"]; break;
-    default: guided = [self.voice offerGuidance: @"many"]; break;
+    case 2: guided = [self guide: @"two"]; break;
+    case 3: guided = [self guide: @"three"]; break;
+    default: guided = [self guide: @"many"]; break;
   }
   self.synchronizer.goodTime = guided;
 }
@@ -273,7 +397,7 @@
 # define SMALL_DIST 90
 # define LARGE_DIST 240
 
-  if ([qrcs count] == 1) {
+  if ([self.majority vote] == 1 && [qrcs count] == 1) {
     qrc1 = qrcs[0];
     dist = abs(qrc1.minx - width / 2);
     dist = MAX(dist, abs(qrc1.maxx - width / 2));
@@ -287,6 +411,17 @@
   }
   self.signal.period = period;
   [self.synchronizer step];
+}
+
+- (BOOL) guide: (NSString *) guidance
+{
+  // Offer the given guidance. There might be a special message we'd
+  // rather say first, in which case we offer that instead.
+  //
+  NSString *g = self.specialMessage ? self.specialMessage : guidance;
+  BOOL res = [self.voice offerGuidance: g];
+  if (res) self.specialMessage = nil;
+  return res;
 }
 
 - (void) zxingController: (ZXingWidgetController *) controller
@@ -330,6 +465,30 @@
   bitmapCopy = NULL;
 }
 
+- (void) cameraStats: (uint8_t *) bitmap width: (int) width height: (int) height
+{
+  // DEBUG Save frames and camera status for later analysis.
+  //
+  static int previsits;
+  static int visits;
+
+  if(previsits < 60) {
+    previsits++;
+    return;
+  }
+  
+  if(visits >= 70) return;
+
+  NSString *f = [self isAdjustingFocus] ? @"f" : @"-";
+  NSString *x = [self isAdjustingExposure] ? @"x" : @"-";
+  NSString *w = [self isAdjustingWhiteBalance] ? @"w" : @"-";
+  NSString *anno = [@[f, x, w] componentsJoinedByString: @""];
+  [self.frameLog logFrame:bitmap withWidth:width height:height annotation:anno];
+  visits++;
+  if(visits == 70)
+    [self.frameLog save];
+}
+
 
 - (id) init
 {
@@ -338,6 +497,7 @@
   [self setup];
   return self;
 }
+
 
 - (id) initWithCoder: (NSCoder *) aDecoder
 {
@@ -376,6 +536,7 @@
     [NSURL fileURLWithPath:[mainBundle pathForResource:@"epianodbmaj" ofType:@"aif"] isDirectory:NO];
 }
 
+
 - (void) viewDidAppear:(BOOL)animated
 {
 #if TGV_EXPERIMENTAL
@@ -383,9 +544,10 @@
 #endif
   [super viewDidAppear:animated];
   [self.voice initializeGuidance];
+  self.specialMessage = nil;
   if ([defaults boolForKey: kSettingsIlluminateScans]) {
     [self setTorch: YES];
-    [self.voice offerGuidance: @"Illumination is on"];
+    self.specialMessage = kIllumIsOn;
   }
   savedFailScans = 0;
   savedSuccScans = 0;
@@ -411,21 +573,16 @@
   [self.eventLog log: @"Scanning restarted from background"];
 #endif
   [self.voice initializeGuidance];
+  self.specialMessage = nil;
   if ([defaults boolForKey: kSettingsIlluminateScans]) {
     [self setTorch: YES];
-    // Wait for silent period when restarting in scan mode.
-    // Note: this doesn't work very well currently. It might help
-    // to have a way to queue up a guidance message.
-    //
-    [self.voice performSelector: @selector(offerGuidance:)
-                     withObject: @"Illumination is on"
-                     afterDelay: 1.8];
-    // [self.voice offerGuidance: @"Illumination is on"];
+    self.specialMessage = kIllumIsOn;
   }
   savedFailScans = 0;
   savedSuccScans = 0;
   savedFailCounts = 0;
 }
+
 
 - (BOOL) scanViewShouldReportTouches:(ScanView *)scanView
 {
@@ -436,10 +593,12 @@
 #endif
 }
 
+
 - (void) scanView: scanView didFeelTouchesAtPoints: (NSArray *) points
 {
   self.trackedPoints = points;
 }
+
 
 - (BOOL) eventLogShouldLogEvent:(EventLog *)eventLog
 {
@@ -502,6 +661,7 @@
     self.motionManager = nil;
   }
   self.synchronizer = nil;
+  self.majority = nil;
   self.voice = nil;
   self.signal = nil;
   [super dealloc];

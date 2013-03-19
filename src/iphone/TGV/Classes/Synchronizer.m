@@ -8,18 +8,24 @@
 @interface Synchronizer ()
 {
     CFAbsoluteTime lastGoodTime;
+    int goodTimes; // Number of good times so far
 }
 @end
 
 @implementation Synchronizer
 
-@synthesize goodTime = _goodTime;
-
-- (void) setGoodTime:(BOOL)goodTime
+- (void) setGoodTime: (BOOL) goodTime
 {
-    if (goodTime)
+    if (goodTime) {
         lastGoodTime = CFAbsoluteTimeGetCurrent();
+        goodTimes++;
+    }
     _goodTime = goodTime;
+}
+
+- (BOOL) isGoodTimeWithPeriod: (int) period
+{
+    return _goodTime && goodTimes % period == 0;
 }
 
 - (void) step
@@ -32,6 +38,7 @@
     if(lastGoodTime + PERIOD <= now) {
         _goodTime = YES;
         lastGoodTime = now;
+        goodTimes++;
     } else {
         _goodTime = NO;
     }

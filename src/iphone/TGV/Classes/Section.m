@@ -7,7 +7,7 @@
 @synthesize x = _x;
 @synthesize y = _y;
 @synthesize w = _w;
-@synthesize h = _h;
+//@synthesize h = _h;
 @synthesize meanLuminance = _meanLuminance;
 @synthesize variegation = _variegation; 
 @end

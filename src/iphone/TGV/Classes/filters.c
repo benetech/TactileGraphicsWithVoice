@@ -82,7 +82,8 @@ int lumi_rect_downslopes(uint16_t *in, int inwidth, int inheight,
             dsstart = p;
             for(; p < pend && *p <= *(p - 1); p++)
                 ;
-            if(p - dsstart >= dsminwid && *dsstart - *(p - 1) >= dsmindep)
+            if(     p - dsstart >= dsminwid &&
+                    *(dsstart - 1) - *(p - 1) >= dsmindep)
                 rowslopect++;
         }
         if(rowslopect >= MINROWSLOPES)

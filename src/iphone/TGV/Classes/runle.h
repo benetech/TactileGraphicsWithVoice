@@ -11,9 +11,7 @@ typedef struct run {
     struct run *component;  /* Containing component, for union-find */
 } RUN;
 
-RUN **encode(int classify(void *, int, int),
-             int slopect(void *, int, int, int),
-             void *ck, int width, int height);
+RUN **encode(int classify(void *, int, int), void *ck, int width, int height);
 
 void component_union(RUN *, RUN *);
 RUN *component_find(RUN *);

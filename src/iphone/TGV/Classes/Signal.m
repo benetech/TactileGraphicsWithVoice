@@ -4,7 +4,7 @@
 //
 
 #import "Signal.h"
-#define SIGNAL_MIN_PERIOD 0.50
+#define SIGNAL_MIN_PERIOD 0.40
 #define SIGNAL_NO_SOUND ((SystemSoundID) -1)
 
 @interface Signal ()

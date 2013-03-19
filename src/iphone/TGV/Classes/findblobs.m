@@ -77,6 +77,9 @@ static void blob_create(NSMutableDictionary *dict, int imgwd, int imght,
     blob.maxx = x + r->width - 1;
     blob.miny = y;
     blob.maxy = y;
+    // (Currently downslopes are counted later, but it doesn't hurt too
+    // much to track them here.)
+    //
     blob.slopeCount = r->slopes;
     blob.runCount = 1;
     blob.pixelCount = r->width;

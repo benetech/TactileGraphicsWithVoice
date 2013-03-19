@@ -6,19 +6,6 @@
 #define kTouchThresh  10 // Number of pixels to count as touching an edge
 
 @implementation Blob
-@synthesize root = _root;
-@synthesize bclass = _bclass;
-@synthesize minx = _minx;
-@synthesize maxx = _maxx;
-@synthesize miny = _miny;
-@synthesize maxy = _maxy;
-@synthesize slopeCount = _slopeCount;
-@synthesize runCount = _runCount;
-@synthesize pixelCount = _pixelCount;
-@synthesize topPixels = _topPixels;
-@synthesize botPixels = _botPixels;
-@synthesize leftPixels = _leftPixels;
-@synthesize rightPixels = _rightPixels;
 
 - (int) width
 {
