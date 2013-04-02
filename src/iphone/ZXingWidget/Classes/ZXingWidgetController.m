@@ -392,10 +392,12 @@ static bool isIPad() {
   // CMTimeShow(conn.videoMinFrameDuration);
   // CMTimeShow(conn.videoMaxFrameDuration);
   
+  if(self.capture_frame_rate <= 0)
+    self.capture_frame_rate = CAPTURE_FRAME_RATE;
   if (conn.isVideoMinFrameDurationSupported)
-    conn.videoMinFrameDuration = CMTimeMake(1, CAPTURE_FRAME_RATE);
+    conn.videoMinFrameDuration = CMTimeMake(1, self.capture_frame_rate);
   if (conn.isVideoMaxFrameDurationSupported)
-    conn.videoMaxFrameDuration = CMTimeMake(1, CAPTURE_FRAME_RATE);
+    conn.videoMaxFrameDuration = CMTimeMake(1, self.capture_frame_rate);
   
   // CMTimeShow(conn.videoMinFrameDuration);
   // CMTimeShow(conn.videoMaxFrameDuration);
@@ -602,7 +604,8 @@ dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 12000000000), dispatch_get_main_
 
 #pragma mark - Torch
 
-- (void)setTorch:(BOOL)status {
+- (BOOL)setTorch:(BOOL)status {
+  BOOL didSetTorch = NO;
 #if HAS_AVFF
   Class captureDeviceClass = NSClassFromString(@"AVCaptureDevice");
   if (captureDeviceClass != nil) {
@@ -610,18 +613,24 @@ dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 12000000000), dispatch_get_main_
     AVCaptureDevice *device = [captureDeviceClass defaultDeviceWithMediaType:AVMediaTypeVideo];
     
     [device lockForConfiguration:nil];
-    if ( [device hasTorch] ) {
-      if ( status ) {
-        //[device setTorchMode:AVCaptureTorchModeOn];
-        [device setTorchModeOnWithLevel: 0.5 error: nil];
+    if ([device hasTorch]) {
+      if (status) {
+        if ([device isTorchModeSupported:AVCaptureTorchModeOn]) {
+          [device setTorchModeOnWithLevel: 0.5 error: nil];
+          didSetTorch = YES;
+        }
       } else {
-        [device setTorchMode:AVCaptureTorchModeOff];
+        if ([device isTorchModeSupported: AVCaptureTorchModeOff]) {
+          [device setTorchMode:AVCaptureTorchModeOff];
+          didSetTorch = YES;
+        }
       }
     }
     [device unlockForConfiguration];
     
   }
 #endif
+  return didSetTorch;
 }
 
 - (BOOL)torchIsOn {
@@ -681,17 +690,22 @@ dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 12000000000), dispatch_get_main_
 #endif
 }
 
-- (void) setFocusMode: (AVCaptureFocusMode) focusMode
+- (BOOL) setFocusMode: (AVCaptureFocusMode) focusMode
 {
+  BOOL didSetFocus = NO;
 #if HAS_AVFF
   Class captureDeviceClass = NSClassFromString(@"AVCaptureDevice");
   if (captureDeviceClass == nil)
-    return;
+    return NO;
   AVCaptureDevice *device = [captureDeviceClass defaultDeviceWithMediaType:AVMediaTypeVideo];
   [device lockForConfiguration: nil];
-  device.focusMode = focusMode;
+  if ([device isFocusModeSupported: focusMode]) {
+    device.focusMode = focusMode;
+    didSetFocus = YES;
+  }
   [device unlockForConfiguration];
 #endif // HAS_AVFF
+  return didSetFocus;
 }
 
 - (BOOL) isAdjustingExposure

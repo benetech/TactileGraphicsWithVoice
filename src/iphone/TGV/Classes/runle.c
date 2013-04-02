@@ -4,6 +4,7 @@
  */
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include "runle.h"
 
 
@@ -62,6 +63,74 @@ RUN **encode(int classify(void *, int, int), void *ck, int width, int height)
         rct++;
     }
     istarts[y] = iruns + rct;
+    return istarts;
+}
+
+
+RUN **encode_16_thresh(uint16_t *bitmap, int width, int height, int thresh)
+{
+    /* Do run length encoding of 16-bpp bitmap data with a specified
+     * light/dark threshold.  Return an array that points to the start
+     * of the runs for each row. The runs all occupy the same array, so
+     * runs for one row end at the beginning of the runs of the next.
+     * The last entry in the array points just past the runs of the last
+     * row.
+     * 
+     * This function retains ownership of the returned values, which are
+     * potentially freed or overwritten at the next call.
+     */
+    static int irunsz = 0;
+    static RUN *iruns;
+    static int istartsz = 0;
+    static RUN **istarts;
+
+    int cursz = width * height * sizeof(RUN);
+    if(irunsz < cursz) {
+        iruns = realloc(iruns, cursz);
+        irunsz = cursz;
+    }
+    cursz = (height + 1) * sizeof(RUN *);
+    if(istartsz < cursz) {
+        istarts = realloc(istarts, cursz);
+        istartsz = cursz;
+    }
+    int curcl, cl;
+    RUN *runp;
+    RUN **startp;
+    uint16_t *bitmapend;
+    uint16_t *row;
+    uint16_t *rowend;
+    uint16_t *startpx;
+    uint16_t *pixel;
+
+    if(iruns == NULL || istarts == NULL)
+        return NULL;
+    memset(iruns, 0, cursz * sizeof(RUN));
+    startp = istarts;
+    runp = iruns;
+    bitmapend = bitmap + (width * height);
+    for(row = bitmap; row < bitmapend; row += width) {
+        *startp++ = runp;
+        startpx = row;
+        curcl = *startpx <= thresh;
+        rowend = row + width;
+        for(pixel = row + 1; pixel < rowend; pixel++) {
+            cl = *pixel <= thresh;
+            if(cl != curcl) {
+                runp->pclass = curcl;
+                runp->width = pixel - startpx;
+                runp->component = NULL;
+                curcl = cl;
+                startpx = pixel;
+                runp++;
+            }
+        }
+        runp->pclass = curcl;
+        runp->width = pixel - startpx;
+        runp->component = NULL;
+        runp++;
+    }
+    *startp = runp;
     return istarts;
 }
 

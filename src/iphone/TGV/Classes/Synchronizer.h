@@ -5,10 +5,10 @@
 // synchronize with the guidance announcements. If vocal guidance is off, you
 // just want to do the things every now and then.
 //
-// So this class has a manual and automatic mode. In manual mode, the good
-// times are controlled externally through the goodTime property. In automatic
-// mode, each new time is initiated by the step method, and its goodness is
-// determined by elapsed time.
+// So this class has a manual and automatic mode. In manual mode, the
+// good times are controlled externally by setting the goodTime property.
+// In automatic mode, each new time is initiated by the step method, and
+// its goodness is determined by elapsed time.
 //
 
 #import <Foundation/Foundation.h>

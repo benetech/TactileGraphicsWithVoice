@@ -18,6 +18,8 @@ void lumi_rect_histogram(int *out, uint16_t *in, int inwidth, int inheight,
                     int x, int y, int w, int h);
 void lumi_dilate(uint16_t *out, uint16_t *in,
                     int width, int height, int radius);
+void lumi_dilate_accel(uint16_t *out, uint16_t *in,
+                 int width, int height, int radius);
 void lumi_boxblur(uint16_t *out, uint16_t *in,
                     int width, int height, int radius);
 int histo_otsu_thresh(int *histogram, int pixels);

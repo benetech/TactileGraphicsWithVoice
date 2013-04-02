@@ -12,6 +12,7 @@ typedef struct run {
 } RUN;
 
 RUN **encode(int classify(void *, int, int), void *ck, int width, int height);
+RUN **encode_16_thresh(uint16_t *bitmap, int width, int height, int thresh);
 
 void component_union(RUN *, RUN *);
 RUN *component_find(RUN *);

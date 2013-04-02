@@ -5,6 +5,7 @@
 #import "ScanViewController.h"
 #import "QRCodeReader.h"
 #import "filters.h"
+#import "Device.h"
 #import "EventLog.h"
 #import "FrameLog.h"
 #import "Synchronizer.h"
@@ -16,6 +17,8 @@
 #import "Blob.h"
 #import "findqrcs.h"
 
+#define SLOW_FRAME_RATE  5   // For devices without much CPU oomph
+#define FAST_FRAME_RATE 15   // For reasonably powerful devices
 #define GUIDE_MAX_QRS 4u     // 4 or more QRs get the same guidance ("many")
 #define ANNOT_HEIGHT 30      // Add pixels of annotation to saved images
 #define MAX_SAVES 10         // Don't save too many images per scan
@@ -35,6 +38,7 @@ static NSString *kIllumIsOn = @"illumination is on";
   BOOL copyGoodTime;       // Copy was made at a good time for periodic actions
   CMAcceleration copyGrav; // Gravity at time of copy, for failure analysis
 }
+@property (nonatomic, strong) Device *device;
 @property (nonatomic, strong) EventLog *eventLog;
 @property (nonatomic, strong) FrameLog *frameLog;
 @property (nonatomic, strong) CMMotionManager *motionManager;
@@ -49,6 +53,13 @@ static NSString *kIllumIsOn = @"illumination is on";
 
 
 @implementation ScanViewController
+
+- (Device *) device
+{
+  if (! _device)
+    _device = [[Device alloc] init];
+  return _device;
+}
 
 - (EventLog *) eventLog
 {
@@ -119,9 +130,9 @@ static NSString *kIllumIsOn = @"illumination is on";
                   height:(size_t)height
 {
   // Tell the ZXing controller whether to scan the given bitmap looking
-  // for QR codes. We say yes only if there looks to be one code there.
-  // We also offer vocal guidance on getting the camera aimed at just one
-  // code.
+  // for QR codes. We say yes only if there looks to be exactly one code
+  // there.  We also offer vocal guidance on getting the camera aimed at
+  // just one code.
   //
   // Note: ownership of bitmap is being transferred to us. We need to
   // free it.
@@ -143,32 +154,25 @@ static NSString *kIllumIsOn = @"illumination is on";
     memcpy(bitmapCopy, bitmap, width * height * BPP);
     copyGrav = self.motionManager.deviceMotion.gravity;
   }
-  
+
+  //CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
   Analysis *analysis =
-    [Analysis analysisWithBitmap: bitmap width: width height: height];
+    [Analysis analysisWithDevice: self.device bitmap: bitmap width: width height: height];
+  //NSLog(@"Analysis %6.4f", CFAbsoluteTimeGetCurrent() - start);
   free(bitmap);
   
   // Register the latest count with the majority tracker. Treat anything
   // >= GUIDE_MAX_QRS the same. (Guidance says "many" for this case.)
   //
   [self.majority newValue: MIN([analysis.QRBlobs count], GUIDE_MAX_QRS)];
-  
-  // TEMP DEBUG
-  //printf("votes ");
-  //NSArray *mmaa = [self.majority votes];
-  //for(NSNumber *nnuu in mmaa) {
-  //  printf(" %d", [nnuu intValue]);
-  //}
-  //printf("\n");
-  //fflush(stdout);
-  // TEMP DEBUG
-  
+
   // Our result is going to be YES if there's 1 QR code there now, and
   // the majority result is also 1.  The majority result means there have
   // been mostly counts of 1 recently. For now we scan even if the 1 QR
   // code is at the edge or is too small or too large. The risk seems
   // minimal, though it does make the guidance sound overly fussy in some
-  // cases.
+  // cases (because the scan succeeds right after the guidance suggests
+  // the phone needs to be moved).
   //
   shouldScan = [analysis.QRBlobs count] == 1 && [self.majority vote] == 1;
   
@@ -187,12 +191,14 @@ static NSString *kIllumIsOn = @"illumination is on";
   // isn't 1. If guiding by voice, only save images whose count was
   // announced. If guiding by beeps, save every so often.
   //
-  // The way to test is to aim the camera at exactly one QRC. For now,
+  // The way to test is to aim the camera at exactly zero QRCs. For now,
   // have to change this line of code to test with other numbers of QRCs.
+  // (Zero is useful for testing close up: hold camera too close for any
+  // QRC to fit.)
   //
   if (self.synchronizer.isGoodTime && bitmapCopy &&
       [defaults boolForKey: kSettingsSaveFailedCounts] &&
-      [analysis.QRBlobs count] != 1 &&
+      [analysis.QRBlobs count] != 0 &&
       savedFailCounts < MAX_SAVES) {
     NSString *anno =
       [NSString stringWithFormat: @"Counted %d QR codes",
@@ -321,8 +327,8 @@ static NSString *kIllumIsOn = @"illumination is on";
   if(darkvaried > 3 && darkplain > darkvaried && darkplain > 5) {
     // Autoillumination seems warranted.
     //
-    [self setTorch: YES];
-    self.specialMessage = kIllumIsOn;
+    if ([self setTorch: YES])
+      self.specialMessage = kIllumIsOn;
   }
 }
 
@@ -511,12 +517,20 @@ static NSString *kIllumIsOn = @"illumination is on";
   return self;
 }
 
+
 - (void) setup
 {
   // Shared initialization code.
   //
+  
   defaults = [NSUserDefaults standardUserDefaults];
-
+  
+  if ([self.device isSlow]) {
+    self.capture_frame_rate = SLOW_FRAME_RATE;
+  } else {
+    self.capture_frame_rate = FAST_FRAME_RATE;
+  }
+  
   [[NSNotificationCenter defaultCenter]
       addObserver:self
          selector:@selector(didBecomeActive:)
@@ -546,8 +560,8 @@ static NSString *kIllumIsOn = @"illumination is on";
   [self.voice initializeGuidance];
   self.specialMessage = nil;
   if ([defaults boolForKey: kSettingsIlluminateScans]) {
-    [self setTorch: YES];
-    self.specialMessage = kIllumIsOn;
+    if( [self setTorch: YES])
+      self.specialMessage = kIllumIsOn;
   }
   savedFailScans = 0;
   savedSuccScans = 0;
@@ -575,8 +589,8 @@ static NSString *kIllumIsOn = @"illumination is on";
   [self.voice initializeGuidance];
   self.specialMessage = nil;
   if ([defaults boolForKey: kSettingsIlluminateScans]) {
-    [self setTorch: YES];
-    self.specialMessage = kIllumIsOn;
+    if([self setTorch: YES])
+      self.specialMessage = kIllumIsOn;
   }
   savedFailScans = 0;
   savedSuccScans = 0;

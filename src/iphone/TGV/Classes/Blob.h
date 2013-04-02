@@ -5,7 +5,9 @@
 
 @interface Blob : NSObject
 @property (nonatomic) RUN *root;           // Representative run of the blob
+@property (nonatomic) void *data;          // Temporary associated data
 @property (nonatomic) int pixelCount;      // Total number of px in the blob
+@property (nonatomic) float finderConf;    // Finder pattern confidence
 @property (nonatomic) short bclass;        // Class of blob: 0 = bg, 1 = fg
 @property (nonatomic) short minx, maxx;    // Leftmost, rightmost pixels
 @property (nonatomic) short miny, maxy;    // Topmost, bottommost pixels

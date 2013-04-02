@@ -9,12 +9,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#import "bitmap.h"
     
-NSArray *findqrcs_x(RUN ***startsp, uint16_t *lumi, uint16_t *dil,
-                    size_t width, size_t height,
-                    int ld_thresh, int vvd_thresh);
-NSArray *findqrcs(uint16_t *lumi, uint16_t *dil, size_t width, size_t height,
-                    int ld_thresh, int vvd_thresh);
+NSArray *findqrcs(int min_qr_size, int max_qr_size, TGV_BITMAP *bitmap,
+                        RUN **starts, NSMutableDictionary *blobs,
+                        NSArray *fpblobs);
 
 #ifdef __cplusplus
 }

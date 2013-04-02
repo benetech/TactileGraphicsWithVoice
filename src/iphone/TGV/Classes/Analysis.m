@@ -4,7 +4,11 @@
 #import "Section.h"
 #import "runle.h"
 #import "filters.h"
+#import "bitmap.h"
 #import "makesects.h"
+#import "refinedblobs.h"
+#import "findfinders.h"
+#import "dockfinders.h"
 #import "findqrcs.h"
 
 @interface Analysis ()
@@ -14,11 +18,9 @@
 @end
 
 @implementation Analysis
-@synthesize sections = _sections;
-@synthesize QRBlobs = _QRBlobs;
-@synthesize starts = _starts;
 
-+ (Analysis *) analysisWithBitmap: (uint8_t *) bitmap
++ (Analysis *) analysisWithDevice: (Device *) device
+                           bitmap: (uint8_t *) bitmap
                             width: (size_t) width
                            height: (size_t) height
 {
@@ -31,11 +33,15 @@
     //
 # define DILATE_RADIUS 3
 # define SECTION_UNITS 10  // Divide image into 100 sections
+
     Analysis *res = [[[[self class] alloc] init] autorelease];
     uint16_t *lumi_orig;  // Original image in grayscale (luminance)
     uint16_t *lumi_dil;   // Dilated image in grayscale (luminance)
     int histogram[LUMINANCES];
     int otsu_thresh, vvd_thresh, fg_thresh;
+    TGV_BITMAP bm;
+    NSMutableDictionary *blobs;
+    NSArray *fpblobs;
     RUN **starts;
 
     // Make the two luminance bitmaps.
@@ -44,7 +50,15 @@
     lumi_dil = (uint16_t *) bitmap + width * height;
 
     lumi_of_rgba(lumi_orig, bitmap, width, height);
-    lumi_dilate(lumi_dil, lumi_orig, width, height, DILATE_RADIUS);
+    if ([device isSlow])
+        // On slow devices, use faster but slightly cruder accelerated
+        // dilation.
+        //
+        lumi_dilate_accel(lumi_dil, lumi_orig, width, height, DILATE_RADIUS);
+    else
+        // On faster devices, use hand coded dilation.
+        //
+        lumi_dilate(lumi_dil, lumi_orig, width, height, DILATE_RADIUS);
 
     // Make histogram and compute initial thresholds.
     //
@@ -52,6 +66,8 @@
                         0, 0, width, height);
     otsu_thresh = histo_otsu_thresh(histogram, width * height);
     vvd_thresh = histo_vvd_thresh(histogram, width * height);
+    res.otsu_thresh = otsu_thresh;
+    res.vvd_thresh = vvd_thresh;
 
     // Get properties of sections and calculate foreground threshold.
     //
@@ -63,20 +79,35 @@
                                     height: height
                                   sections: res.sections
                                  threshold: otsu_thresh];
+    res.fg_thresh = fg_thresh;
+
+    // Find refined blobs.
+    //
+    bm.bm_lumi_orig = lumi_orig;
+    bm.bm_lumi_dil = lumi_dil;
+    bm.bm_width = width;
+    bm.bm_height = height;
+    bm.bm_ldthresh = fg_thresh;
+    bm.bm_vvdthresh = vvd_thresh;
+    blobs = refined_blobs(&starts, &bm, MIN_QR_SIZE);
+
+    res.starts = starts;
+
+    // Find finder pattern blobs and dock them with harboring blobs.
+    // (Note that this modifies the dictionary of blobs.)
+    //
+    fpblobs = findfinders(MIN_QR_SIZE, MAX_QR_SIZE, &bm, starts, blobs);
+    fpblobs = dockfinders(blobs, fpblobs);
+
+    res.FPBlobs = fpblobs;
 
     // Find QR codes.
     //
-    res.QRBlobs =
-        findqrcs_x(&starts, lumi_orig, lumi_dil, width, height,
-                        fg_thresh, vvd_thresh);
-    res.starts = starts; // Info for development
-    
-    // Fill in thresholds.
-    //
-    res.otsu_thresh = otsu_thresh;
-    res.vvd_thresh = vvd_thresh;
-    res.fg_thresh = fg_thresh;
+    res.QRBlobs = findqrcs(MIN_QR_SIZE, MAX_QR_SIZE, &bm, starts,
+                            blobs, fpblobs);
 
+    // OK, finished.
+    //
     return res;
 }
 
@@ -128,6 +159,12 @@
 {
     _QRBlobs = QRBlobs;
     [_QRBlobs retain];
+}
+
+- (void) setFPBlobs: (NSArray *) FPBlobs
+{
+    _FPBlobs = FPBlobs;
+    [_FPBlobs retain];
 }
 
 

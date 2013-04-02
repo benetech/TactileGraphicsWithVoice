@@ -36,13 +36,9 @@
                                                     > {
   NSSet *readers;
   ParsedResult *result;
-  // OverlayView *overlayView; // Moved to private property
   SystemSoundID beepSound;
-  // BOOL showCancel;
   NSURL *soundToPlay;
-  // id<ZXingDelegate> delegate;
   BOOL wasCancelled;
-  // BOOL oneDMode;
 #if HAS_AVFF
   AVCaptureSession *captureSession;
   AVCaptureVideoPreviewLayer *prevLayer;
@@ -55,6 +51,7 @@
 @property (nonatomic, assign) BOOL showCancel;
 @property (nonatomic, assign) BOOL oneDMode;
 @property (nonatomic, assign) BOOL showLicense;
+@property (nonatomic, assign) int capture_frame_rate;
 
 #if HAS_AVFF
 @property (nonatomic, retain) AVCaptureSession *captureSession;
@@ -73,10 +70,10 @@
 - (void) setTrackedPoints: (NSArray *) points;
 
 - (BOOL)fixedFocus;
-- (void)setTorch:(BOOL)status;
+- (BOOL)setTorch:(BOOL)status;
 - (BOOL)torchIsOn;
 - (BOOL) isAdjustingFocus;
-- (void) setFocusMode: (AVCaptureFocusMode) focusMode;
+- (BOOL) setFocusMode: (AVCaptureFocusMode) focusMode;
 - (void) setFocusPointOfInterest: (CGPoint) point;
 - (BOOL) isAdjustingExposure;
 - (BOOL) isAdjustingWhiteBalance;

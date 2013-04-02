@@ -2,7 +2,18 @@
  */
 #include <stdio.h>
 #include <strings.h>
+#include <Accelerate/Accelerate.h>
 #include "filters.h"
+
+#define Max(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a > _b ? _a : _b; })
+
+#define Min(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a < _b ? _a : _b; })
 
 /* Native pixel component order on Mac is RGBA, but in iOS video
  * captures it's BGRA.
@@ -163,6 +174,9 @@ void lumi_dilate(uint16_t *out, uint16_t *in,
      * Since min() is commutative and associative, we can break things
      * into a horizontal and vertical pass. So for each pixel we process
      * 2 * s nearby pixels rather than s * s.
+     *
+     * It's possible that we should just be using lumi_dilate_accel() all
+     * the time. It's a lot faster, but not quite as accurate.
      */
     uint16_t *end;
     uint16_t *row, *col, *p, *minp, *a, *b;
@@ -196,6 +210,93 @@ void lumi_dilate(uint16_t *out, uint16_t *in,
         for(p = col; p < end; p += width)
             *p = *minp++;
     }
+}
+
+
+# define SCALECLAMP(s) ((Min(Max(127, s), 638) - 127) / 2)
+# define UNSCALECLAMP(b) (b * 2 + 127)
+
+
+void lumi_dilate_accel(uint16_t *out, uint16_t *in,
+                    int width, int height, int radius)
+{
+    // Dilate using the vImage library.
+    //
+    static int tempWidth;
+    static int tempHeight;
+    static uint8_t *tempA; // Planar8 form of input
+    static uint8_t *tempB; // Internal temp buffer for vImage
+    static uint8_t *tempC; // Planar8 form of output
+    
+    // Allocate temporary buffers and keep pointers to them. In practice
+    // there is just one allocation for each execution of the app, and
+    // little to no reason to deallocate them.
+    //
+    if(tempWidth != width || tempHeight != height || tempA == NULL) {
+        tempA = realloc(tempA, width * height); // One byte per pixel
+        tempC = realloc(tempC, width * height);
+        free(tempB); // (tempB is allocated below.)
+        tempB = NULL;
+        if(tempA == NULL | tempC == NULL) {
+            // Desperation play. This should never happen; we're not
+            // asking for all that much space.
+            //
+            free(tempA);
+            free(tempC);
+            tempA = NULL;
+            tempC = NULL;
+            memcpy(out, in, width * height * sizeof(uint16_t));
+            return;
+        }
+        tempWidth = width;
+        tempHeight = height;
+    }
+
+    int diam = radius * 2 + 1;
+    vImage_Buffer src;
+    vImage_Buffer dst;
+
+    // Transform input to Planar8 form.
+    //
+    uint8_t *scb = tempA;
+    uint16_t *send = in + width * height;
+    for(uint16_t *s = in; s < send; s++)
+        *scb++ = SCALECLAMP(*s);
+
+    // Create data descriptors for vImage.
+    //
+    src.data = tempA;
+    src.height = height;
+    src.width = width;
+    src.rowBytes = width;
+    dst.data = tempC;
+    dst.height = height;
+    dst.width = width;
+    dst.rowBytes = width;
+    
+    // Allocate vImage temp buffer if necessary. It makes things
+    // noticeably faster to reuse the buffer.
+    //
+    if(tempB == NULL) {
+        size_t size = vImageMin_Planar8(&src, &dst, NULL, 0, 0, diam, diam,
+                                        kvImageGetTempBufferSize);
+        if (size > 0)
+            tempB = malloc(size); // If this fails, vImage will allocate
+    }
+    
+    if (vImageMin_Planar8(&src, &dst, tempB, 0, 0, diam, diam, 0) != kvImageNoError) {
+        // Same desperation play. Not likely to happen.
+        //
+        memcpy(out, in, width * height * sizeof(uint16_t));
+        return;
+    }
+
+    // Translate Planar8 form to output.
+    //
+    uint16_t *uscs = out;
+    uint8_t *bend = tempC + width * height;
+    for(uint8_t *b = tempC; b < bend; b++)
+        *uscs++ = UNSCALECLAMP(*b);
 }
 
 

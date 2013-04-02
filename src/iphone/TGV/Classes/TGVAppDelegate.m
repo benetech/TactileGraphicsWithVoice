@@ -21,7 +21,7 @@
 
 - (void) applicationDidReceiveMemoryWarning:(UIApplication *)application
 {
-    NSLog(@"memory warning"); // TEMP
+    NSLog(@"Received memory warning");
 }
 
 
