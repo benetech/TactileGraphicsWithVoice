@@ -10,6 +10,7 @@
 
 #define kSettingsGuideWithBeeps     @"GuideWithBeeps"
 #define kSettingsIlluminateScans    @"IlluminateScans"
+#define kSettingsScanAllCounts      @"ScanAllCounts"
 
 // Used for troubleshooting
 #define kSettingsSaveFailedScans    @"SaveFailedScans"

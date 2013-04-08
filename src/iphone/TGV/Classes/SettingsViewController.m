@@ -28,6 +28,12 @@
     [defaults synchronize];
 }
 
+- (void) setScanAllCounts: (UISwitch *) sender
+{
+    [defaults setBool: sender.isOn forKey: kSettingsScanAllCounts];
+    [defaults synchronize];
+}
+
 - (void) setSaveFailedScans: (UISwitch *) sender
 {
     [defaults setBool: sender.isOn forKey: kSettingsSaveFailedScans];
@@ -75,7 +81,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     switch (section) {
-        case 0: return 2;
+        case 0: return 3;
         case 1:
 #if TGV_EXPERIMENTAL
             return 5;
@@ -106,6 +112,11 @@
             label = @"Illuminate Scans";
             action = @selector(setIlluminateScans:);
             initialValue = [defaults boolForKey: kSettingsIlluminateScans];
+            break;
+        case 2:
+            label = @"Scan Aggressively";
+            action = @selector(setScanAllCounts:);
+            initialValue = [defaults boolForKey: kSettingsScanAllCounts];
             break;
         case 10:
             label = @"Save Failed Scans";

@@ -166,15 +166,19 @@ static NSString *kIllumIsOn = @"illumination is on";
   //
   [self.majority newValue: MIN([analysis.QRBlobs count], GUIDE_MAX_QRS)];
 
-  // Our result is going to be YES if there's 1 QR code there now, and
-  // the majority result is also 1.  The majority result means there have
-  // been mostly counts of 1 recently. For now we scan even if the 1 QR
-  // code is at the edge or is too small or too large. The risk seems
-  // minimal, though it does make the guidance sound overly fussy in some
-  // cases (because the scan succeeds right after the guidance suggests
-  // the phone needs to be moved).
+  // If ScanAllCounts is on, we always return YES. Otherwise our result
+  // is going to be YES if there's 1 QR code there now, and the majority
+  // result is also 1.  The majority result means there have been mostly
+  // counts of 1 recently. For now we scan even if the 1 QR code is at
+  // the edge or is too small or too large. The risk seems minimal,
+  // though it does make the guidance sound overly fussy in some cases
+  // (because the scan succeeds right after the guidance suggests the
+  // phone needs to be moved).
   //
-  shouldScan = [analysis.QRBlobs count] == 1 && [self.majority vote] == 1;
+  if ([defaults boolForKey: kSettingsScanAllCounts])
+    shouldScan = YES;
+  else
+    shouldScan = [analysis.QRBlobs count] == 1 && [self.majority vote] == 1;
   
   // See whether turning on illumination might help the scan.
   //
@@ -188,7 +192,7 @@ static NSString *kIllumIsOn = @"illumination is on";
     [self guideByVoice: analysis.QRBlobs width: width height: height];
   
   // The "save failed counts" setting asks to save images whose count
-  // isn't 1. If guiding by voice, only save images whose count was
+  // isn't 0. If guiding by voice, only save images whose count was
   // announced. If guiding by beeps, save every so often.
   //
   // The way to test is to aim the camera at exactly zero QRCs. For now,

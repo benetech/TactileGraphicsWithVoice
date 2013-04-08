@@ -234,7 +234,7 @@ static BOOL is_finder_pattern(int runct, FPDATA *fpd)
 
 static float finder_confidence(int runct, FPDATA *fpd)
 {
-    // Calculate a confidence level that the blob with the given metrics
+    // Calculate a probability that the blob with the given metrics
     // is a finder pattern. This uses the same metrics but is somewhat
     // independent of the threshold calculation in is_finder_pattern().
     // It's based just on the probability that a non-finder-pattern
