@@ -24,6 +24,7 @@
 @property (nonatomic) int quorum;     // How many recent values to track
 @property (nonatomic) int maxValue;   // Largest value of tracked int
 @property (nonatomic) int keepCount;  // Number of previous votes to keep
+- (void) clear;                       // Reset all vote counters to 0
 - (void) newValue: (int) value;       // Register a new tracked value
 - (int) vote;                         // Majority value of most recent quorum
 - (NSArray *) votes;                  // History of votes (most recent first)

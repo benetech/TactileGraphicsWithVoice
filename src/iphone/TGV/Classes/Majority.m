@@ -27,6 +27,7 @@
     //
     historyct = 0;
     nextin = history;
+    [self.voteHistory removeAllObjects];
 }
 
 - (void) setQuorum:(int)quorum
@@ -38,10 +39,11 @@
     nextin = history;
     historyct = 0;
     _quorum = quorum;
-    // Need to clear out any previous histogram.
+    // Invalidate any previous values.
     //
     if(histogram != NULL)
         memset(histogram, 0, (self.maxValue + 1) * sizeof(int));
+    [self.voteHistory removeAllObjects];
 }
 
 - (void) setKeepCount:(int)keepCount
@@ -53,6 +55,15 @@
     while ((count = [self.voteHistory count]) > 1 && count > keepCount)
         [self.voteHistory removeLastObject];
     _keepCount = keepCount;
+}
+
+- (void) clear
+{
+    nextin = history;
+    historyct = 0;
+    if(histogram != NULL)
+        memset(histogram, 0, (self.maxValue + 1) * sizeof(int));
+    [self.voteHistory removeAllObjects];
 }
 
 - (void) newValue: (int) value

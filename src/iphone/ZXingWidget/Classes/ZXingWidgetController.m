@@ -70,7 +70,7 @@
     self.wantsFullScreenLayout = YES;
     beepSound = -1;
     decoding = NO;
-    // [self initOverlayView];
+    [self zxsetup];
   }
   
   return self;
@@ -82,8 +82,21 @@
   self.wantsFullScreenLayout = YES;
   beepSound = -1;
   decoding = NO;
-  // [self initOverlayView];
+  [self zxsetup];
   return self;
+}
+
+- (void) zxsetup
+{
+  NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+  [defaultCenter addObserver: self
+                    selector: @selector(didBecomeActive:)
+                        name: UIApplicationDidBecomeActiveNotification
+                      object: nil];
+  [defaultCenter addObserver: self
+                    selector: @selector(willResignActive:)
+                        name: UIApplicationWillResignActiveNotification
+                      object: nil];
 }
 
 - (void) initOverlayView {
@@ -121,7 +134,7 @@
   self.overlayView.trackedPoints = points;
 }
 
-- (void)cancelled {
+- (void) cancelled {
   [self stopCapture];
   //if (!self.isStatusBarHidden) {
   //  [[UIApplication sharedApplication] setStatusBarHidden:NO];
@@ -165,8 +178,6 @@
   //
   if(!self.overlayView)
     [self initOverlayView];
-
-  decoding = YES;
 
   [self initCapture];
   [self.view addSubview: self.overlayView];
@@ -353,6 +364,7 @@ static bool isIPad() {
 #endif
     
 - (void)initCapture {
+  decoding = YES;
 #if HAS_AVFF
   AVCaptureDevice* inputDevice =
     [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
@@ -600,6 +612,30 @@ dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 12000000000), dispatch_get_main_
   self.prevLayer = nil;
   self.captureSession = nil;
 #endif
+}
+
+- (void) didBecomeActive: (NSNotification *) notification
+{
+  // The app has moved from background to foreground in a state where
+  // it's supposed to be scanning. So reinitiate the scan.
+  //
+  [self initCapture];
+
+  // I suspect this code should be moved to initCapture. Leaving it here
+  // for now.
+  //
+  [self.view addSubview: self.overlayView];
+  [self.overlayView setPoints:nil];
+  self.overlayView.trackedPoints = nil;
+  wasCancelled = NO;
+}
+
+- (void) willResignActive: (NSNotification *) notification
+{
+  // The app is moving to the background. Stop the scan, at least for
+  // now.
+  //
+  [self stopCapture];
 }
 
 #pragma mark - Torch

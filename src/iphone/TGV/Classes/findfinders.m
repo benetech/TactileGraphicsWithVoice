@@ -1,5 +1,11 @@
 // findfinders.m     Find finder patterns as separate blobs
 //
+// This code identifies finder patterns by looking for a few orientation-
+// independent features that seem like they ought to characterize them.
+// There's plenty of room to use more powerful techniques to do a better
+// job. Using ZXing's internal code doesn't seem like a good fit, because
+// it's based too much on the image being in good focus.
+//
 
 #import "runle.h"
 #import "filters.h"
@@ -37,10 +43,24 @@ typedef struct {
 #define LIKEPREV_THRESH  0.666 // Fraction of runs like previous run
 #define MULTIPART_THRESH 0.164 // Fraction of runs with 6,7 parts
 
-// Cumulative distributions and standard deviations among
-// non-finder-patterns for the finder pattern metrics. We use these to
-// give a confidence level to categorizing a blob as a finder pattern.
-// (Based on test corpus Mar 28 2013.)
+// Cumulative distributions and standard deviations among non finder
+// patterns for the finder pattern metrics. We use these to give a
+// confidence level to categorizing a blob as a finder pattern. (Based
+// on test corpus Mar 28 2013.)
+//
+// To generate these tables on a Unix system (with awk):
+//
+//     $ cumulate findercorpus
+//
+// findercorpus is a list of finder pattern and non finder pattern
+// metrics as for the thresholds above. cumulate is an awk script that
+// processes the corpus to produce these tables. They're found in the
+// Resources group (in the top directory of the project).
+//
+// To make a new corpus, you conceptually want to enable
+// WRITE_FINDERPROPS below, and run the app over a set of images. Then
+// determine which of the blobs are actually finder patterns. In practice
+// this is much easier using a command-line version of the app.
 //
 
 static double g_smallodd[] = {

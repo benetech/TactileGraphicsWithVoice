@@ -22,8 +22,9 @@
 #define GUIDE_MAX_QRS 4u     // 4 or more QRs get the same guidance ("many")
 #define ANNOT_HEIGHT 30      // Add pixels of annotation to saved images
 #define MAX_SAVES 10         // Don't save too many images per scan
-#define AUTO_ILLUM_FRAMES 75 // How many failed frames before auto illumination
+#define AUTO_ILLUM_SEC 5     // How many seconds before auto illumination
 
+static NSString *kScanning = @"Scanning";
 static NSString *kIllumIsOn = @"illumination is on";
 
 @interface ScanViewController ()
@@ -100,7 +101,7 @@ static NSString *kIllumIsOn = @"illumination is on";
     _majority = [[Majority alloc] init];
     _majority.quorum = 7;     // Look at last 7 values
     _majority.maxValue = GUIDE_MAX_QRS;
-    _majority.keepCount = AUTO_ILLUM_FRAMES;
+    _majority.keepCount = AUTO_ILLUM_SEC * self.capture_frame_rate;
   }
   return _majority;
 }
@@ -300,7 +301,7 @@ static NSString *kIllumIsOn = @"illumination is on";
   if ([self.majority vote] != 0)
     return; // We see a QR code (or error)
   NSArray *votes = [self.majority votes];
-  if ([votes count] < AUTO_ILLUM_FRAMES)
+  if ((int) [votes count] < AUTO_ILLUM_SEC * self.capture_frame_rate)
     return; // Haven't seen enough frames to decide.
   for(NSNumber *n in votes)
     if ([n intValue] != 0)
@@ -352,6 +353,7 @@ static NSString *kIllumIsOn = @"illumination is on";
   //
 # define LARGEST_QRC_PX 32400 // WAS 48400
 # define SMALLEST_QRC 60
+  NSString *guidance;
   BOOL guided;
   Blob *qrc1;
   int qrcsCount = [self.majority vote];
@@ -364,7 +366,13 @@ static NSString *kIllumIsOn = @"illumination is on";
     return;
   }
   switch(qrcsCount) {
-    case 0: guided = [self guide: @"zero"]; break;
+    case 0:
+      if ([defaults boolForKey: kSettingsAnnounceZero])
+        guidance = @"zero";
+      else
+        guidance = nil;
+      guided = [self guide: guidance];
+      break;
     case 1:
       qrc1 = [qrcs count] == 1 ? qrcs[0] : nil;
       if (qrc1 == nil)
@@ -535,11 +543,11 @@ static NSString *kIllumIsOn = @"illumination is on";
     self.capture_frame_rate = FAST_FRAME_RATE;
   }
   
-  [[NSNotificationCenter defaultCenter]
-      addObserver:self
-         selector:@selector(didBecomeActive:)
-             name:UIApplicationDidBecomeActiveNotification
-           object:nil];
+  //[[NSNotificationCenter defaultCenter]
+  //    addObserver:self
+  //       selector:@selector(didBecomeActive:)
+  //           name:UIApplicationDidBecomeActiveNotification
+  //         object:nil];
   NSMutableSet *readerset = [[NSMutableSet alloc ] init];
 
   QRCodeReader* qrcodeReader = [[QRCodeReader alloc] init];
@@ -562,11 +570,14 @@ static NSString *kIllumIsOn = @"illumination is on";
 #endif
   [super viewDidAppear:animated];
   [self.voice initializeGuidance];
+  [self.majority clear];
   self.specialMessage = nil;
   if ([defaults boolForKey: kSettingsIlluminateScans]) {
-    if( [self setTorch: YES])
+    if ([self setTorch: YES])
       self.specialMessage = kIllumIsOn;
   }
+  if (self.specialMessage == nil && ![defaults boolForKey: kSettingsAnnounceZero])
+    self.specialMessage = kScanning;
   savedFailScans = 0;
   savedSuccScans = 0;
   savedFailCounts = 0;
@@ -587,18 +598,29 @@ static NSString *kIllumIsOn = @"illumination is on";
 {
   if ([self.tabBarController selectedViewController] != self)
     return;
+  [super didBecomeActive: notification];
 #if TGV_EXPERIMENTAL
   [self.eventLog log: @"Scanning restarted from background"];
 #endif
   [self.voice initializeGuidance];
   self.specialMessage = nil;
+  [self.majority clear];
   if ([defaults boolForKey: kSettingsIlluminateScans]) {
     if([self setTorch: YES])
       self.specialMessage = kIllumIsOn;
   }
+  if (self.specialMessage == nil && ![defaults boolForKey: kSettingsAnnounceZero])
+    self.specialMessage = kScanning;
   savedFailScans = 0;
   savedSuccScans = 0;
   savedFailCounts = 0;
+}
+
+- (void) willResignActive: (NSNotification *) notification
+{
+  if ([self.tabBarController selectedViewController] != self)
+    return;
+  [super willResignActive: notification];
 }
 
 

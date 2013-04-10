@@ -1,26 +1,19 @@
-//
-//  Voice.m
-//  TGV
-//
-//  Created by Jeffrey Scofield on 1/26/13.
-//
+// Voice.m     Offer periodic vocal guidance
 //
 
 #import "Voice.h"
 #define kGoldenPause 1.0 // Pause between guidances (sec)
+#define kSilentPause 1.3 // Pause after silent guidance (sec)
 #define kGiveupPause 2.0 // Pause after starting guidance (sec)
 
 @interface Voice ()
 @property (nonatomic, strong) NSString *guidanceNow;
 @property (nonatomic) CFAbsoluteTime startedTime;
 @property (nonatomic) CFAbsoluteTime finishedTime;
+@property (nonatomic) CFAbsoluteTime pauseTime;
 @end
 
 @implementation Voice
-
-@synthesize guidanceNow = _guidanceNow;
-@synthesize startedTime = _startedTime;
-@synthesize finishedTime = _finishedTime;
 
 - (Voice *) init
 {
@@ -39,6 +32,7 @@
     self.guidanceNow = nil;
     self.startedTime = 0.0;
     self.finishedTime = 0.0;
+    self.pauseTime = 0.0;
 }
 
 - (BOOL) offerGuidance: (NSString *) guidance
@@ -54,17 +48,26 @@
     // can be kGoldenPause since the last announcement finished, or it can
     // be kGiveupPause since the last announcement started.
     //
-    if (guidance == nil)
-        return NO;
+    // There is a special case when guidance == nil. The idea is that this
+    // should represent a silent announcement. For this case, wait for
+    // slightly longer than kGoldenPause but not as long as kGiveupPause.
+    //
     CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
-    if(self.guidanceNow == nil && now - self.finishedTime < kGoldenPause)
+    if(self.guidanceNow == nil && now - self.finishedTime < self.pauseTime)
         return NO; // Too soon since end of last announcement
     if(self.guidanceNow != nil && now - self.startedTime < kGiveupPause)
-        return NO; // Too soon since start of last announcement
+        return NO; // Also too soon since start of last announcement
     self.guidanceNow = guidance;
     self.startedTime = now;
-    UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification,
-                                    guidance);
+    if(guidance == nil) {
+        self.finishedTime = now; // A silent announcement finishes immediately
+        self.pauseTime = kSilentPause;
+    } else {
+        self.finishedTime = 0.0;
+        self.pauseTime = kGoldenPause;
+        UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification,
+                                        guidance);
+    }
     return YES;
 }
 

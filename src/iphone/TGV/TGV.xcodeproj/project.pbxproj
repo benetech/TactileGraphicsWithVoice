@@ -227,6 +227,8 @@
 		B9CAD4DC16D893F100035210 /* TGVSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TGVSettings.h; sourceTree = "<group>"; };
 		B9CAD4DD16DAF72000035210 /* TGVViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TGVViewController.h; sourceTree = "<group>"; };
 		B9CAD4DE16DAF72000035210 /* TGVViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TGVViewController.m; sourceTree = "<group>"; };
+		B9D8DD66171523C4000C89B0 /* cumulate */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = cumulate; sourceTree = "<group>"; };
+		B9D8DD67171523D9000C89B0 /* findercorpus */ = {isa = PBXFileReference; lastKnownFileType = text; path = findercorpus; sourceTree = "<group>"; };
 		B9EEC92116FFD7FF00F17452 /* refinedblobs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = refinedblobs.h; sourceTree = "<group>"; };
 		B9EEC92216FFD7FF00F17452 /* refinedblobs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = refinedblobs.m; sourceTree = "<group>"; };
 		B9EEC92616FFD81500F17452 /* findfinders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = findfinders.h; sourceTree = "<group>"; };
@@ -399,21 +401,23 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3B0A5DB81444C492000EC568 /* Icon.png */,
-				B949FF9816961C52003C545B /* Icon@2x.png */,
-				E548755B119C62B9001CC0F8 /* plink.aif */,
+				B9D8DD66171523C4000C89B0 /* cumulate */,
 				B96119B416EACA0B006503FB /* epianodb4.aif */,
 				B96119C016EC4733006503FB /* epianodbmaj.aif */,
-				B96049DD167EBF3A00A832D4 /* ResultsViewController.xib */,
-				B911CD3F16992B6E00CE5CA0 /* ResultsTViewController.xib */,
-				B9CAD4D716D7E86300035210 /* SettingsViewController.xib */,
-				28AD735F0D9D9599002E5188 /* MainWindow.xib */,
-				B911CD391698DB0E00CE5CA0 /* list-tabbar.png */,
-				B911CD3A1698DB0E00CE5CA0 /* list-tabbar@2x.png */,
+				B9D8DD67171523D9000C89B0 /* findercorpus */,
 				B911CD351698D9F700CE5CA0 /* gears-tabbar.png */,
 				B911CD361698D9F700CE5CA0 /* gears-tabbar@2x.png */,
+				3B0A5DB81444C492000EC568 /* Icon.png */,
+				B949FF9816961C52003C545B /* Icon@2x.png */,
+				B911CD391698DB0E00CE5CA0 /* list-tabbar.png */,
+				B911CD3A1698DB0E00CE5CA0 /* list-tabbar@2x.png */,
+				28AD735F0D9D9599002E5188 /* MainWindow.xib */,
+				E548755B119C62B9001CC0F8 /* plink.aif */,
 				B911CD311698CB3700CE5CA0 /* qr-tabbar.png */,
 				B911CD321698CB3700CE5CA0 /* qr-tabbar@2x.png */,
+				B911CD3F16992B6E00CE5CA0 /* ResultsTViewController.xib */,
+				B96049DD167EBF3A00A832D4 /* ResultsViewController.xib */,
+				B9CAD4D716D7E86300035210 /* SettingsViewController.xib */,
 				8D1107310486CEB800E47090 /* TGV-Info.plist */,
 				B9FBD4DA16E024E60063A76D /* TGVE-Info.plist */,
 			);

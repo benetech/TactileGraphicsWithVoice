@@ -77,6 +77,8 @@
 - (void) setFocusPointOfInterest: (CGPoint) point;
 - (BOOL) isAdjustingExposure;
 - (BOOL) isAdjustingWhiteBalance;
+- (void) didBecomeActive: (NSNotification *) notification;
+- (void) willResignActive: (NSNotification *) notification;
 @end
 
 @protocol ZXingDelegate

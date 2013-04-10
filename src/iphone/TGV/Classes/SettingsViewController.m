@@ -1,9 +1,4 @@
-//
-//  SettingsViewController.m
-//  TGV
-//
-//  Created by Jeffrey Scofield on 2/22/13.
-//
+// SettingsViewController.m     Control the settings tab
 //
 
 #import "SettingsViewController.h"
@@ -31,6 +26,12 @@
 - (void) setScanAllCounts: (UISwitch *) sender
 {
     [defaults setBool: sender.isOn forKey: kSettingsScanAllCounts];
+    [defaults synchronize];
+}
+
+- (void) setAnnounceZero: (UISwitch *) sender
+{
+    [defaults setBool: sender.isOn forKey: kSettingsAnnounceZero];
     [defaults synchronize];
 }
 
@@ -81,7 +82,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     switch (section) {
-        case 0: return 3;
+        case 0: return 4;
         case 1:
 #if TGV_EXPERIMENTAL
             return 5;
@@ -117,6 +118,11 @@
             label = @"Scan Aggressively";
             action = @selector(setScanAllCounts:);
             initialValue = [defaults boolForKey: kSettingsScanAllCounts];
+            break;
+        case 3:
+            label = @"Announce Zero Counts";
+            action = @selector(setAnnounceZero:);
+            initialValue = [defaults boolForKey: kSettingsAnnounceZero];
             break;
         case 10:
             label = @"Save Failed Scans";
