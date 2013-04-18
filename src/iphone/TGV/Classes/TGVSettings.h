@@ -1,9 +1,4 @@
-//
-//  TGVSettings.h
-//  TGV
-//
-//  Created by Jeffrey Scofield on 2/22/13.
-//
+// TGVSettings.h
 //
 
 // Names for settings
@@ -13,11 +8,16 @@
 #define kSettingsScanAllCounts      @"ScanAllCounts"
 #define kSettingsAnnounceZero       @"AnnounceZero"
 
-// Used for troubleshooting
+// Used for troubleshooting.
 
+// (These are disabled for now.)
 #define kSettingsSaveFailedScans    @"SaveFailedScans"
 #define kSettingsSaveSucceededScans @"SaveSucceededScans"
 #define kSettingsSaveFailedCounts   @"SaveFailedCounts"
+
+// (These are active.)
+#define kSettingsDoSurvey           @"DoSurvey"
+#define kSettingsSilentGuidance     @"SilentGuidance"
 
 // Used in the experimental version
 

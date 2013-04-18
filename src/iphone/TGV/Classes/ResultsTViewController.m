@@ -1,26 +1,37 @@
-//
-//  ResultsTViewController.m
-//  TGV
-//
-//  Created by Jeffrey Scofield on 1/5/13.
-//
+// ResultsTViewController.m     Controller for the list of scan results
 //
 
 #import "ResultsTViewController.h"
+#import "Survey.h"
+
+# define SURVEY_WAIT1 3.0   // Time for announcement before survey
+# define SURVEY_WAIT2 1.5   // Time for return to results page before survey
 
 @interface ResultsTViewController ()
-@property (nonatomic,retain) NSMutableArray *results;
+{
+    BOOL announce;         // Announce latest result string at next appearance
+    BOOL pendingSurvey;    // Show the survey at next appearance
+}
+@property (nonatomic, retain) NSMutableArray *results;
 @property (nonatomic, retain) NSString *resultstring;
-- (void) initialize;
+@property (nonatomic, retain) Survey *survey;
+- (void) setup;
 @end
 
 @implementation ResultsTViewController
+
+- (Survey *) survey
+{
+    if (! _survey)
+        _survey = [[Survey alloc] init];
+    return _survey;
+}
 
 - (id) initWithNibName: (NSString *) nibName bundle: (NSBundle *) nibBundle
 {
     self = [super initWithNibName: nibName bundle: nibBundle];
     if (self) {
-        [self initialize];
+        [self setup];
     }
     return self;
 }
@@ -29,15 +40,26 @@
 {
     self = [super initWithCoder: aDecoder];
     if(self) {
-        [self initialize];
+        [self setup];
     }
     return self;
 }
 
-- (void) initialize
+- (void) setup
 {
+    NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+    [defaultCenter addObserver: self
+                      selector: @selector(didBecomeActive:)
+                          name: UIApplicationDidBecomeActiveNotification
+                        object: nil];
+    [defaultCenter addObserver: self
+                      selector: @selector(willResignActive:)
+                          name: UIApplicationWillResignActiveNotification
+                        object: nil];
     self.results = [NSMutableArray arrayWithCapacity: 16];
+    // restore results from save file if any
     announce = NO;
+    pendingSurvey = NO;
 }
 
 - (void)viewDidLoad
@@ -57,8 +79,48 @@
     if(announce && [self.resultstring length] > 0) {
         UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification,
                                         self.resultstring);
+        [self surveyAfterDelay: SURVEY_WAIT1];
     }
+    if (pendingSurvey)
+        // This is for the case when the survey couldn't be issued immediately.
+        //
+        [self surveyAfterDelay: SURVEY_WAIT2];
     announce = NO;
+}
+
+- (void) surveyAfterDelay: (NSTimeInterval) delay
+{
+    // Wait a while for the announcement to finish, then issue a survey
+    // question if there is one. Currently we just wait a fixed amount of
+    // time. In practice, the end-of-announcement notification is not
+    // reliable.
+    //
+    pendingSurvey = NO;
+    [self performSelector: @selector(surveyNow:)
+               withObject: nil
+               afterDelay: delay];
+}
+
+- (void) surveyNow: (NSObject *) dummy
+{
+    // If our view is still being displayed, perform the survey.
+    // Otherwise mark it as pending, to be performed the next time our
+    // view is displayed.
+    //
+    if ([self.tabBarController selectedViewController] == self)
+        [self.survey askQuestionInView: self.view.window];
+    else
+        pendingSurvey = YES;
+}
+
+- (void) didBecomeActive: (NSNotification *) notification
+{
+    // Delete any save file
+}
+
+- (void) willResignActive: (NSNotification *) notification
+{
+    // Save results to file.
 }
 
 - (void) addResult: (NSString *) str
@@ -77,27 +139,6 @@
     announce = NO;
 }
 
-#pragma mark - Table view data source
-
-/* REFERENCE *
-
-   UITableViewDataSource protocol
-
- – tableView:cellForRowAtIndexPath:  required method
- – numberOfSectionsInTableView:
- – tableView:numberOfRowsInSection:  required method
- – sectionIndexTitlesForTableView:
- – tableView:sectionForSectionIndexTitle:atIndex:
- – tableView:titleForHeaderInSection:
- – tableView:titleForFooterInSection:
-
- – tableView:commitEditingStyle:forRowAtIndexPath:
- – tableView:canEditRowAtIndexPath:
-
- – tableView:canMoveRowAtIndexPath:
- – tableView:moveRowAtIndexPath:toIndexPath:
-
- * REFERENCE */
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -123,58 +164,6 @@
     return cell;
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-#pragma mark - Table view delegate
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     [detailViewController release];
-     */
-}
 
 - (void)didReceiveMemoryWarning
 {

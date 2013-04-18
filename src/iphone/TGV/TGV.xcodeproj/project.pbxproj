@@ -30,6 +30,8 @@
 		B911CD4016992B6E00CE5CA0 /* ResultsTViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B911CD3E16992B6E00CE5CA0 /* ResultsTViewController.m */; };
 		B911CD4116992B6E00CE5CA0 /* ResultsTViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B911CD3F16992B6E00CE5CA0 /* ResultsTViewController.xib */; };
 		B911DA7C16AF1BDB00FDD76C /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B911DA7B16AF1BDB00FDD76C /* CoreImage.framework */; };
+		B925A99D171E6C880094DC80 /* Survey.m in Sources */ = {isa = PBXBuildFile; fileRef = B925A99C171E6C880094DC80 /* Survey.m */; };
+		B925A99E171E6C880094DC80 /* Survey.m in Sources */ = {isa = PBXBuildFile; fileRef = B925A99C171E6C880094DC80 /* Survey.m */; };
 		B93DE61C17088A1E000B09D8 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B93DE61B17088A1E000B09D8 /* Accelerate.framework */; };
 		B93DE620170A3808000B09D8 /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = B93DE61F170A3808000B09D8 /* Device.m */; };
 		B93DE621170A3808000B09D8 /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = B93DE61F170A3808000B09D8 /* Device.m */; };
@@ -40,8 +42,6 @@
 		B94A498F16B4674000068117 /* runle.c in Sources */ = {isa = PBXBuildFile; fileRef = B94A498B16B4674000068117 /* runle.c */; };
 		B94A499216B486C600068117 /* findqrcs.m in Sources */ = {isa = PBXBuildFile; fileRef = B94A499116B486C600068117 /* findqrcs.m */; };
 		B94A499516B4B5A100068117 /* Voice.m in Sources */ = {isa = PBXBuildFile; fileRef = B94A499416B4B5A100068117 /* Voice.m */; };
-		B96049D0167D8EEE00A832D4 /* TGVTabDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B96049CF167D8EEE00A832D4 /* TGVTabDelegate.m */; };
-		B96049DE167EBF3B00A832D4 /* ResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B96049DC167EBF3A00A832D4 /* ResultsViewController.m */; };
 		B96119B516EACA0B006503FB /* epianodb4.aif in Resources */ = {isa = PBXBuildFile; fileRef = B96119B416EACA0B006503FB /* epianodb4.aif */; };
 		B96119B616EACA0B006503FB /* epianodb4.aif in Resources */ = {isa = PBXBuildFile; fileRef = B96119B416EACA0B006503FB /* epianodb4.aif */; };
 		B96119BA16EACA5D006503FB /* Signal.m in Sources */ = {isa = PBXBuildFile; fileRef = B96119B916EACA5D006503FB /* Signal.m */; };
@@ -90,8 +90,6 @@
 		B9FBD4BA16E024E50063A76D /* TGVAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* TGVAppDelegate.m */; };
 		B9FBD4BB16E024E50063A76D /* ScanViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 28C286E00D94DF7D0034E888 /* ScanViewController.mm */; };
 		B9FBD4BC16E024E50063A76D /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1FF586FC11BBD81D00E8E868 /* main.mm */; };
-		B9FBD4BD16E024E50063A76D /* TGVTabDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B96049CF167D8EEE00A832D4 /* TGVTabDelegate.m */; };
-		B9FBD4BE16E024E50063A76D /* ResultsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B96049DC167EBF3A00A832D4 /* ResultsViewController.m */; };
 		B9FBD4BF16E024E50063A76D /* ResultsTViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B911CD3E16992B6E00CE5CA0 /* ResultsTViewController.m */; };
 		B9FBD4C016E024E50063A76D /* Blob.m in Sources */ = {isa = PBXBuildFile; fileRef = B94A498816B4674000068117 /* Blob.m */; };
 		B9FBD4C116E024E50063A76D /* findblobs.m in Sources */ = {isa = PBXBuildFile; fileRef = B94A498A16B4674000068117 /* findblobs.m */; };
@@ -181,6 +179,8 @@
 		B911CD3F16992B6E00CE5CA0 /* ResultsTViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ResultsTViewController.xib; path = Classes/ResultsTViewController.xib; sourceTree = "<group>"; };
 		B911CD42169959A500CE5CA0 /* TGVResults.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TGVResults.h; sourceTree = "<group>"; };
 		B911DA7B16AF1BDB00FDD76C /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
+		B925A99B171E6C880094DC80 /* Survey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Survey.h; sourceTree = "<group>"; };
+		B925A99C171E6C880094DC80 /* Survey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Survey.m; sourceTree = "<group>"; };
 		B93DE61B17088A1E000B09D8 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		B93DE61E170A3808000B09D8 /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
 		B93DE61F170A3808000B09D8 /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Device.m; sourceTree = "<group>"; };
@@ -196,10 +196,6 @@
 		B94A499316B4B5A100068117 /* Voice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Voice.h; sourceTree = "<group>"; };
 		B94A499416B4B5A100068117 /* Voice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Voice.m; sourceTree = "<group>"; };
 		B96049CD167D368C00A832D4 /* ScanViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ScanViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		B96049CE167D8D9400A832D4 /* TGVTabDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TGVTabDelegate.h; sourceTree = "<group>"; };
-		B96049CF167D8EEE00A832D4 /* TGVTabDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TGVTabDelegate.m; sourceTree = "<group>"; };
-		B96049DB167EBF3A00A832D4 /* ResultsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultsViewController.h; sourceTree = "<group>"; };
-		B96049DC167EBF3A00A832D4 /* ResultsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.objc; path = ResultsViewController.m; sourceTree = "<group>"; };
 		B96049DD167EBF3A00A832D4 /* ResultsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ResultsViewController.xib; path = Classes/ResultsViewController.xib; sourceTree = "<group>"; };
 		B96119B416EACA0B006503FB /* epianodb4.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = epianodb4.aif; sourceTree = "<group>"; };
 		B96119B816EACA5D006503FB /* Signal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signal.h; sourceTree = "<group>"; };
@@ -322,8 +318,6 @@
 				B9EEC92216FFD7FF00F17452 /* refinedblobs.m */,
 				B911CD3D16992B6E00CE5CA0 /* ResultsTViewController.h */,
 				B911CD3E16992B6E00CE5CA0 /* ResultsTViewController.m */,
-				B96049DB167EBF3A00A832D4 /* ResultsViewController.h */,
-				B96049DC167EBF3A00A832D4 /* ResultsViewController.m */,
 				B94A498B16B4674000068117 /* runle.c */,
 				B94A498C16B4674000068117 /* runle.h */,
 				B9FBD4A316DFE9880063A76D /* ScanView.h */,
@@ -336,14 +330,14 @@
 				B9CAD4D616D7E86300035210 /* SettingsViewController.m */,
 				B96119B816EACA5D006503FB /* Signal.h */,
 				B96119B916EACA5D006503FB /* Signal.m */,
+				B925A99B171E6C880094DC80 /* Survey.h */,
+				B925A99C171E6C880094DC80 /* Survey.m */,
 				B96119BC16EBC55C006503FB /* Synchronizer.h */,
 				B96119BD16EBC55C006503FB /* Synchronizer.m */,
 				1D3623240D0F684500981E51 /* TGVAppDelegate.h */,
 				1D3623250D0F684500981E51 /* TGVAppDelegate.m */,
 				B911CD42169959A500CE5CA0 /* TGVResults.h */,
 				B9CAD4DC16D893F100035210 /* TGVSettings.h */,
-				B96049CE167D8D9400A832D4 /* TGVTabDelegate.h */,
-				B96049CF167D8EEE00A832D4 /* TGVTabDelegate.m */,
 				B9CAD4DD16DAF72000035210 /* TGVViewController.h */,
 				B9CAD4DE16DAF72000035210 /* TGVViewController.m */,
 				B94A499316B4B5A100068117 /* Voice.h */,
@@ -587,8 +581,6 @@
 				1D3623260D0F684500981E51 /* TGVAppDelegate.m in Sources */,
 				28C286E10D94DF7D0034E888 /* ScanViewController.mm in Sources */,
 				1FF586FD11BBD81D00E8E868 /* main.mm in Sources */,
-				B96049D0167D8EEE00A832D4 /* TGVTabDelegate.m in Sources */,
-				B96049DE167EBF3B00A832D4 /* ResultsViewController.m in Sources */,
 				B911CD4016992B6E00CE5CA0 /* ResultsTViewController.m in Sources */,
 				B94A498D16B4674000068117 /* Blob.m in Sources */,
 				B94A498E16B4674000068117 /* findblobs.m in Sources */,
@@ -611,6 +603,7 @@
 				B9EEC92816FFD81500F17452 /* findfinders.m in Sources */,
 				B9EEC92C16FFD82F00F17452 /* dockfinders.m in Sources */,
 				B93DE620170A3808000B09D8 /* Device.m in Sources */,
+				B925A99D171E6C880094DC80 /* Survey.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -621,8 +614,6 @@
 				B9FBD4BA16E024E50063A76D /* TGVAppDelegate.m in Sources */,
 				B9FBD4BB16E024E50063A76D /* ScanViewController.mm in Sources */,
 				B9FBD4BC16E024E50063A76D /* main.mm in Sources */,
-				B9FBD4BD16E024E50063A76D /* TGVTabDelegate.m in Sources */,
-				B9FBD4BE16E024E50063A76D /* ResultsViewController.m in Sources */,
 				B9FBD4BF16E024E50063A76D /* ResultsTViewController.m in Sources */,
 				B9FBD4C016E024E50063A76D /* Blob.m in Sources */,
 				B9FBD4C116E024E50063A76D /* findblobs.m in Sources */,
@@ -645,6 +636,7 @@
 				B9EEC92916FFD81500F17452 /* findfinders.m in Sources */,
 				B9EEC92D16FFD82F00F17452 /* dockfinders.m in Sources */,
 				B93DE621170A3808000B09D8 /* Device.m in Sources */,
+				B925A99E171E6C880094DC80 /* Survey.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -694,7 +686,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Jeffrey Scofield";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				EXPORTED_SYMBOLS_FILE = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -704,7 +696,7 @@
 				INFOPLIST_FILE = "TGV-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = TGV;
-				PROVISIONING_PROFILE = "02F426C1-6FDB-4D76-92D5-B1D59760824C";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 			};

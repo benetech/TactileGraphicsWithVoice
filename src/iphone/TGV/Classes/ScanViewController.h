@@ -6,7 +6,7 @@
 #import "ScanView.h"
 #import "EventLog.h"
 #import "ZXingWidgetController.h"
-#import "ResultsViewController.h"
+#import "ResultsTViewController.h"
 
 @interface ScanViewController : ZXingWidgetController <ZXingDelegate, ScanViewDelegate, EventLogDelegate> {
 }

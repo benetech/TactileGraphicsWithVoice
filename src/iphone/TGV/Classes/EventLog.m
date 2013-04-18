@@ -8,7 +8,7 @@
 #import <stdio.h>
 #import "EventLog.h"
 
-NSString *monthNames[] =
+static NSString *monthNames[] =
     { @"X",
       @"Jan", @"Feb", @"Mar", @"Apr", @"May", @"Jun",
       @"Jul", @"Aug", @"Sep", @"Oct", @"Nov", @"Dec" };

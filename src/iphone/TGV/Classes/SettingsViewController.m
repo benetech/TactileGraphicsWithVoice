@@ -35,6 +35,18 @@
     [defaults synchronize];
 }
 
+- (void) setDoSurvey: (UISwitch *) sender
+{
+    [defaults setBool: sender.isOn forKey: kSettingsDoSurvey];
+    [defaults synchronize];
+}
+
+- (void) setSilentGuidance: (UISwitch *) sender
+{
+    [defaults setBool: sender.isOn forKey: kSettingsSilentGuidance];
+    [defaults synchronize];
+}
+
 - (void) setSaveFailedScans: (UISwitch *) sender
 {
     [defaults setBool: sender.isOn forKey: kSettingsSaveFailedScans];
@@ -85,9 +97,9 @@
         case 0: return 4;
         case 1:
 #if TGV_EXPERIMENTAL
-            return 5;
+            return 4;
 #else
-            return 3;
+            return 2;
 #endif
         default: return 0;
     }
@@ -115,7 +127,7 @@
             initialValue = [defaults boolForKey: kSettingsIlluminateScans];
             break;
         case 2:
-            label = @"Scan Aggressively";
+            label = @"Scan All the Time";
             action = @selector(setScanAllCounts:);
             initialValue = [defaults boolForKey: kSettingsScanAllCounts];
             break;
@@ -125,27 +137,43 @@
             initialValue = [defaults boolForKey: kSettingsAnnounceZero];
             break;
         case 10:
+            label = @"Issue Survey Questions";
+            action = @selector(setDoSurvey:);
+            initialValue = [defaults boolForKey: kSettingsDoSurvey];
+            break;
+        case 11:
+            label = @"Silent Guidance";
+            action = @selector(setSilentGuidance:);
+            initialValue = [defaults boolForKey: kSettingsSilentGuidance];
+            break;
+#ifdef TROUBLE_WITH_SCANS
+        // These are disabled for now. If you want to reenable them, don't
+        // forget to remove code in [self setup] that sets them to NO.
+        // (A few lines below.)
+        //
+        case 12:
             label = @"Save Failed Scans";
             action = @selector(setSaveFailedScans:);
             initialValue = [defaults boolForKey: kSettingsSaveFailedScans];
             break;
-        case 11:
+        case 13:
             label = @"Save Succeeded Scans";
             action = @selector(setSaveSucceededScans:);
             initialValue = [defaults boolForKey: kSettingsSaveSucceededScans];
             break;
-        case 12:
+        case 14:
             label = @"Save Failed Counts";
             action = @selector(setSaveFailedCounts:);
             initialValue = [defaults boolForKey: kSettingsSaveFailedCounts];
             break;
+#endif // TROUBLE_WITH_SCANS
 #if TGV_EXPERIMENTAL
-        case 13:
+        case 12:
             label = @"Highlight scan touch";
             action = @selector(setTrackTouches:);
             initialValue = [defaults boolForKey: kSettingsTrackTouches];
             break;
-        case 14:
+        case 13:
             label = @"Log Events";
             action = @selector(setLogEvents:);
             initialValue = [defaults boolForKey: kSettingsLogEvents];
@@ -183,6 +211,14 @@
 - (void) setup
 {
     defaults = [NSUserDefaults standardUserDefaults];
+    
+    // Disable some troubleshooting options for now. Otherwise they might
+    // get stuck in the on position.
+    //
+    [defaults setBool: NO forKey: kSettingsSaveFailedScans];
+    [defaults setBool: NO forKey: kSettingsSaveSucceededScans];
+    [defaults setBool: NO forKey: kSettingsSaveFailedCounts];
+    [defaults synchronize];
 }
 
 - (void)viewDidLoad

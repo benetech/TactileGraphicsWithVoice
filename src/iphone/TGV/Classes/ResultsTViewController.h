@@ -11,8 +11,8 @@
 
 @interface ResultsTViewController : UIViewController
     <UITableViewDataSource, UITableViewDelegate, TGVResults>
-{
-    BOOL announce;
-}
+//{
+//   BOOL announce;
+//}
 @property (nonatomic, retain) IBOutlet UITableView *tableView;
 @end

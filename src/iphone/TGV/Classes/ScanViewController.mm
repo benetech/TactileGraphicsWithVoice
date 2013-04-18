@@ -415,7 +415,9 @@ static NSString *kIllumIsOn = @"illumination is on";
 # define SMALL_DIST 90
 # define LARGE_DIST 240
 
-  if ([self.majority vote] == 1 && [qrcs count] == 1) {
+  if ([defaults boolForKey: kSettingsSilentGuidance]) {
+    period = SIGNAL_INF_PERIOD;
+  } else if ([self.majority vote] == 1 && [qrcs count] == 1) {
     qrc1 = qrcs[0];
     dist = abs(qrc1.minx - width / 2);
     dist = MAX(dist, abs(qrc1.maxx - width / 2));
@@ -436,6 +438,8 @@ static NSString *kIllumIsOn = @"illumination is on";
   // Offer the given guidance. There might be a special message we'd
   // rather say first, in which case we offer that instead.
   //
+  if ([defaults boolForKey: kSettingsSilentGuidance])
+    guidance = nil;
   NSString *g = self.specialMessage ? self.specialMessage : guidance;
   BOOL res = [self.voice offerGuidance: g];
   if (res) self.specialMessage = nil;
