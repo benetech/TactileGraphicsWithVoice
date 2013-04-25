@@ -32,11 +32,11 @@
 		B911DA7C16AF1BDB00FDD76C /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B911DA7B16AF1BDB00FDD76C /* CoreImage.framework */; };
 		B925A99D171E6C880094DC80 /* Survey.m in Sources */ = {isa = PBXBuildFile; fileRef = B925A99C171E6C880094DC80 /* Survey.m */; };
 		B925A99E171E6C880094DC80 /* Survey.m in Sources */ = {isa = PBXBuildFile; fileRef = B925A99C171E6C880094DC80 /* Survey.m */; };
+		B9377C331728CA0F00AA7668 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B93DE61B17088A1E000B09D8 /* Accelerate.framework */; };
 		B93DE61C17088A1E000B09D8 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B93DE61B17088A1E000B09D8 /* Accelerate.framework */; };
 		B93DE620170A3808000B09D8 /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = B93DE61F170A3808000B09D8 /* Device.m */; };
 		B93DE621170A3808000B09D8 /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = B93DE61F170A3808000B09D8 /* Device.m */; };
 		B949FF9916961C52003C545B /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B949FF9816961C52003C545B /* Icon@2x.png */; };
-		B949FF9D1696A888003C545B /* ResultsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B96049DD167EBF3A00A832D4 /* ResultsViewController.xib */; };
 		B94A498D16B4674000068117 /* Blob.m in Sources */ = {isa = PBXBuildFile; fileRef = B94A498816B4674000068117 /* Blob.m */; };
 		B94A498E16B4674000068117 /* findblobs.m in Sources */ = {isa = PBXBuildFile; fileRef = B94A498A16B4674000068117 /* findblobs.m */; };
 		B94A498F16B4674000068117 /* runle.c in Sources */ = {isa = PBXBuildFile; fileRef = B94A498B16B4674000068117 /* runle.c */; };
@@ -78,7 +78,6 @@
 		B9FBD4AD16E024E50063A76D /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B0A5DB81444C492000EC568 /* Icon.png */; };
 		B9FBD4AE16E024E50063A76D /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3B331CED161BB74E007313B6 /* Default-568h@2x.png */; };
 		B9FBD4AF16E024E50063A76D /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B949FF9816961C52003C545B /* Icon@2x.png */; };
-		B9FBD4B016E024E50063A76D /* ResultsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B96049DD167EBF3A00A832D4 /* ResultsViewController.xib */; };
 		B9FBD4B116E024E50063A76D /* qr-tabbar.png in Resources */ = {isa = PBXBuildFile; fileRef = B911CD311698CB3700CE5CA0 /* qr-tabbar.png */; };
 		B9FBD4B216E024E50063A76D /* qr-tabbar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B911CD321698CB3700CE5CA0 /* qr-tabbar@2x.png */; };
 		B9FBD4B316E024E50063A76D /* gears-tabbar.png in Resources */ = {isa = PBXBuildFile; fileRef = B911CD351698D9F700CE5CA0 /* gears-tabbar.png */; };
@@ -196,7 +195,6 @@
 		B94A499316B4B5A100068117 /* Voice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Voice.h; sourceTree = "<group>"; };
 		B94A499416B4B5A100068117 /* Voice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Voice.m; sourceTree = "<group>"; };
 		B96049CD167D368C00A832D4 /* ScanViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ScanViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		B96049DD167EBF3A00A832D4 /* ResultsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ResultsViewController.xib; path = Classes/ResultsViewController.xib; sourceTree = "<group>"; };
 		B96119B416EACA0B006503FB /* epianodb4.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = epianodb4.aif; sourceTree = "<group>"; };
 		B96119B816EACA5D006503FB /* Signal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signal.h; sourceTree = "<group>"; };
 		B96119B916EACA5D006503FB /* Signal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Signal.m; sourceTree = "<group>"; };
@@ -268,6 +266,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9377C331728CA0F00AA7668 /* Accelerate.framework in Frameworks */,
 				B9FBD4CA16E024E50063A76D /* QuartzCore.framework in Frameworks */,
 				B9FBD4CB16E024E50063A76D /* CoreImage.framework in Frameworks */,
 				B9FBD4CC16E024E50063A76D /* libZXingWidget.a in Frameworks */,
@@ -410,7 +409,6 @@
 				B911CD311698CB3700CE5CA0 /* qr-tabbar.png */,
 				B911CD321698CB3700CE5CA0 /* qr-tabbar@2x.png */,
 				B911CD3F16992B6E00CE5CA0 /* ResultsTViewController.xib */,
-				B96049DD167EBF3A00A832D4 /* ResultsViewController.xib */,
 				B9CAD4D716D7E86300035210 /* SettingsViewController.xib */,
 				8D1107310486CEB800E47090 /* TGV-Info.plist */,
 				B9FBD4DA16E024E60063A76D /* TGVE-Info.plist */,
@@ -534,7 +532,6 @@
 				3B0A5DB91444C492000EC568 /* Icon.png in Resources */,
 				3B331CEE161BB74E007313B6 /* Default-568h@2x.png in Resources */,
 				B949FF9916961C52003C545B /* Icon@2x.png in Resources */,
-				B949FF9D1696A888003C545B /* ResultsViewController.xib in Resources */,
 				B911CD331698CB3700CE5CA0 /* qr-tabbar.png in Resources */,
 				B911CD341698CB3700CE5CA0 /* qr-tabbar@2x.png in Resources */,
 				B911CD371698D9F700CE5CA0 /* gears-tabbar.png in Resources */,
@@ -557,7 +554,6 @@
 				B9FBD4AD16E024E50063A76D /* Icon.png in Resources */,
 				B9FBD4AE16E024E50063A76D /* Default-568h@2x.png in Resources */,
 				B9FBD4AF16E024E50063A76D /* Icon@2x.png in Resources */,
-				B9FBD4B016E024E50063A76D /* ResultsViewController.xib in Resources */,
 				B9FBD4B116E024E50063A76D /* qr-tabbar.png in Resources */,
 				B9FBD4B216E024E50063A76D /* qr-tabbar@2x.png in Resources */,
 				B9FBD4B316E024E50063A76D /* gears-tabbar.png in Resources */,
@@ -706,7 +702,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Jeffrey Scofield (PP36DPP7BP)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				EXPORTED_SYMBOLS_FILE = "";
@@ -723,7 +719,7 @@
 				OTHER_LDFLAGS = "";
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = TGVE;
-				PROVISIONING_PROFILE = "C1F25C9E-FB7C-4FE8-B2D5-3FCC8D32A6D3";
+				PROVISIONING_PROFILE = "";
 				STANDARD_C_PLUS_PLUS_LIBRARY_TYPE = dynamic;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -733,7 +729,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Jeffrey Scofield";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				EXPORTED_SYMBOLS_FILE = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -744,7 +740,7 @@
 				INFOPLIST_FILE = "TGVE-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = TGVE;
-				PROVISIONING_PROFILE = "F7F60D82-EA6A-4B23-83CC-DB2C3C881DD3";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 			};

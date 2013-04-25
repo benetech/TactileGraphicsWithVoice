@@ -1,5 +1,8 @@
 // Synchronizer.h     Decide when it's a good time to do a periodic action
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 // The basic idea is that there are some things you want to do every now and
 // then. If vocal guidance is on, there are some cases where you'd like to
 // synchronize with the guidance announcements. If vocal guidance is off, you

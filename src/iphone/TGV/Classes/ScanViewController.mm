@@ -1,5 +1,8 @@
 // ScanViewController.mm     Controller for the view that scans QR codes
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #import <CoreGraphics/CoreGraphics.h>
 #import "TGVSettings.h"
 #import "ScanViewController.h"

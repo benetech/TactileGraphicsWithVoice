@@ -1,5 +1,8 @@
 // findblobs.h
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #import <Foundation/Foundation.h>
 #import "runle.h"
 #import "Blob.h"

@@ -1,5 +1,8 @@
 // Blob.m    Connected component
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 
 #import "Blob.h"
 

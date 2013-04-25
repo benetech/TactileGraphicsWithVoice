@@ -1,5 +1,8 @@
 /* runle.c     Run length encoding
  *
+ * Jeffrey Scofield, Psellos
+ * http://psellos.com
+ *
  * (Coding this in straight C for speed.)
  */
 #include <stdlib.h>

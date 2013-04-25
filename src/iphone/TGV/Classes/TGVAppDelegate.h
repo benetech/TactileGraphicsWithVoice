@@ -1,9 +1,7 @@
-//
 //  TGVAppDelegate.h
-//  TGV
 //
-//  Created by David Kavanagh on 5/10/10.
-//  Modified for TGV by Jeffrey Scofield 12/14/12 ...
+// Jeffrey Scofield, Psellos
+// http://psellos.com
 //
 
 #import <UIKit/UIKit.h>

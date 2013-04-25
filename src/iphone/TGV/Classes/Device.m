@@ -1,5 +1,8 @@
 //  Device.m     Properties of the device
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #import <sys/sysctl.h>
 #import "Device.h"
 

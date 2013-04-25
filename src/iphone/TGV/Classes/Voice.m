@@ -1,5 +1,8 @@
 // Voice.m     Offer periodic vocal guidance
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 
 #import "Voice.h"
 #define kGoldenPause 1.0 // Pause between guidances (sec)

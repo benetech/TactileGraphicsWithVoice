@@ -1,5 +1,8 @@
 // dockfinders.m     Merge finder patterns into larger blobs
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #import "Blob.h"
 #import "dockfinders.h"
 

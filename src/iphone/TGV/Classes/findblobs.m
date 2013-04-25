@@ -1,5 +1,8 @@
 // findblobs.m     Find connected components of an image
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #import <Foundation/Foundation.h>
 #import "runle.h"
 #import "Blob.h"
@@ -41,7 +44,7 @@ NSMutableDictionary *findblobs(int width, int height, RUN **starts)
         x = 0;
         for(r = starts[y]; r < starts[y + 1]; r++) {
             r->component = NULL; // Mark as a run with no blob yet
-            while(prevx + prevr->width < x) {
+            while(prevx + prevr->width <= x) {
                 prevx += prevr->width;
                 prevr++;
             }

@@ -1,9 +1,7 @@
+// FrameLog.h
 //
-//  FrameLog.h
-//  TGV
-//
-//  Created by Jeffrey Scofield on 3/16/13.
-//
+// Jeffrey Scofield, Psellos
+// http://psellos.com
 //
 
 #import <Foundation/Foundation.h>

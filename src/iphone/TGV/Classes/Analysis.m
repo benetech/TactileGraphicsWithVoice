@@ -1,5 +1,8 @@
 // Analysis.m     Analysis of an image
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #import "Analysis.h"
 #import "Section.h"
 #import "runle.h"

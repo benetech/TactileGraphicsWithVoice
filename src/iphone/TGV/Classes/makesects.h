@@ -1,5 +1,8 @@
-/* makesects.h     Carve image into sections and analyze
- */
+// makesects.h     Carve image into sections and analyze
+//
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #if TARGET_MAC
 #import <Cocoa/Cocoa.h>
 #else

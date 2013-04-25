@@ -1,4 +1,7 @@
-// ResultsTViewController.m     Controller for the list of scan results
+// ResultsTViewController.m     Controller for table of scan results
+//
+// Jeffrey Scofield, Psellos
+// http://psellos.com
 //
 
 #import "ResultsTViewController.h"

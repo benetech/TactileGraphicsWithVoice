@@ -1,5 +1,8 @@
 // Majority.h     Track changing (small nonnegative int) value
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 // Track a series of small int values, taking a vote after each new value
 // shows up. The idea of the vote is to determine what value has shown up
 // the majority of the time recently. The newValue: method registers a

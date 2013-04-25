@@ -1,5 +1,9 @@
 /* runle.h     Run length encoding
+ *
+ * Jeffrey Scofield, Psellos
+ * http://psellos.com
  */
+#include <stdint.h>
 
 /* A horizontal row of adjacent pixels of the same class. Right now we
  * just have two classes, background (light) and foreground (dark).

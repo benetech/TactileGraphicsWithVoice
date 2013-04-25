@@ -1,5 +1,8 @@
 // Survey.m     Ask questions after successful scans
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 
 #import <stdio.h>
 #import "TGVSettings.h"

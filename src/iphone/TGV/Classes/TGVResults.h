@@ -1,9 +1,7 @@
+// TGVResults.h    Protocol for reporting scan results
 //
-//  TGVResults.h
-//  TGV
-//
-//  Created by Jeffrey Scofield on 1/5/13.
-//
+// Jeffrey Scofield, Psellos
+// http://psellos.com
 //
 
 #import <Foundation/Foundation.h>

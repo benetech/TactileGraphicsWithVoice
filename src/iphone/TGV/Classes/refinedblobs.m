@@ -1,8 +1,18 @@
 // refinedblobs.m     Find blobs and refine them a little
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 // Right now we coalesce smallish background blobs with their containing
 // foreground blobs. This helps with QR codes because they have many
 // light regions inside (especially in close-up).
+//
+// The basic blob finding (image segmentation) algorithm is taken from
+// the work of James Bruce, which goes by the name CMVision:
+//
+//     Realtime Machine Vision Perception and Prediction
+//     Undergraduate Thesis, Carnegie Mellon University, 2000
+//     http://www.cs.cmu.edu/~jbruce/cmvision/papers/JBThesis00.pdf
 //
 #include <stdint.h>
 #import "runle.h"

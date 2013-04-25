@@ -1,5 +1,8 @@
-/* findqrcs.h     Find and classify QR codes in an image
- */
+// findqrcs.h     Find and classify QR codes in an image
+//
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #if TARGET_MAC
 #import <Cocoa/Cocoa.h>
 #else

@@ -1,9 +1,7 @@
+// Voice.h     Offer periodic vocal guidance
 //
-//  Voice.h
-//  TGV
-//
-//  Created by Jeffrey Scofield on 1/26/13.
-//
+// Jeffrey Scofield, Psellos
+// http://psellos.com
 //
 
 #import <Foundation/Foundation.h>

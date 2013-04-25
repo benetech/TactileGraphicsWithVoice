@@ -1,9 +1,7 @@
+// TGVViewController.h     Top-level view controller for TGV
 //
-//  TGVViewController.h
-//  TGV
-//
-//  Created by Jeffrey Scofield on 2/24/13.
-//
+// Jeffrey Scofield, Psellos
+// http://psellos.com
 //
 
 #import <UIKit/UIKit.h>

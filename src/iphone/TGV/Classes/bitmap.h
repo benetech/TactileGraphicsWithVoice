@@ -1,5 +1,8 @@
 /* bitmap.h     TGV bitmap info
  *
+ * Jeffrey Scofield, Psellos
+ * http://psellos.com
+ *
  * TGV works with two versions of an image. lumi_orig is the original
  * image, converted to grayscale (luminance values). lumi_dil is a
  * dilated version of the original, which makes the QR codes stand out

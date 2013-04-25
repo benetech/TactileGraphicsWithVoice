@@ -1,5 +1,8 @@
 // Synchronizer.m     Decide when it's a good time to do a periodic action
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 
 #import "Synchronizer.h"
 

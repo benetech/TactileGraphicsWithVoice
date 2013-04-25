@@ -1,5 +1,8 @@
 // Majority.m     Tracking of changing (small nonnegative int) value
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 
 #import "Majority.h"
 

@@ -1,4 +1,7 @@
-// TGVSettings.h
+// TGVSettings.h     Constants for names of settings
+//
+// Jeffrey Scofield, Psellos
+// http://psellos.com
 //
 
 // Names for settings

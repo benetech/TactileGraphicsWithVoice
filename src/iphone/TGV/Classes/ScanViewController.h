@@ -1,6 +1,8 @@
+//  ScanViewController.h     Controller for the view that scans QR codes
 //
-//  ScanViewController.h
-
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #import <UIKit/UIKit.h>
 #import <CoreMotion/CoreMotion.h>
 #import "ScanView.h"

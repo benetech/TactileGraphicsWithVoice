@@ -1,6 +1,7 @@
 // Signal.h     Play a short sound with a controlled periodicity
 //
-// Created by Jeffrey Scofield on 3/8/13.
+// Jeffrey Scofield, Psellos
+// http://psellos.com
 //
 
 #import <Foundation/Foundation.h>

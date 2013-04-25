@@ -1,5 +1,8 @@
 // findfinders.m     Find finder patterns as separate blobs
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 // This code identifies finder patterns by looking for a few orientation-
 // independent features that seem like they ought to characterize them.
 // There's plenty of room to use more powerful techniques to do a better

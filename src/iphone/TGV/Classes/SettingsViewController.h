@@ -1,9 +1,7 @@
+// SettingsViewController.h     Controller for viewing and changing settings
 //
-//  SettingsViewController.h
-//  TGV
-//
-//  Created by Jeffrey Scofield on 2/22/13.
-//
+// Jeffrey Scofield, Psellos
+// http://psellos.com
 //
 
 #import <UIKit/UIKit.h>

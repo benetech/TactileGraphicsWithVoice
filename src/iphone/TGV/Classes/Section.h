@@ -1,5 +1,8 @@
 // Section.h     Section of grid laid over image
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #import <Foundation/Foundation.h>
 
 @interface Section : NSObject

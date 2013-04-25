@@ -1,7 +1,13 @@
 // ScanView.m
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 // Simple subclass of UIView. The only difference right now is that this
 // class can track touches for use in accessibility experiments.
+//
+// Note: current implementation uses raw events, and hence doesn't work
+// when VoiceOver is enabled.
 //
 
 #import "ScanView.h"

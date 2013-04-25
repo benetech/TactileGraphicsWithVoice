@@ -1,4 +1,7 @@
-// SettingsViewController.m     Control the settings tab
+// SettingsViewController.m     Controller for viewing and changing settings
+//
+// Jeffrey Scofield, Psellos
+// http://psellos.com
 //
 
 #import "SettingsViewController.h"

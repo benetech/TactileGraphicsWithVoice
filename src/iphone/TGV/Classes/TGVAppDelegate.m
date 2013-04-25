@@ -1,3 +1,8 @@
+// TGVAppDelegate.m
+//
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #import "TGVAppDelegate.h"
 #import "ScanViewController.h"
 

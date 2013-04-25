@@ -1,4 +1,7 @@
 /* filters.h     Image filters
+ *
+ * Jeffrey Scofield, Psellos
+ * http://psellos.com
  */
 #include <stdint.h>
 #include <CoreGraphics/CGImage.h>

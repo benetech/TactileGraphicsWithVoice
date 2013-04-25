@@ -1,5 +1,8 @@
 // Analysis.h     Analysis of an image
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #import <Foundation/Foundation.h>
 #import "Device.h"
 #import "runle.h"

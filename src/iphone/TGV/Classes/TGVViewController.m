@@ -1,9 +1,7 @@
+// TGVViewController.m     Top-level view controller for TGV
 //
-//  TGVViewController.m
-//  TGV
-//
-//  Created by Jeffrey Scofield on 2/24/13.
-//
+// Jeffrey Scofield, Psellos
+// http://psellos.com
 //
 
 #import "TGVViewController.h"

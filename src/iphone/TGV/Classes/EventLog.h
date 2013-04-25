@@ -1,9 +1,7 @@
-//
 //  EventLog.h
-//  TGV
 //
-//  Created by Jeffrey Scofield on 3/1/13.
-//
+// Jeffrey Scofield, Psellos
+// http://psellos.com
 //
 
 #import <Foundation/Foundation.h>

@@ -1,6 +1,8 @@
 // findqrcs.m     Find QR codes in an image
 //
-//#import <math.h>
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #import "runle.h"
 #import "filters.h"
 #import "bitmap.h"

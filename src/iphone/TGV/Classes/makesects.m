@@ -1,5 +1,8 @@
 // makesects.m     Carve image into sections and analyze
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #import <math.h>
 #import "filters.h"
 #import "makesects.h"

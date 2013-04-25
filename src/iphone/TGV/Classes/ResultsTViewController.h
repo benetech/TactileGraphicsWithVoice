@@ -1,9 +1,7 @@
+//  ResultsTViewController.h     Controller for table of scanning results
 //
-//  ResultsTViewController.h
-//  TGV
-//
-//  Created by Jeffrey Scofield on 1/5/13.
-//
+// Jeffrey Scofield, Psellos
+// http://psellos.com
 //
 
 #import <UIKit/UIKit.h>

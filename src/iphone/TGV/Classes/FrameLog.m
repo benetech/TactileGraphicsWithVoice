@@ -1,5 +1,8 @@
 // FrameLog.m    Log captured video frames for later analysis
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 // For speed, keep all the frames in memory. The save method writes them to
 // the Photo Album and frees the memory. (Hope iOS doesn't get too annoyed.)
 //

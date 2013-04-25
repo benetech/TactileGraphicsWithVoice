@@ -1,5 +1,8 @@
 // Blob.h     Connected component
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #import <Foundation/Foundation.h>
 #import "runle.h"
 

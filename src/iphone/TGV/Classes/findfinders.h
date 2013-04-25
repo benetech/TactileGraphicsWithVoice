@@ -1,5 +1,8 @@
 // findfinders.h     Find finder patterns as separate blobs
 //
+// Jeffrey Scofield, Psellos
+// http://psellos.com
+//
 #if TARGET_MAC
 #import <Cocoa/Cocoa.h>
 #else
