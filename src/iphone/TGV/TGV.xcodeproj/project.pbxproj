@@ -784,7 +784,7 @@
 					armv7,
 					armv7s,
 				);
-				CODE_SIGN_IDENTITY = "iPhone Developer: Jeffrey Scofield (PP36DPP7BP)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Jeffrey Scofield";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
@@ -797,7 +797,7 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				PROVISIONING_PROFILE = "219DBD98-1A9B-486E-ADCB-19DCB6F5B4E6";
+				PROVISIONING_PROFILE = "56A2B8F2-CA63-4AFE-BD19-495A1FA76DBF";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "armv7 armv7s";
 				WARNING_CFLAGS = (

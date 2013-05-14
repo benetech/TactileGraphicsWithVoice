@@ -1,8 +1,8 @@
-# These are the finder pattern metrics (as used in findfinders.m) for
-# all the blobs in a corpus of 174 test images that look enough like
-# finder patterns to be interesting. The first column tells whether the
-# blob really is a finder pattern. The rest are metrics based on the
-# light/dark sections of each run in the blob:
+# These are the finder pattern metrics (as used in findfinders.m) for all
+# the blobs that look enough like a finder pattern to be interesting.
+# They're taken from a corpus of 174 test images. The first column tells
+# whether the blob really is a finder pattern. The rest are metrics based
+# on the light/dark sections of each run in the blob:
 #
 #    Fraction of runs that have a small odd number of sections
 #    Fraction of runs that look fairly symmetric
@@ -20,7 +20,7 @@
 #
 #    At least 1/9 the area of the smallest QR code we recognize
 #    No more than 1/9 the area of the largest QR code we recognize
-#    Aspect ratio between 0.480 and 2.083
+#    Aspect ratio between 0.480 and 2.083 (i.e., vaguely squarish)
 #
 # We use this data to set thresholds for picking out finder patterns,
 # and for calculating a sort of confidence level that a blob really is a
